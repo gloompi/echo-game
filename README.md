@@ -1,98 +1,86 @@
-# ECHO
+# Echo — Be here. Seen later.
 
-**The Seeker sees 3 seconds in the past.**
+A browser party hunt for **2–12 players**. Hiders are fully visible, but Seekers receive their poses on a configurable **0–10 second server holdback**. Your own movement is predicted locally; shots hit current authoritative positions, not echoes.
 
-A browser-based, asymmetric multiplayer arena prototype built with Three.js, TypeScript, and an authoritative Node.js server. Hiders wear blocky striped shirts; seekers wear blue armor and carry orange toy blasters. The arena uses cyan/magenta lighting, cover, stairs, and elevated routes.
+This branch replaces the Node game server with **Rust (Axum + Tokio)** while retaining the Three.js characters, arena, audio, controls and survival mode. Node is used for frontend tooling and the cross-platform launcher, not the game simulation.
 
-## Run locally
+## Play on your PC
 
-Install Node.js **22.12 or newer**. Then:
+Install Node.js 22.12+ and stable Rust/Cargo, then:
 
 ```sh
-git clone https://github.com/gloompi/echo-game.git
-cd echo-game
 npm install
-npm run dev
+npm run play
 ```
 
-Open **http://localhost:5173** in a desktop browser with WebGL2 enabled. Choose **Practice** for a solo room with bots, **Quick play** for a shared public room on this server, or **Create room** to invite friends. Private rooms wait for the host to start. A room supports up to eight participants, including bots. Bot fill brings small rooms to four players.
+Open the local URL printed by the launcher. Use **PRACTICE** for bots or **CREATE A ROOM** for friends.
 
-The repository is source code, not a hosted game. Players must connect to the same running server. On your LAN, friends open `http://YOUR-PC-LAN-IP:5173` while development mode is running. Copy the invite after opening that reachable address, not `localhost`. Internet friends need a reachable production server or a tunnel with WebSocket support. No paid deployment, tunnel, DNS change, or firewall change is provisioned by this repository.
-
-## Production
+To publish a temporary invite without deploying a permanent server, install `cloudflared` and run:
 
 ```sh
-npm run build
-npm start
+npm run share
 ```
 
-The production server serves the client and WebSocket endpoint from port **3000**. For an internet-facing deployment, place it behind HTTPS and forward WebSocket upgrades for `/socket`. Configure `ALLOWED_ORIGINS` with your exact public origin if the proxy rewrites the Host header. See `.env.example`; environment files are not loaded automatically. Set variables in your shell or hosting service.
+The launcher builds the client and Rust server, starts both game HTTP and WebSocket traffic on one loopback port, launches a Cloudflare Quick Tunnel, and prints local and public URLs. It generates a random playtest access key unless `ECHO_ACCESS_KEY` is already configured. Open the local URL, create a room, then use **COPY LINK** for the public room-specific invitation. Keep the PC and terminal running. Ctrl+C stops both processes.
 
-An optional Dockerfile builds the same application. It has not been deployment-tested:
+Friends need only the complete invitation and a desktop browser with keyboard and mouse. They do not need Rust, Node, cloudflared, port forwarding or a VPN.
+
+See [local hosting and troubleshooting](docs/LOCAL_PLAY.md), including Windows prerequisites and a Docker alternative. Quick Tunnels are a development convenience, not a production hosting/SLA solution.
+
+## Change the game settings
+
+The host can edit **Echo delay**, **round length** and **Seeker count** in the lobby. Defaults: 3 seconds, 180 seconds, two Seekers (clamped so at least one Hider remains). The UI uses 0.25-second delay steps; the protocol/environment support whole milliseconds.
+
+Settings are validated by the server and cannot change during a hunt. Results return to the lobby; the host starts the next round. The host can also use **Esc → END ROUND / ROOM SETTINGS** to stop a playtest and retune it. Up to 12 players includes the host.
+
+Copy `.env.example` to `.env` to change defaults for newly created rooms:
+
+```dotenv
+ECHO_DELAY_MS=1250
+ECHO_ROUND_MS=180000
+ECHO_SEEKERS=2
+PORT=3000
+```
+
+Zero disables the special Echo holdback, not ordinary Internet latency. The display also uses a 100 ms interpolation buffer. Do not interpret the setting as a guaranteed end-to-end on-screen age.
+
+## Development and verification
 
 ```sh
-docker build -t echo-game .
-docker run --rm -p 3000:3000 echo-game
+npm run dev             # Rust server + Vite; no public tunnel
+npm run build           # Typecheck, browser production build, Rust release binary
+npm start               # Run an existing build locally
+npm run share:built     # Publish an existing build through a temporary tunnel
+npm run test:ts         # Browser-side rules, movement, transport/connection tests
+npm run test:launcher   # Launcher lifecycle test with mock services (POSIX)
+npm run fixtures:check  # JS motor must reproduce checked-in parity fixtures
+cargo test --workspace  # Rust rules, delay boundaries, hits, permissions, motor parity
+npm run test:network    # Actual Rust HTTP/WebSocket integration; build client first
+npm run test:e2e        # Actual two-browser WebGL flow; build first
 ```
 
-GitHub Pages alone cannot host the authoritative Node/WebSocket server.
+For browser tests, install Chromium once with `npx playwright install chromium` (CI uses `--with-deps`). No database or paid backend service is required by this implementation. Dependency installation requires access to npm and crates.io. Commit **real generated** `package-lock.json` and `Cargo.lock` after a successful dependency-enabled build; neither should be fabricated. CI retains generated lockfiles as artifacts for review.
 
-## Play
-
-| Control | Action |
-| --- | --- |
-| WASD / arrows | Move |
-| Mouse | Look; click **Enter arena** to capture the mouse |
-| Shift | Sprint, consuming stamina |
-| Space | Jump |
-| Q | Hider dash |
-| E | Wave — including in your delayed echo |
-| Left mouse | Seeker blaster |
-| R | Reload |
-| Tab | Scoreboard |
-| Escape | Release mouse / menu; the online round continues |
-
-When mouse capture is unavailable, hold the right mouse button to look. This alpha targets desktop keyboard and mouse, not touch controls.
-
-### The rule that matters
-
-The server retains pose history and sends seekers other players' poses at **server time minus 3000 ms**. Seekers' own movement is predicted immediately. Other players' spatial effects and animations follow the delayed timeline too; live enemy coordinates are not sent as a hidden renderer state.
-
-**Shots are checked against current server hitboxes and current cover. There is no three-second hitbox rewind.** Shooting an echo does not damage the player who has already left. A successful shot awards a tag; two tags catch a hider. Near-misses through a delayed ghost award the hider a bait, with a cooldown to avoid counting every bullet.
-
-Hiders see live players and an optional translucent version of their own three-second-old pose. Other hiders remain solid, ordinary characters. Seekers also see solid delayed characters, not an additional live target. Network transit and a 100 ms interpolation buffer add to the perceptual delay; the rule is a 3000 ms **server holdback**, not a promise of exactly 3000 ms on screen over any connection.
-
-Defaults: one seeker, a five-second hider head start, two-minute rounds, two-hit captures, 12-shot magazines, automatic rematches. Role preferences are hints, with seeker preferences taking priority. Automatic preferences rotate the seeker. Private-room late arrivals spectate until the next round; public quick-play arrivals enter as hiders.
-
-## Development
-
-```sh
-npm test
-npm run typecheck
-npm run build
-npx playwright install chromium
-npm run test:e2e
-```
-
-A lockfile is intentionally **not fabricated**: dependency downloads were unavailable in the authoring environment. The first successful `npm install` creates `package-lock.json`; review and commit it, then use `npm ci`. CI already uses `npm ci` when a lockfile exists.
-
-### Verification status of this initial implementation
-
-- 33 simulation/protocol-validation tests were executed successfully after TypeScript transpilation with Node's native test runner.
-- Shared simulation, room logic, validation, and those tests passed strict TypeScript checking using locally available Node definitions.
-- All authored TypeScript files were checked for syntax during transpilation.
-- The full dependency-backed build, WebGL rendering, browser tests, and live WebSocket transport were **not verified** in the authoring environment: npm registry access was unavailable, and the first GitHub Actions job stopped before any steps ran. The exact Actions failure cause was not exposed by the available connector.
-
-The browser tests and CI workflow are included to finish that verification in a working Node environment. Treat this as an initial implementation, not a production-certified release.
-
-## Structure
+## Code layout
 
 ```text
-client/       Three.js characters, arena, controls, HUD, audio, prediction
-server/       WebSocket rooms, authoritative simulation and input validation
-shared/       Protocol, fixed-step movement, collision layout and pose history
-tests/        Simulation regression tests and Playwright browser checks
-docs/         Architecture, constraints and a manual multiplayer playtest
+client/                     Three.js rendering, DOM UI, audio, input, networking
+shared/rules.json            One set of numeric tunings for TS and Rust
+shared/arena.json            One collision layout/spawn list for TS and Rust
+shared/physics.ts            Browser prediction motor
+shared/settings.ts          Room-setting validation and labels
+crates/echo-core/            Engine-independent Rust simulation and rules
+crates/echo-server/          HTTP, WebSockets, room lifecycle and fixed-step loop
+scripts/play.mjs             Local/public playtest launcher
+scripts/movement-fixtures.ts Cross-language movement fixture generator
 ```
 
-See [architecture](docs/ARCHITECTURE.md) and [playtest checklist](docs/PLAYTEST.md). There are no accounts, database, analytics, matchmaking across separate server processes, paid assets, or external art/model downloads. All in-game meshes are procedural. The supplied illustration guided the character design; the image itself is not redistributed in this repository.
+[Architecture and timing contract](docs/ARCHITECTURE.md) · [Playtest checklist](docs/PLAYTEST.md) · [Asset portability](assets-src/README.md)
+
+## Scope and validation status
+
+Included: Rust authoritative rooms; current-position hits; server-held Hider history; live allied Seekers; local prediction/reconciliation; 60 Hz simulation and 20 Hz snapshots; bounded input/output queues; lobby configuration; private-room invites; practice bots; host transfer; local/temporary-public hosting; automated regression suites.
+
+This is still the existing survival game, not the later Signal Heist/objective mode. WebTransport, Rapier/WASM-shared movement, React UI conversion, persistent accounts, reconnect/resume, full GLB animation authoring and a native-engine client are **not implemented** here. The existing collider motor is ported and covered by cross-language fixtures rather than changing movement engines during the server migration. No zero-lag guarantee is made.
+
+At authoring time, 33 browser-side logic tests and the six JS fixture scenarios passed in an offline check using TypeScript 5.8.3. A launcher lifecycle integration test using mock server/tunnel processes also passed. The full dependency-backed frontend build, Rust compilation/tests, real socket/browser integration, Docker build and a live Internet tunnel were not executable in that environment. CI and the commands above are the remaining verification gate; do not treat this branch as a verified release until those pass.

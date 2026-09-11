@@ -1,10 +1,10 @@
 node_modules/
 dist/
+target/
 .env
 .env.*
 !.env.example
+.DS_Store
+*.log
 test-results/
 playwright-report/
-*.log
-.DS_Store
-verification.tar.gz

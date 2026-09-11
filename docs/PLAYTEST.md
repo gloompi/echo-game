@@ -1,18 +1,21 @@
-# First multiplayer playtest
+# Playtest and verification checklist
 
-1. Install dependencies, run `npm test`, `npm run typecheck`, and `npm run build`. Record any errors before changing dependency versions. Run `npm run dev` and open the page on a desktop browser with WebGL2 enabled. Check the developer console for errors. The menu should render a striped hider, armored seeker and a magenta/cyan echo.
-2. Try Practice as a hider, then as a seeker. Confirm movement, jump, sprint/stamina, dash, wave, ammo/reload and escape/resume. Check stairs, wall sliding and camera obstruction near cover. The seeker is first person; the hider is third person. Verify shadows and sound controls.
-3. In two browser windows or on two computers, create a private room. Disable bot fill. Set one role to seeker, the other to hider. Join using the six-character room code, then start from the host. Hiders get a five-second head start; seekers can look but cannot move or shoot until it ends.
-4. Stand both players in the open east outer lane. Have the hider stand still for at least three seconds, then strafe sideways and wave. The seeker should see the old location for three seconds while the hider sees their own optional echo. Seekers should not see a live duplicate, live positional nameplate or live remote VFX.
-5. Shoot the stale location. Confirm no damage and the echo feedback. Fire at the real current location communicated by the second tester: a correct prediction should tag the hider even if the old model is elsewhere. Repeat behind solid cover: cover must block the ray. Two current hits catch the hider.
-6. Confirm a frozen hider can be caught, a moving hider can bait, a seeker cannot shoot during head start or results, ammo stops at zero, and reload takes 1.5 seconds. Test the final capture, timeout victory, results countdown and automatic next round.
-7. Exercise disconnect/host transfer and a private late join. The late arrival should wait until the next round. Open two Quick play sessions: they should meet on this same server and a late quick-play entrant should be a live hider. A practice room must not accept an invited second player.
-8. Repeat with browser network throttling and, later, separate internet connections. Observe prediction correction and delayed character smoothing. The expected view age is 3000 ms plus transport and interpolation, not exactly three seconds under arbitrary jitter. Leaving a tab or opening the menu must stop its input; it must not pause the shared round.
+## Automated gate
 
-## Browser automation
+Run `npm run test:ts`, `npm run fixtures:check`, `cargo test --workspace`, `npm run build`, `npm run test:network`, and `npm run test:e2e` in a dependency-enabled checkout. The Rust suite covers current-hit/echo-miss semantics, delay boundaries including 0 and 10 seconds, host permissions, input limits, role rotation, capacity, history and JS motor parity. The network suite uses the real Rust binary and native Node WebSocket clients. Browser checks use the real production client, WebGL, two independent contexts and the Rust server.
 
-`npx playwright install chromium` then `npm run test:e2e`. The tests start the development servers and check menu initialization, room flow, and delayed WebSocket payloads. Screenshots and traces are saved on failures. These tests were authored but could not be executed in the network-isolated authoring environment.
+The offline authoring environment passed 33 JS logic tests and regenerated/checked six motor scenarios; a mock-service launcher lifecycle test also passed. Full Rust, frontend build, socket, browser, Docker and public-tunnel checks were not run there. Do not count checked-in tests as passed merely because they exist. See CI for the next verification result.
 
-## Hosting note
+## Two-person functional playtest
 
-An invitation is only useful when the address is reachable. A `localhost` invite points to the recipient's own machine. Use a LAN address for the same network, or a production HTTPS address/tunnel for internet friends. The latter must forward WebSocket upgrades to `/socket`. Do not expose the Vite development server as the permanent public deployment.
+Create a room, disable bots, choose one Seeker and a 1.25s delay. Join from a second browser or PC. Confirm the friend cannot change host settings. Start the round, move the Hider, and verify the Seeker sees the earlier route while the Hider sees live Seeker movement. Check HUD and nameplates show the configured delay. Wave and dash; no spatial effect should reveal an unreleased live Hider transform.
+
+Fire at the echo after the real Hider moves aside: miss plus echo feedback. Predict the real location: current hit. Check wall blocking, two-hit capture, reloads, dash-wall collision, jumps, stairs and camera collision. Test zero, three and ten-second delays in separate rounds; ten seconds gets a sufficiently long head start. Results must return to the lobby, preserving session scores, not immediately restart before settings can be changed.
+
+Use the host's pause-menu return-to-lobby button during a round. Both clients should unlock the mouse and enter the lobby. Change settings and restart without interpolating between old and new timelines. Disconnect the host's browser and confirm the next human gets host controls. Stop the server and confirm clients report connection loss; resuming an old player session is not implemented.
+
+## Friends-over-Internet check
+
+Use `npm run share`, open the local URL before or after the tunnel is ready, then create a room and copy its link. Confirm the copied origin is the public tunnel rather than localhost and the fragment key is retained. A friend on another Internet connection should join directly in a desktop browser. A missing/wrong key should produce an actionable error. Stop the terminal and confirm the public game stops.
+
+Join up to twelve clients (host included); the thirteenth must be rejected without affecting the room. Try Wi-Fi, background-tab pause/resume and moderate network jitter. Measure FPS, ping, corrections and browser/server CPU. Compare direct localhost with tunnel play before drawing conclusions about WebSocket suitability. Do not promise lag-free play based on a transport or a tick-rate number alone.

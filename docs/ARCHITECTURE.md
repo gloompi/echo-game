@@ -1,37 +1,44 @@
-# Architecture and invariants
+# Echo architecture — protocol v2
 
-## Information boundary
+## Boundaries
 
-The server owns positions, physics time, roles, hit points, ammo, timers, collision checks and pose history. Clients submit bounded movement/aim inputs, never an authoritative position or frame duration. Tick duration is fixed at 1/30 second. Snapshots are sent at approximately 15 Hz.
+Three.js renders game state. DOM UI owns menus and settings, not authoritative rules. `echo-core` owns movement, roles, rounds, shots and historical sampling without depending on Axum, Tokio, browser APIs or a wall clock. `echo-server` supplies monotonic time, a 60 Hz loop, room lifecycle, transport and static hosting. Each room is authoritative and in-memory.
 
-`Room.snapshot(viewer, now)` is the only snapshot serializer. A seeker receives their own current `self` motor and the history sample at `now - 3000` for everyone else. A hider receives current peers and, optionally, their own old pose. `roster` carries names, role and non-spatial score/alive metadata, not transforms. Seeker warm-up produces no historical players until sufficient history exists; it never substitutes present coordinates.
+`shared/rules.json` and `shared/arena.json` are imported by TypeScript and included at Rust compile time. The motor currently has **two implementations**: `shared/physics.ts` for local prediction and `echo-core::physics` for authority. Six JS-generated scenarios check cross-language parity. This is not yet a shared WASM simulation. Replacing the existing kinematic controller with Rapier is deferred to avoid combining a physics rewrite with a server rewrite.
 
-Other players' event positions, aim and animated poses are held back as well. A seeker's own shot feedback remains immediate, including a successful current-position hit: this is the intended weapon mechanic, not passive location disclosure. Alive status, roster membership, score and round-end notifications are current non-spatial metadata. The alpha does not conceal those metadata side channels.
+## Timing contract
 
-Browser interpolation operates only on already-filtered snapshots. There is no hidden live enemy array on a seeker client. The 100 ms smoothing buffer and network transit sit on top of the server holdback. Reconciliation replays unacknowledged inputs over the current authoritative self motor, with small corrections smoothed visually.
+For a Seeker at server time T with room delay D:
 
-## Hit detection and movement
+- The Seeker's self state is current. Allied Seeker poses are current.
+- Hider poses and their animation flags are sampled at T−D on the server; current Hider poses are not sent in a hidden secondary field.
+- During history warmup, missing historical Hiders are omitted, never substituted with live transforms.
+- Roster metadata contains no spatial fields. Remote spatial effects are held back conservatively; non-spatial hit/capture confirmations can be immediate.
+- Shots use the shooter's current authoritative origin/aim and current Hider hitboxes, after all movement for that tick. There is no rewind to the visible echo and no generic historical lag compensation.
+- Hiders receive current other-player poses and their own delayed echo.
 
-Hitscan blaster rays originate from the seeker's current server eye position and aim. Static cover, ground and arena boundaries clip the ray. The closest current live hider is tested with a body AABB. Hitboxes are never rewound. Two hits eliminate a hider for this round. This intentionally differs from competitive FPS lag compensation: a high-ping seeker gets no rewind advantage.
+The browser retains recent delivered frames and interpolates around estimated server-now minus 100 ms. It does **not** receive live Hider history and wait three seconds locally. Server holdback therefore does not provide a free three-second browser jitter cushion. Clock estimation, network conditions and interpolation affect effective display age; the configured delay is a gameplay rule, not a zero-latency promise.
 
-Movement uses a cylinder approximation against shared AABB cover, gravity, jumping, sprint stamina, small step climbing and dash collision substeps. It is character-controller physics, not a general rigid-body solver. Player/player body collision is intentionally absent; otherwise collision with an unseen current hider could disclose that position. Visual character limbs are stylized and not independent hitboxes. Cosmetic arena props do not all collide; structural cover and platforms use the shared map.
+A fixed-size time horizon of 12 seconds supports D=0…10000 ms plus interpolation boundaries. The server clears history at new rounds. Host setting changes increment `settingsVersion`; clients flush interpolation/prediction frames rather than blend across timelines. Settings are immutable during an active hunt.
 
-## Rooms and lifecycle
+## Inputs and transport
 
-Single server process, in-memory rooms, no persistence. Up to eight participants per room; bots fill to four when enabled. Private rooms require host start, transfer host ownership after disconnect, and defer late arrivals to the next round. Public rooms admit late human arrivals as hiders. Practice rooms reject invitations.
+The browser predicts its own motor at 60 Hz and sends sequenced controls. The server validates finite values, axes, pitch and sequence bounds; clients never submit authoritative positions, durations or hit claims. At most one queued command is simulated per fixed tick. Held controls briefly continue across a short input gap, then neutralize after 300 ms. Snapshot acknowledgements let the browser discard processed commands and replay outstanding commands over the server correction.
 
-A round gives hiders five seconds to move while the seeker can only look. The hunt runs for 120 seconds. All hiders caught means seeker victory; time expiration or no remaining seeker means hider victory. Ten seconds of results precede the next round. Scores persist for the session; reconnecting creates a new player identity. The last human disconnect destroys the room. Role preferences are not a guarantee of the chosen role when a valid roster requires otherwise.
+Snapshots are produced at 20 Hz. The renderer is independent of both frequencies. Tokio's loop skips missed deadlines instead of running an unbounded catch-up burst; an overloaded host still degrades gameplay and must be measured.
 
-Seeker bots read the same history samples as human seekers, with a modest velocity-based lead; they do not aim at live hider positions. Hider bots can react to live seekers. Pathfinding is intentionally simple waypoint steering, not a navigation mesh. Bot difficulty and small-room balance need playtesting.
+WebSockets are the only implemented transport. `GameTransport` distinguishes reliable messages from latest-state traffic so a future datagram transport has a clean insertion point, but both methods still use reliable ordered TCP today. Inputs have bounded client buffering; slow output readers cannot accumulate unlimited server snapshots because a watch channel retains only the latest unsent state. Reliable control messages have a separate bounded queue. WebSocket packet loss can still cause head-of-line blocking.
 
-## Transport and safety limits
+WebTransport is a future measured optimization, not automatically usable through the current HTTP/WebSocket Quick Tunnel. A production QUIC endpoint would require its own deployment/support work. No P2P mesh, TURN service or host-authority-in-browser is used.
 
-WebSocket JSON, 2 KiB maximum incoming payload, no compression, validated finite values, monotonic bounded input sequence, server-clamped axes/aim, 90 messages per second per connection, join deadline, heartbeat, and outbound backpressure cutoff. Clients send approximately 30 input messages per second. Stale inputs stop moving after 300 ms, subject to normal controller deceleration.
+## Local hosting
 
-Same-origin upgrade checks apply by default. `ALLOWED_ORIGINS` supports an explicit comma-separated allowlist behind a reverse proxy. Non-browser clients without an Origin header are permitted. This is not authentication or complete anti-cheat: malicious hider clients know present positions and could share them out of band. Spectator collusion is not prevented. Deploy only behind HTTPS for public play; add edge rate limiting and process supervision before broader use.
+The Rust process serves `dist/client`, `/socket`, `/health` and `/api/config` on one port. `scripts/play.mjs --share` explicitly publishes that port through cloudflared, generates a playtest access key and a separate control token, and registers the resulting public origin. Only the game is published, not the project directory or development server.
 
-Limits are conservative initial safeguards, not load-test results. The per-IP connection limit uses the direct socket peer, not untrusted X-Forwarded-For; a reverse proxy can put all players behind the same 24-connection cap. For larger deployments, configure trusted-proxy accounting deliberately rather than blindly trusting a forwarded header.
+The public-origin control route requires a loopback connection plus the control token. Browser joins require the configured access key. Same-host/explicitly allowed Origin checks, 2048-byte messages, connection/message limits, bounded queues and heartbeat timeouts are baseline protections for private playtests, not a complete production anti-abuse system.
 
-## Next engineering work
+Settings, scores and rooms are not persisted. A leaving host browser hands host controls to another human. Server process failure is not host migration and ends the session.
 
-Finish real-browser/build verification and generate the dependency lockfile first. Then run two-human internet playtests: assess hitbox feel, camera framing, visual readability, bot navigation, buffering under jitter, and whether two-hit captures produce enough successful predictions. Multiple seekers, reconnect tokens, latency instrumentation and deployment automation are future work, not implemented features.
+## Native-engine migration
+
+Reuse shared map/tuning data, Rust room rules/protocol concepts and original visual designs. Renderer/input/audio integration and native transport adapters still need implementation. The existing art is procedural Three.js source, not a finished engine-independent skeletal GLB asset pack; see `assets-src/README.md`. No React conversion, native client, replay system or Signal Heist objectives are included in this server migration.
