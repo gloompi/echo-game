@@ -18,21 +18,19 @@ jobs:
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
-      - name: Test and build
-        run: |
-          if [ -f tsconfig.json ]; then npm test && npm run build; fi
-      - name: Browser tests
-        run: |
-          if [ -f playwright.config.ts ]; then npx playwright install --with-deps chromium && npm run test:e2e; fi
-      - name: Package verification artifacts
-        if: always()
-        run: tar -czf verification.tar.gz node_modules package-lock.json
+      - name: Simulation tests
+        run: npm test
+      - name: Typecheck and production build
+        run: npm run build
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Browser checks
+        run: npm run test:e2e
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
-          name: echo-verification
+          name: echo-browser-failures
           path: |
-            verification.tar.gz
             test-results/
             playwright-report/
-          retention-days: 3
+          retention-days: 7

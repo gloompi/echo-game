@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#091321" />
+  <meta name="description" content="ECHO. A multiplayer game of bad timing. The Seeker sees three seconds in the past. Your movement is always now." />
+  <title>ECHO — Be here. Seen later.</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <canvas id="game" aria-label="ECHO 3D arena"></canvas>
+  <div id="vignette"></div>
+  <div id="menu">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="ECHO home"><span class="brand-icon">≋</span>ECHO<span class="brand-slash">/</span></a>
+      <nav><button class="nav-button selected" id="nav-play">PLAY</button><button class="nav-button" data-modal="how">HOW TO PLAY <span>↗</span></button></nav>
+      <div class="header-right"><span class="alpha"><i></i> PLAYABLE ALPHA <span>01</span></span><button class="icon-button sound-toggle" aria-label="Toggle sound" title="Toggle sound">♪</button><button class="icon-button" data-modal="settings" aria-label="Settings" title="Settings">⚙</button></div>
+    </header>
+    <main class="hero">
+      <section class="hero-copy">
+        <p class="eyebrow"><span class="tiny-cross">+</span> A MULTIPLAYER GAME OF BAD TIMING</p>
+        <h1>BE HERE.<br><span>SEEN LATER.</span></h1>
+        <p class="hero-description">The Seeker sees <strong>3 seconds in the past.</strong><br>Give them something to shoot at.<br>Just don’t be there when they do.</p>
+        <label class="callsign" for="player-name"><span>YOUR CALLSIGN</span><input id="player-name" maxlength="18" autocomplete="nickname" placeholder="Runner" value="Runner"/><span class="input-status">●</span></label>
+        <div class="role-preference"><span>PLAY AS</span><button class="role-choice active" data-role="hider" aria-pressed="true">Hider</button><button class="role-choice" data-role="seeker" aria-pressed="false">Seeker</button><button class="role-choice" data-role="auto" aria-pressed="false">Either</button></div>
+        <div class="play-actions"><button class="button primary" id="quick-play">QUICK PLAY <span>↗</span></button><button class="button secondary" id="practice">PRACTICE <span>→</span></button></div>
+        <div class="friends-actions"><button id="create-room">CREATE A ROOM <span>+</span></button><span class="separator"></span><button data-modal="join">JOIN A FRIEND <span>↗</span></button></div>
+        <p class="matchmaking-note"><i></i> 2–8 players · Empty slots filled with bots</p>
+      </section>
+      <div class="hero-art-label art-label-one"><span class="label-line"></span><small>THE HIDER</small><strong>RIGHT NOW.</strong></div>
+      <div class="hero-art-label art-label-two"><small>THE ECHO</small><strong>−3.00 <span>SEC</span></strong></div>
+      <div class="art-caption"><span>LIVE FROM</span><b>THE AFTERHOURS ARENA</b><span class="caption-corner">↗</span></div>
+      <div class="hero-index">[ 01 / ∞ ]</div>
+    </main>
+    <footer class="feature-strip">
+      <div><span class="feature-number">01</span><section><h3>YOU MOVE. NOW.</h3><p>Your movement never waits.</p></section></div>
+      <div><span class="feature-number">02</span><section><h3>THEY SEE. LATER.</h3><p>Everyone else is three seconds behind.</p></section></div>
+      <div><span class="feature-number">03</span><section><h3>MAKE THEM MISS.</h3><p>Shots hit the present. Not your echo.</p></section></div>
+      <button class="footer-help" data-modal="how" aria-label="Learn the rules">↗</button>
+    </footer>
+    <div class="mobile-note">A keyboard-and-mouse arena. Open ECHO on a desktop to play.</div>
+  </div>
+  <div id="hud" class="hidden">
+    <header class="game-header"><div class="game-brand">ECHO<span>/</span><button id="hud-room" title="Copy invite link">ROOM <b id="room-code">------</b> ↗</button></div><div class="round-status"><span id="phase-label">HEAD START</span><strong id="clock">00:05</strong><span id="hiders-left">3 HIDERS</span></div><div class="game-tools"><span class="network"><i></i><b id="ping">—</b> ms</span><button class="icon-button sound-toggle" aria-label="Toggle sound">♪</button><button class="icon-button" id="pause-button" aria-label="Pause menu">Ⅱ</button></div></header>
+    <div class="role-readout"><span class="eyebrow" id="role-label">YOU ARE THE HIDER</span><h2 id="role-heading">STAY AHEAD.</h2><p id="role-hint">Let them chase a memory.</p></div>
+    <div id="crosshair"><i></i><i></i><i></i><i></i></div>
+    <div id="hit-marker">×</div>
+    <div id="round-banner"><span id="banner-kicker"></span><strong id="banner-title"></strong><p id="banner-subtitle"></p></div>
+    <button id="capture" class="button capture">CLICK TO ENTER <span>↗</span><small>WASD to move · Mouse to look · Esc for menu</small></button>
+    <div id="feed" aria-live="polite"></div>
+    <div class="bottom-hud">
+      <section class="vitals"><span class="eyebrow">STILL IN THE PRESENT</span><div id="health"><i></i><i></i><span>2 / 2</span></div><div class="stamina-row"><span>SPRINT</span><div class="meter"><i id="stamina-fill"></i></div></div><div id="ability"><kbd>Q</kbd><b>QUICK STEP</b><span id="dash-cooldown">READY</span></div></section>
+      <section class="echo-timeline"><div class="timeline-label"><span id="timeline-subject">YOUR ECHO</span><b>−3.00 s</b><span>YOU / NOW</span></div><div class="timeline-track"><i class="timeline-past"></i><span></span><i class="timeline-now"></i></div><p id="timeline-note">The ghost is where they think you are.</p></section>
+      <section class="weapon-status"><div id="ammo-panel"><span class="eyebrow">E-12 / PULSE BLASTER</span><div class="ammo"><strong id="ammo">12</strong><span>/ 12</span><kbd>R</kbd></div><div id="reload-track"><i id="reload-fill"></i></div></div><div id="hider-stats"><span class="eyebrow">SHOTS INTO YOUR ECHO</span><strong id="baits">00</strong><span class="stat-caption">BAD MEMORIES</span></div><div class="control-hint"><span><kbd>SPACE</kbd> Jump</span><span><kbd>E</kbd> Wave</span><span><kbd>TAB</kbd> Scores</span></div></section>
+    </div>
+  </div>
+  <div id="lobby" class="overlay hidden"><section class="panel lobby-panel"><p class="eyebrow">PRIVATE FREQUENCY</p><h2>BETTER WITH<br><em>BAD COMPANY.</em></h2><p class="panel-description">Share your room. Make some memories.<br>Then get out of the way.</p><button id="lobby-code" class="room-invite"><span>ROOM CODE</span><strong id="lobby-code-value">------</strong><span>COPY LINK ↗</span></button><div id="lobby-players"></div><div class="lobby-options"><label><input type="checkbox" id="fill-bots" checked /> Fill empty slots with bots</label><select id="lobby-preference" aria-label="Preferred role"><option value="hider">Prefer hider</option><option value="seeker">Prefer seeker</option><option value="auto">Either role</option></select></div><button class="button primary" id="start-round">START ROUND <span>↗</span></button><p id="lobby-note" class="subtle">One seeker. Two minutes. No coordination required.</p><button class="text-button leave-room">← LEAVE ROOM</button></section></div>
+  <div id="pause" class="overlay centered hidden"><section class="panel pause-panel"><p class="eyebrow">YOU’RE STILL IN THE ARENA</p><h2>TAKE A<br><em>SECOND.</em></h2><p class="panel-description">Online rounds keep moving while this menu is open.</p><button class="button primary" id="resume">BACK TO THE PRESENT <span>↗</span></button><button class="button secondary" id="pause-invite">COPY INVITE LINK <span>↗</span></button><button class="text-button" data-modal="settings">SETTINGS</button><button class="text-button leave-room">LEAVE ROOM</button></section></div>
+  <div id="scoreboard" class="overlay centered hidden"><section class="panel score-panel"><p class="eyebrow">AFTERHOURS / LIVE STANDINGS</p><h2 id="score-title">THE FREQUENCY.</h2><div class="score-row score-head"><span>PLAYER</span><span>ROLE</span><span>TAGS</span><span>BAITS</span></div><div id="score-rows"></div><p class="subtle" id="score-note">Hold Tab to view · Shots hit current positions</p></section></div>
+  <dialog id="modal-how" class="panel modal"><button class="close-modal" aria-label="Close">×</button><p class="eyebrow">THREE SECONDS. ONE BIG DIFFERENCE.</p><h2>DON’T TRUST<br><em>YOUR EYES.</em></h2><div class="rules"><section><b>01 / HIDE IN PLAIN SIGHT</b><p>As a hider, everything you see is live. The magenta ghost shows your position three seconds ago. That’s what the seeker sees. Keep moving, change direction, and wave with E.</p></section><section><b>02 / PREDICT THE PRESENT</b><p>As a seeker, your movement is immediate. Everyone else’s movement and animations arrive three seconds late. Shoot where they are now, not where their echo is. Two hits catch a hider.</p></section><section><b>03 / OUTLAST THE CLOCK</b><p>Hiders get a five-second head start, then two minutes to survive. Catch every hider to win as seeker. One survivor wins for the hiders. The next round starts automatically.</p></section></div><div class="key-guide"><span><kbd>W A S D</kbd> Move</span><span><kbd>MOUSE</kbd> Look / fire</span><span><kbd>SHIFT</kbd> Sprint</span><span><kbd>SPACE</kbd> Jump</span><span><kbd>Q</kbd> Hider dash</span><span><kbd>E</kbd> Wave</span><span><kbd>R</kbd> Reload</span><span><kbd>ESC</kbd> Menu</span></div><p class="subtle">Roles are preferences; every round needs a seeker. No player-to-player collisions. Static cover blocks sight and shots. Three-second server delay plus normal network latency.</p></dialog>
+  <dialog id="modal-settings" class="panel modal settings-modal"><button class="close-modal" aria-label="Close">×</button><p class="eyebrow">YOUR FREQUENCY</p><h2>FINE TUNE.</h2><label class="setting-row">Mouse sensitivity <input type="range" id="sensitivity" min="0.5" max="2.5" value="1" step="0.1" /></label><label class="setting-row">Sound volume <input type="range" id="volume" min="0" max="1" value="0.3" step="0.05" /></label><label class="setting-row">Soft shadows <input type="checkbox" id="shadows" checked /></label><label class="setting-row">Show my echo (hider) <input type="checkbox" id="show-echo" checked /></label><p class="subtle">Settings are saved on this device. Keyboard and mouse required.</p></dialog>
+  <dialog id="modal-join" class="panel modal join-modal"><button class="close-modal" aria-label="Close">×</button><p class="eyebrow">TUNE IN TO A FRIEND</p><h2>SAME ROOM.<br><em>DIFFERENT TIME.</em></h2><form id="join-form"><label class="join-code-label" for="join-code">SIX-CHARACTER ROOM CODE</label><input id="join-code" placeholder="ABC234" minlength="6" maxlength="6" required autocomplete="off" pattern="[A-Za-z2-9]{6}" /><button class="button primary" type="submit">JOIN ROOM <span>↗</span></button></form><p class="subtle">You need to be connected to the same ECHO server. An invite link takes care of that.</p></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="loading"><span class="brand">ECHO /</span><div class="loading-line"></div><span>SYNCING THE PAST…</span></div>
+  <script type="module" src="/client/boot.ts"></script>
+</body>
+</html>
