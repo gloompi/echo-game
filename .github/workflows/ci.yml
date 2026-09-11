@@ -9,23 +9,38 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install dependencies
+      - name: Rust toolchain
+        run: rustup update stable --no-self-update && rustup default stable
+      - name: Install JavaScript dependencies
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
-      - name: Simulation tests
-        run: npm test
+      - name: Browser-side logic and motor fixtures
+        run: npm run test:ts && npm run fixtures:check && npm run test:launcher
+      - name: Rust simulation, protocol and motor parity
+        run: cargo test --workspace
       - name: Typecheck and production build
         run: npm run build
+      - name: Real Rust WebSocket integration
+        run: npm run test:network
       - name: Install browser
         run: npx playwright install --with-deps chromium
-      - name: Browser checks
+      - name: Two-client WebGL checks
         run: npm run test:e2e
+      - name: Retain actual generated lockfiles for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-lockfiles
+          path: |
+            package-lock.json
+            Cargo.lock
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -33,4 +48,5 @@ jobs:
           path: |
             test-results/
             playwright-report/
+          if-no-files-found: ignore
           retention-days: 7

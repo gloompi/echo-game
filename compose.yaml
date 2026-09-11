@@ -1,0 +1,17 @@
+services:
+  echo:
+    build: .
+    init: true
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      ECHO_DELAY_MS: ${ECHO_DELAY_MS:-3000}
+      ECHO_ROUND_MS: ${ECHO_ROUND_MS:-180000}
+      ECHO_SEEKERS: ${ECHO_SEEKERS:-2}
+      ECHO_ACCESS_KEY: ${ECHO_ACCESS_KEY:-}
+      ECHO_PUBLIC_URL: ${ECHO_PUBLIC_URL:-}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]

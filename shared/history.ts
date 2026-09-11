@@ -2,7 +2,7 @@ import { CFG } from './config.js';
 import { angleLerp } from './physics.js';
 import type { Pose } from './types.js';
 interface Frame { at: number; players: Pose[] }
-/** Private server history. Never falls forward to a newer frame during warm-up. */
+/** Private history. Never substitute a future pose during warm-up or interpolate across a teleport. */
 export class History {
   frames: Frame[] = [];
   record(at: number, players: Pose[]): void {
@@ -19,8 +19,8 @@ export class History {
     const next = new Map(b.players.map(p => [p.id, p]));
     return a.players.map(p => {
       const q = next.get(p.id);
-      if (!q || p.alive !== q.alive) return { ...p };
-      return { ...p, x: p.x + (q.x - p.x) * t, y: p.y + (q.y - p.y) * t, z: p.z + (q.z - p.z) * t, yaw: angleLerp(p.yaw, q.yaw, t), pitch: p.pitch + (q.pitch - p.pitch) * t };
+      if (!q || p.alive !== q.alive || p.role !== q.role || (p.warp ?? 0) !== (q.warp ?? 0)) return { ...p };
+      return { ...p, x:p.x+(q.x-p.x)*t, y:p.y+(q.y-p.y)*t, z:p.z+(q.z-p.z)*t, yaw:angleLerp(p.yaw,q.yaw,t), pitch:p.pitch+(q.pitch-p.pitch)*t };
     });
   }
   clear(): void { this.frames.length = 0; }
