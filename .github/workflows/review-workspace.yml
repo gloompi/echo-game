@@ -1,0 +1,19 @@
+name: Review workspace
+on:
+  push:
+    branches: [feat/webtransport-abilities]
+permissions:
+  contents: read
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export tracked source only
+        run: git archive --format=tar -o /tmp/echo-source.tar HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: echo-review-source
+          path: /tmp/echo-source.tar
+          retention-days: 1
