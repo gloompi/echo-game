@@ -1,0 +1,11 @@
+{
+  "crouchHeight": 1.12,
+  "crouchEye": 0.92,
+  "crouchMultiplier": 0.45,
+  "groundFriction": 8,
+  "groundAcceleration": 70,
+  "airAcceleration": 16,
+  "bhopSpeedCap": 12,
+  "jumpBufferSeconds": 0.1,
+  "mirrorRadius": 1.8
+}

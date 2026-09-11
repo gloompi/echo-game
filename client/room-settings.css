@@ -1,14 +1,16 @@
-#room-settings { border:1px solid #344752; border-radius:10px; margin:18px 0; padding:14px; display:grid; grid-template-columns:1fr 1fr; gap:14px; text-align:left; }
-#room-settings legend { font-size:11px; letter-spacing:.15em; padding:0 8px; }
-#room-settings label { display:flex; flex-direction:column; gap:8px; font-size:12px; color:#bfd5de; }
-#room-settings label:first-of-type, #room-settings small { grid-column:1/-1; }
-#room-settings input { width:100%; min-width:0; accent-color:#66e5ed; }
-#room-settings input[type=number] { color:#fff; background:#12222c; border:1px solid #415561; border-radius:5px; padding:8px; }
-#room-settings output { color:#77edf2; font-size:20px; }
-#room-settings button, #host-return-lobby { padding:11px; border:1px solid #54717d; border-radius:6px; background:#18323c; color:#ecfbff; cursor:pointer; font:inherit; font-size:12px; }
-#room-settings small { color:#9cacb8; font-size:11px; line-height:1.5; }
-#room-settings:disabled { opacity:.65; }
-#host-return-lobby { margin-top:12px; }
-#host-return-lobby[hidden] { display:none; }
-
-.lobby-panel { max-height:calc(100dvh - 32px); overflow-y:auto; }
+.lobby-panel{max-height:94vh;overflow:auto;width:min(820px,94vw)!important}
+#room-settings{margin:20px 0;padding:16px;border:1px solid #304355;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;text-align:left}
+#room-settings legend,#player-bindings legend{padding:0 8px;font:700 11px monospace;letter-spacing:.13em;color:#78ebe0}
+#room-settings label,#player-bindings label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font:600 12px sans-serif}
+#room-settings input:not([type=range]),#room-settings select{width:100%;background:#122332;border:1px solid #385065;color:#ecf5fa;padding:9px;border-radius:3px;box-sizing:border-box}
+#room-settings input[type=range]{width:100%;accent-color:#6cebd9}
+#room-settings small,#player-bindings small{font:11px/1.5 sans-serif;color:#a5b8c7;display:block}
+#room-settings .wide{grid-column:1/-1}#room-settings:disabled{opacity:.72}
+#save-room-settings,#host-return-lobby,#player-bindings button{padding:10px;background:#193744;border:1px solid #427184;color:#e7ffff;font:700 11px monospace;cursor:pointer}
+#host-return-lobby{display:block;width:100%;margin-top:12px}#host-return-lobby[hidden]{display:none}
+.map-card{display:flex;align-items:center;gap:20px}.map-card canvas{width:160px;height:160px;flex-shrink:0}.map-card p{font:12px/1.6 sans-serif;color:#bfcdd8}
+#player-bindings{display:grid;gap:14px;border:1px solid #304355;margin-top:22px;padding:16px}#player-bindings label{justify-content:space-between}
+#sensitivity-output{min-width:45px;font:12px monospace;color:#6cebd9}
+#movement-readout{position:fixed;bottom:178px;left:50%;transform:translateX(-50%);color:#d6f9f5;font:11px/1.7 monospace;text-align:center;pointer-events:none;background:#091321c9;padding:7px 15px;border-radius:4px}
+#mirror-hint{color:#fb99ee;display:block}#movement-readout:empty{display:none}
+@media(max-width:680px){#room-settings{grid-template-columns:1fr}.map-card{flex-direction:column;align-items:flex-start}}

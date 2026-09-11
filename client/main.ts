@@ -1,10 +1,15 @@
 import * as T from 'three';
 import { CFG } from '../shared/config.js';
-import { DEFAULT_SETTINGS, delayLabel } from '../shared/settings.js';
-import { angleLerp, aimDirection, arenaRay, clamp, move } from '../shared/physics.js';
+import { DEFAULT_SETTINGS, delayLabel, resolveSettings } from '../shared/settings.js';
+import { angleLerp, aimDirection, arenaRay, clamp, move, bodyHeight, eyeHeight, configureMovement } from '../shared/physics.js';
 import { neutralInput, type Input, type Motor, type Pose, type Preference, type Snapshot, type GameEvent } from '../shared/types.js';
 import { Character, makeBlaster } from './models.js';
-import { makeArena, makeStage, CYAN } from './world.js';
+import { makeStage, CYAN } from './world.js';
+import { makeArena } from './map-world.js';
+import { ACTIVE_MAP, selectMap } from '../shared/map.js';
+import { normalizeKey } from '../shared/controls.js';
+import { PlayerControls } from './player-controls.js';
+import M from '../shared/movement.json';
 import { Connection } from './network.js';
 import { RoomControls } from './room-settings.js';
 import { GameAudio } from './audio.js';
@@ -14,7 +19,8 @@ const renderer = new T.WebGLRenderer({ canvas, antialias: true, powerPreference:
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75)); renderer.setSize(innerWidth, innerHeight);
 renderer.outputColorSpace = T.SRGBColorSpace; renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.13;
 renderer.shadowMap.enabled = localStorage.getItem('echo-shadows') !== 'off'; renderer.shadowMap.type = T.PCFShadowMap;
-const arena = makeArena(), stage = makeStage();
+let arena = makeArena();
+const stage = makeStage();
 const camera = new T.PerspectiveCamera(72, innerWidth / innerHeight, 0.05, 180);
 const stageCamera = new T.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
 const foregroundGun = makeBlaster(); foregroundGun.scale.setScalar(0.47); foregroundGun.position.set(0.27, -0.33, -0.49); foregroundGun.rotation.y = Math.PI; camera.add(foregroundGun); arena.scene.add(camera);
@@ -24,7 +30,7 @@ heroSeeker.group.scale.setScalar(1.3); heroSeeker.group.position.set(1.45, 0, -0
 heroGhost.group.scale.setScalar(1.23); heroGhost.group.position.set(0.55, 0, -1.5); heroGhost.group.rotation.y = 0.3;
 stage.stage.add(heroHider.group, heroSeeker.group, heroGhost.group);
 const audio = new GameAudio();
-let sensitivity = Number(localStorage.getItem('echo-sensitivity') ?? 1), showEcho = localStorage.getItem('echo-show-echo') !== 'off';
+let showEcho = localStorage.getItem('echo-show-echo') !== 'off';
 let preference: Preference = (localStorage.getItem('echo-role') as Preference) || 'auto';
 if (!['hider', 'seeker', 'auto'].includes(preference)) preference = 'auto';
 let snapshot: Snapshot | null = null, predicted: Motor | null = null, sequence = 0, currentRound = -1;
@@ -38,6 +44,8 @@ interface FX { mesh: T.Mesh; life: number; max: number; velocity?: T.Vector3 }
 const effects: FX[] = [];
 const connection = new Connection(onSnapshot, reason => { leave(false); toast(reason, 7000); }, reason => toast(reason, 5000));
 const roomControls = new RoomControls(message => connection.send(message), toast);
+const controls = new PlayerControls(toast);
+const movementReadout = document.createElement('div'); movementReadout.id = 'movement-readout'; movementReadout.innerHTML = '<span id=movement-speed></span><span id=mirror-hint></span>'; $('hud').append(movementReadout);
 function toast(text: string, ms = 2700) { clearTimeout(toastTimer); $('toast').textContent = text; $('toast').classList.add('show'); toastTimer = setTimeout(() => $('toast').classList.remove('show'), ms); }
 function setBusy(value: boolean) { connecting = value; for (const id of ['quick-play', 'practice', 'create-room']) $<HTMLButtonElement>(id).disabled = value; }
 function chooseRole(value: Preference) {
@@ -61,16 +69,15 @@ $<HTMLInputElement>('fill-bots').onchange = event => connection.send({ type: 'bo
 $('nav-play').onclick = () => $<HTMLButtonElement>('quick-play').focus();
 for (const el of document.querySelectorAll<HTMLButtonElement>('[data-modal]')) el.onclick = () => {
   if (document.pointerLockElement) document.exitPointerLock();
-  active = false; keys.clear(); shoot = false; $<HTMLDialogElement>(`modal-${el.dataset.modal}`).showModal();
+  active = false; keys.clear(); controls.clear(); shoot = false; $<HTMLDialogElement>(`modal-${el.dataset.modal}`).showModal();
 };
 for (const el of document.querySelectorAll<HTMLButtonElement>('.close-modal')) el.onclick = () => el.closest('dialog')?.close();
 for (const dialog of document.querySelectorAll<HTMLDialogElement>('dialog')) dialog.addEventListener('click', e => { if (e.target === dialog) { const r = dialog.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dialog.close(); } });
 function soundButtons() { for (const button of document.querySelectorAll<HTMLButtonElement>('.sound-toggle')) { button.classList.toggle('muted', !audio.enabled); button.textContent = audio.enabled ? '♪' : '∅'; button.setAttribute('aria-pressed', String(audio.enabled)); } }
 for (const button of document.querySelectorAll<HTMLButtonElement>('.sound-toggle')) button.onclick = () => { audio.unlock(); audio.enabled = !audio.enabled; localStorage.setItem('echo-sound', audio.enabled ? 'on' : 'off'); soundButtons(); };
 soundButtons();
-$<HTMLInputElement>('sensitivity').value = String(sensitivity); $<HTMLInputElement>('volume').value = String(audio.volume);
+$<HTMLInputElement>('volume').value = String(audio.volume);
 $<HTMLInputElement>('shadows').checked = renderer.shadowMap.enabled; $<HTMLInputElement>('show-echo').checked = showEcho;
-$<HTMLInputElement>('sensitivity').oninput = e => { sensitivity = Number((e.target as HTMLInputElement).value); localStorage.setItem('echo-sensitivity', String(sensitivity)); };
 $<HTMLInputElement>('volume').oninput = e => { audio.volume = Number((e.target as HTMLInputElement).value); localStorage.setItem('echo-volume', String(audio.volume)); audio.unlock(); audio.play('wave'); };
 $<HTMLInputElement>('shadows').onchange = e => { renderer.shadowMap.enabled = (e.target as HTMLInputElement).checked; localStorage.setItem('echo-shadows', renderer.shadowMap.enabled ? 'on' : 'off'); };
 $<HTMLInputElement>('show-echo').onchange = e => { showEcho = (e.target as HTMLInputElement).checked; localStorage.setItem('echo-show-echo', showEcho ? 'on' : 'off'); };
@@ -82,7 +89,7 @@ async function invite() {
   catch { window.prompt('Copy this invite link:', url); }
 }
 for (const id of ['hud-room', 'lobby-code', 'pause-invite']) $(id).onclick = () => void invite();
-function pause() { if (!snapshot || snapshot.phase === 'lobby') return; active = false; keys.clear(); shoot = false; if (document.pointerLockElement) document.exitPointerLock(); $('pause').classList.remove('hidden'); $('capture').classList.add('hidden'); }
+function pause() { if (!snapshot || snapshot.phase === 'lobby') return; active = false; keys.clear(); controls.clear(); shoot = false; if (document.pointerLockElement) document.exitPointerLock(); $('pause').classList.remove('hidden'); $('capture').classList.add('hidden'); }
 function capture() {
   if (!snapshot || snapshot.phase === 'lobby' || snapshot.phase === 'finished' || snapshot.self.spectating || !snapshot.self.alive) return;
   audio.unlock(); active = true; $('pause').classList.add('hidden'); $('capture').classList.add('hidden');
@@ -90,34 +97,44 @@ function capture() {
 }
 $('pause-button').onclick = pause; $('resume').onclick = capture; $('capture').onclick = capture;
 for (const el of document.querySelectorAll<HTMLButtonElement>('.leave-room')) el.onclick = () => leave(true);
-function leave(notify: boolean) {
-  connection.close(); active = false; connecting = false; snapshot = null; predicted = null; frames = []; pending = []; currentRound = -1; keys.clear(); shoot = false; lastLobbyKey = ''; lastScoreKey = '';
-  if (document.pointerLockElement) document.exitPointerLock();
-  for (const id of ['hud', 'lobby', 'pause', 'scoreboard']) $(id).classList.add('hidden'); $('menu').classList.remove('hidden'); setBusy(false);
+function clearArenaActors() {
   localCharacter?.dispose(); localCharacter = null; ownEcho?.dispose(); ownEcho = null;
   for (const obj of remote.values()) { obj.character.dispose(); obj.label.remove(); } remote.clear();
   for (const f of effects) { f.mesh.removeFromParent(); f.mesh.geometry.dispose(); (f.mesh.material as T.Material).dispose(); } effects.length = 0;
+}
+function leave(notify: boolean) {
+  connection.close(); active = false; connecting = false; snapshot = null; predicted = null; frames = []; pending = []; currentRound = -1; keys.clear(); controls.clear(); shoot = false; lastLobbyKey = ''; lastScoreKey = '';
+  if (document.pointerLockElement) document.exitPointerLock();
+  for (const id of ['hud', 'lobby', 'pause', 'scoreboard']) $(id).classList.add('hidden'); $('menu').classList.remove('hidden'); setBusy(false);
+  clearArenaActors();
   const url = new URL(location.href); url.searchParams.delete('room'); history.replaceState(null, '', url.pathname + url.search + url.hash);
   document.body.classList.remove('hider'); if (notify) toast('You left the room.');
 }
 canvas.addEventListener('contextmenu', e => e.preventDefault());
+canvas.addEventListener('wheel', e => { if (active) { e.preventDefault(); controls.wheel(e.deltaY); } }, { passive: false });
 canvas.addEventListener('mousedown', e => { if (!active) { capture(); return; } if (e.button === 0) shoot = true; if (e.button === 2) dragging = true; });
 window.addEventListener('mouseup', e => { if (e.button === 0) shoot = false; if (e.button === 2) dragging = false; });
-window.addEventListener('mousemove', e => { if (!active || (!document.pointerLockElement && !dragging)) return; yaw -= e.movementX * 0.0021 * sensitivity; pitch = clamp(pitch - e.movementY * 0.0021 * sensitivity, -1.2, 1.2); });
-document.addEventListener('pointerlockchange', () => { if (document.pointerLockElement === canvas) { active = true; $('capture').classList.add('hidden'); } else if (snapshot && snapshot.phase !== 'lobby' && snapshot.phase !== 'finished') { active = false; keys.clear(); shoot = false; $('pause').classList.remove('hidden'); } });
+window.addEventListener('mousemove', e => { if (!active || (!document.pointerLockElement && !dragging)) return; yaw -= e.movementX * 0.0021 * controls.sensitivity; pitch = clamp(pitch - e.movementY * 0.0021 * controls.sensitivity, -1.2, 1.2); });
+document.addEventListener('pointerlockchange', () => { if (document.pointerLockElement === canvas) { active = true; $('capture').classList.add('hidden'); } else if (snapshot && snapshot.phase !== 'lobby' && snapshot.phase !== 'finished') { active = false; keys.clear(); controls.clear(); shoot = false; $('pause').classList.remove('hidden'); } });
 window.addEventListener('keydown', e => {
   if ((e.target as HTMLElement).matches('input,select,textarea') || document.querySelector('dialog[open]')) return;
   if (e.code === 'Tab' && snapshot && snapshot.phase !== 'lobby') { e.preventDefault(); scoreHeld = true; $('scoreboard').classList.remove('hidden'); renderScores(); return; }
   if (e.code === 'Escape') { if (snapshot && snapshot.phase !== 'lobby') pause(); return; }
-  if (active && ['KeyW','KeyA','KeyS','KeyD','Space','ShiftLeft','ShiftRight','KeyE','KeyQ','KeyR','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) { e.preventDefault(); keys.add(e.code); }
+  if (active && controls.handles(e.code)) { e.preventDefault(); keys.add(normalizeKey(e.code)); }
 });
-window.addEventListener('keyup', e => { keys.delete(e.code); if (e.code === 'Tab') { scoreHeld = false; if (snapshot?.phase !== 'finished') $('scoreboard').classList.add('hidden'); } });
-window.addEventListener('blur', () => { keys.clear(); shoot = false; dragging = false; if (active) pause(); });
+window.addEventListener('keyup', e => { keys.delete(normalizeKey(e.code)); if (e.code === 'Tab') { scoreHeld = false; if (snapshot?.phase !== 'finished') $('scoreboard').classList.add('hidden'); } });
+window.addEventListener('blur', () => { keys.clear(); controls.clear(); shoot = false; dragging = false; if (active) pause(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden && active) pause(); });
 window.addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = stageCamera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); stageCamera.updateProjectionMatrix(); });
 function playable(s: Snapshot) { return s.self.alive && !s.self.spectating && (s.phase === 'playing' || (s.phase === 'headstart' && s.self.role === 'hider')); }
 function onSnapshot(s: Snapshot) {
-  const previous = snapshot; snapshot = s; setBusy(false); roomControls.update(s);
+  const previous = snapshot, settings = resolveSettings(s.settings);
+  if (ACTIVE_MAP.id !== settings.mapId) {
+    clearArenaActors(); camera.removeFromParent(); arena.dispose();
+    selectMap(settings.mapId); arena = makeArena(); arena.scene.add(camera); frames = [];
+  }
+  configureMovement(settings);
+  snapshot = s; setBusy(false); roomControls.update(s);
   const fresh = currentRound !== s.round || !predicted || previous?.self.role !== s.self.role || previous?.settingsVersion !== s.settingsVersion;
   if (fresh) {
     currentRound = s.round; predicted = { ...s.self }; pending = []; frames = []; correction.set(0, 0, 0); yaw = s.self.yaw; pitch = s.self.pitch; sequence = Math.max(sequence, s.self.ack);
@@ -133,13 +150,13 @@ function onSnapshot(s: Snapshot) {
     pending = pending.filter(i => i.seq > s.self.ack); if (pending.length > 120) pending = [];
     predicted = { ...s.self }; if (playable(s)) for (const input of pending) move(predicted, input, s.self.role);
     const change = old.sub(new T.Vector3(predicted.x, predicted.y, predicted.z));
-    if (change.length() < 2) correction.add(change).clampLength(0, 0.8); else correction.set(0, 0, 0);
+    if (previous?.self.warp === s.self.warp && change.length() < 2) correction.add(change).clampLength(0, 0.8); else correction.set(0, 0, 0);
   }
   frames.push(s); if (frames.length > 12) frames.shift();
   $('menu').classList.add('hidden'); $('lobby').classList.toggle('hidden', s.phase !== 'lobby'); $('hud').classList.toggle('hidden', s.phase === 'lobby');
   $('room-code').textContent = s.room; $('lobby-code-value').textContent = s.room;
   if (s.phase === 'lobby') {
-    if (previous?.phase !== 'lobby') { active = false; keys.clear(); shoot = false; if (document.pointerLockElement) document.exitPointerLock(); }
+    if (previous?.phase !== 'lobby') { active = false; keys.clear(); controls.clear(); shoot = false; if (document.pointerLockElement) document.exitPointerLock(); }
     $('pause').classList.add('hidden'); $('capture').classList.add('hidden'); renderLobby();
   }
   if (s.phase !== 'lobby' && (!previous || previous.phase === 'lobby' || fresh)) {
@@ -147,7 +164,7 @@ function onSnapshot(s: Snapshot) {
     $('capture').classList.toggle('hidden', active || !s.self.alive || s.self.spectating || s.phase === 'finished');
   }
   if (s.phase === 'finished') {
-    if (previous?.phase !== 'finished') { active = false; keys.clear(); shoot = false; if (document.pointerLockElement) document.exitPointerLock(); audio.play('win'); }
+    if (previous?.phase !== 'finished') { active = false; keys.clear(); controls.clear(); shoot = false; if (document.pointerLockElement) document.exitPointerLock(); audio.play('win'); }
     $('capture').classList.add('hidden'); $('pause').classList.add('hidden'); $('scoreboard').classList.remove('hidden'); renderScores();
   } else if (!scoreHeld) $('scoreboard').classList.add('hidden');
   if (!s.self.alive || s.self.spectating) $('capture').classList.add('hidden');
@@ -192,7 +209,7 @@ function handleEvent(e: GameEvent) {
   if (!snapshot) return; const me = e.actor === snapshot.self.id;
   if (e.kind === 'shot' && e.from && e.to) {
     const from = new T.Vector3(e.from.x, e.from.y, e.from.z);
-    if (me && predicted) { from.set(predicted.x + Math.cos(yaw) * 0.24, predicted.y + CFG.eye - 0.15, predicted.z - Math.sin(yaw) * 0.24); gunKick = 1; }
+    if (me && predicted) { from.set(predicted.x + Math.cos(yaw) * 0.24, predicted.y + eyeHeight(predicted.crouched) - 0.15, predicted.z - Math.sin(yaw) * 0.24); gunKick = 1; }
     beam(from, new T.Vector3(e.to.x, e.to.y, e.to.z), !!e.hit); audio.play(me ? 'shot' : 'echo');
     if (me && e.hit) { $('hit-marker').classList.add('show'); setTimeout(() => $('hit-marker').classList.remove('show'), 130); audio.play('hit'); }
     if (e.echo && performance.now() - lastToastAt > 1200) {
@@ -202,7 +219,7 @@ function handleEvent(e: GameEvent) {
   } else if (e.kind === 'catch') {
     const name = snapshot.roster.find(p => p.id === e.target)?.name ?? 'A hider';
     const item = document.createElement('div'); item.className = 'feed-item'; item.textContent = `${name} was caught in the present.`; $('feed').append(item); setTimeout(() => item.remove(), 4500);
-  } else if (me && e.kind === 'wave') audio.play('wave'); else if (me && e.kind === 'dash') audio.play('dash');
+  } else if (me && e.kind === 'teleport') { audio.play('dash'); toast('MIRROR SHIFT. Your echo stays behind.', 1400); } else if (me && e.kind === 'wave') audio.play('wave'); else if (me && e.kind === 'dash') audio.play('dash');
 }
 function inputTick() {
   if (!snapshot || !predicted || snapshot.phase === 'lobby') return;
@@ -210,7 +227,7 @@ function inputTick() {
   if (active && !document.hidden) {
     input.mx = Number(keys.has('KeyD') || keys.has('ArrowRight')) - Number(keys.has('KeyA') || keys.has('ArrowLeft'));
     input.mz = Number(keys.has('KeyW') || keys.has('ArrowUp')) - Number(keys.has('KeyS') || keys.has('ArrowDown'));
-    input.sprint = keys.has('ShiftLeft') || keys.has('ShiftRight'); input.jump = keys.has('Space'); input.dash = keys.has('KeyQ'); input.wave = keys.has('KeyE'); input.reload = keys.has('KeyR'); input.shoot = shoot;
+    input.sprint = keys.has('ShiftLeft') || keys.has('ShiftRight'); input.jump = controls.jump(keys); input.crouch = controls.crouch(keys); input.interact = keys.has('KeyF'); input.dash = keys.has('KeyQ'); input.wave = keys.has('KeyE'); input.reload = keys.has('KeyR'); input.shoot = shoot;
   }
   if (!connection.send({ type: 'input', input }) || !snapshot || !predicted) return;
   pending.push(input); if (pending.length > 120) pending.shift();
@@ -218,7 +235,7 @@ function inputTick() {
   else { predicted.yaw = input.yaw; predicted.pitch = input.pitch; }
 }
 function interpolatePose(a: Pose, b: Pose, t: number): Pose {
-  if (a.alive !== b.alive || a.role !== b.role) return a;
+  if (a.alive !== b.alive || a.role !== b.role || (a.warp ?? 0) !== (b.warp ?? 0)) return a;
   return { ...a, x: T.MathUtils.lerp(a.x, b.x, t), y: T.MathUtils.lerp(a.y, b.y, t), z: T.MathUtils.lerp(a.z, b.z, t), yaw: angleLerp(a.yaw, b.yaw, t), pitch: T.MathUtils.lerp(a.pitch, b.pitch, t), moving: T.MathUtils.lerp(a.moving, b.moving, t) };
 }
 function viewFrame(): { players: Pose[]; echo: Pose | null } {
@@ -236,13 +253,13 @@ function updateGame(dt: number, time: number) {
   correction.multiplyScalar(Math.exp(-16 * dt)); localPos.set(predicted.x, predicted.y, predicted.z).add(correction);
   const seeker = snapshot.self.role === 'seeker', delayMs = (snapshot.settings ?? DEFAULT_SETTINGS).delayMs;
   localCharacter.group.visible = !seeker && snapshot.self.alive && !snapshot.self.spectating;
-  localCharacter.group.position.copy(localPos); localCharacter.group.rotation.y = yaw + Math.PI;
+  localCharacter.group.position.copy(localPos); localCharacter.group.rotation.y = yaw + Math.PI; localCharacter.group.scale.y = bodyHeight(predicted.crouched) / CFG.height;
   localCharacter.animate({ moving: Math.hypot(predicted.vx, predicted.vz), grounded: predicted.grounded, waving: snapshot.self.waving || (active && keys.has('KeyE')), dashing: predicted.dashTime > 0 }, dt, time);
   const direction = aimDirection(yaw, pitch); aim.set(direction.x, direction.y, direction.z);
   if (seeker) {
-    camera.position.copy(localPos).add(new T.Vector3(0, CFG.eye, 0)); camera.lookAt(camera.position.clone().add(aim));
+    camera.position.copy(localPos).add(new T.Vector3(0, eyeHeight(predicted.crouched), 0)); camera.lookAt(camera.position.clone().add(aim));
   } else {
-    cameraBase.copy(localPos).add(new T.Vector3(0, 1.35, 0));
+    cameraBase.copy(localPos).add(new T.Vector3(0, predicted.crouched ? .8 : 1.35, 0));
     const hiderAim = new T.Vector3(-Math.sin(yaw) * Math.cos(pitch - 0.18), Math.sin(pitch - 0.18), -Math.cos(yaw) * Math.cos(pitch - 0.18));
     cameraGoal.copy(cameraBase).addScaledVector(hiderAim, -5.2).add(new T.Vector3(0, 1.0, 0));
     const offset = cameraGoal.clone().sub(cameraBase), distance = offset.length(); offset.normalize();
@@ -264,17 +281,17 @@ function updateGame(dt: number, time: number) {
       const character = new Character(p.role); arena.scene.add(character.group); const label = document.createElement('div'); label.className = 'nameplate'; plateLayer.append(label); obj = { character, label }; remote.set(p.id, obj);
     }
     const delayed = seeker && p.role === 'hider';
-    obj.character.group.visible = p.alive; obj.character.group.position.set(p.x, p.y, p.z); obj.character.group.rotation.y = p.yaw + Math.PI;
+    obj.character.group.visible = p.alive; obj.character.group.position.set(p.x, p.y, p.z); obj.character.group.rotation.y = p.yaw + Math.PI; obj.character.group.scale.y = bodyHeight(p.crouched) / CFG.height;
     obj.character.animate(p, dt, time - (delayed ? delayMs / 1000 : 0)); if (obj.character.gun) obj.character.gun.rotation.x -= p.pitch;
     const name = snapshot.roster.find(q => q.id === p.id)?.name ?? 'Runner'; obj.label.textContent = name + (delayed ? ` / −${delayLabel(delayMs)}` : '');
-    const pos = new T.Vector3(p.x, p.y + 2.55, p.z), dir = pos.clone().sub(camera.position), distance = dir.length(); dir.normalize();
+    const pos = new T.Vector3(p.x, p.y + bodyHeight(p.crouched) + .39, p.z), dir = pos.clone().sub(camera.position), distance = dir.length(); dir.normalize();
     const occluded = arenaRay(camera.position, dir, distance) < distance - 0.6; pos.project(camera);
     obj.label.style.display = !p.alive || occluded || pos.z > 1 || pos.z < -1 || Math.abs(pos.x) > 1.1 || Math.abs(pos.y) > 1.1 ? 'none' : 'block';
     obj.label.style.left = `${(pos.x * 0.5 + 0.5) * innerWidth}px`; obj.label.style.top = `${(-pos.y * 0.5 + 0.5) * innerHeight}px`; obj.label.classList.toggle('past', delayed);
   }
   if (ownEcho) {
     ownEcho.group.visible = showEcho && !!view.echo?.alive && snapshot.self.alive;
-    if (view.echo) { const e = view.echo; ownEcho.group.position.set(e.x, e.y, e.z); ownEcho.group.rotation.y = e.yaw + Math.PI; ownEcho.animate(e, dt, time - delayMs / 1000); }
+    if (view.echo) { const e = view.echo; ownEcho.group.position.set(e.x, e.y, e.z); ownEcho.group.rotation.y = e.yaw + Math.PI; ownEcho.group.scale.y = bodyHeight(e.crouched) / CFG.height; ownEcho.animate(e, dt, time - delayMs / 1000); }
   }
   for (let i = effects.length - 1; i >= 0; i--) {
     const f = effects[i]; f.life -= dt; (f.mesh.material as T.MeshBasicMaterial).opacity = Math.max(0, f.life / f.max);
@@ -284,7 +301,7 @@ function updateGame(dt: number, time: number) {
   arena.animate(time); renderer.render(arena.scene, camera);
 }
 function updateHUD() {
-  if (!snapshot || !predicted) return; const s = snapshot;
+  if (!snapshot || !predicted) return; const s = snapshot, settings = resolveSettings(s.settings);
   const left = Math.max(0, s.endsAt - connection.now), seconds = Math.ceil(left / 1000);
   $('clock').textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
   $('phase-label').textContent = s.phase === 'headstart' ? 'HEAD START' : s.phase === 'finished' ? 'LOBBY IN' : `ROUND ${String(s.round).padStart(2, '0')}`;
@@ -292,7 +309,19 @@ function updateHUD() {
   $('ping').textContent = String(Math.round(connection.ping));
   $('stamina-fill').style.width = `${predicted.stamina}%`; $('dash-cooldown').textContent = predicted.dashCooldown > 0 ? `${predicted.dashCooldown.toFixed(1)}s` : 'READY';
   const hearts = $('health').querySelectorAll('i'); hearts.forEach((heart, i) => heart.classList.toggle('empty', i >= s.self.hp)); $('health').querySelector('span')!.textContent = `${s.self.hp} / 2`;
-  $('ammo').textContent = String(s.self.ammo).padStart(2, '0'); $('reload-fill').style.width = s.self.reloadLeft > 0 ? `${100 - s.self.reloadLeft / CFG.reloadMs * 100}%` : '0%';
+  $('ammo').textContent = settings.reloadMs === 0 ? '∞' : String(s.self.ammo).padStart(2, '0');
+  $('reload-fill').style.width = settings.reloadMs > 0 && s.self.reloadLeft > 0 ? `${clamp(100 - s.self.reloadLeft / settings.reloadMs * 100, 0, 100)}%` : '0%';
+  document.querySelector<HTMLElement>('.ammo > span')!.textContent = settings.reloadMs === 0 ? 'NO RELOAD' : '/ 12';
+  document.querySelector<HTMLElement>('.ammo kbd')!.hidden = settings.reloadMs === 0;
+  $('movement-speed').textContent = `${ACTIVE_MAP.name} · ${Math.hypot(predicted.vx,predicted.vz).toFixed(1)} m/s · ${predicted.crouched ? 'CROUCHED' : 'HOP: '+settings.bunnyHop.toUpperCase()}`;
+  const mirrorLeft = Math.max(0,(s.self.mirrorLeft ?? 0)-Math.max(0,connection.now-s.now));
+  const nearby = ACTIVE_MAP.mirrors.find(m => {
+    if (Math.hypot(m.x-predicted!.x,m.z-predicted!.z)>M.mirrorRadius || Math.abs(m.y-predicted!.y)>=1.3) return false;
+    const from = { x:predicted!.x, y:predicted!.y+eyeHeight(predicted!.crouched), z:predicted!.z };
+    const delta = new T.Vector3(m.x-from.x,m.y+1-from.y,m.z-from.z), d=delta.length();
+    return d<.001 || arenaRay(from,delta.normalize())>=d-.1;
+  });
+  $('mirror-hint').textContent = !playable(s) ? '' : mirrorLeft>0 ? `MIRROR RECHARGING · ${Math.ceil(mirrorLeft/1000)}s` : nearby ? `F · ${nearby.label} MIRROR · TELEPORT` : 'MIRROR READY · F NEAR A MIRROR';
   $('baits').textContent = String(s.roster.find(p => p.id === s.self.id)?.baits ?? 0).padStart(2, '0');
   const banner = $('round-banner'); banner.style.opacity = s.phase === 'headstart' || s.self.spectating || !s.self.alive ? '1' : '0';
   if (s.self.spectating) { $('banner-kicker').textContent = 'ROUND IN PROGRESS'; $('banner-title').textContent = 'YOU’RE UP NEXT.'; $('banner-subtitle').textContent = 'You’ll join when the host starts the next round.'; }

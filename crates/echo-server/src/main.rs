@@ -188,7 +188,10 @@ async fn shutdown(){
 async fn main()->Result<(),Box<dyn Error>>{
     dotenvy::dotenv().ok();
     let host=env::var("HOST").unwrap_or_else(|_|"127.0.0.1".into());let port=number("PORT",3000,1,65535)?;
-    let defaults=Settings{delay_ms:number("ECHO_DELAY_MS",rules().delay_ms,0,rules().max_delay_ms)?,round_ms:number("ECHO_ROUND_MS",rules().round_ms,30_000,600_000)?,seeker_count:number("ECHO_SEEKERS",2,1,3)? as usize};
+    let defaults=Settings{delay_ms:number("ECHO_DELAY_MS",rules().delay_ms,0,rules().max_delay_ms)?,round_ms:number("ECHO_ROUND_MS",rules().round_ms,30_000,600_000)?,seeker_count:number("ECHO_SEEKERS",2,1,3)? as usize,
+        reload_ms:number("ECHO_RELOAD_MS",rules().reload_ms,0,10000)?,
+        dash_cooldown_ms:number("ECHO_DASH_COOLDOWN_MS",3200,0,30000)?,
+        mirror_cooldown_ms:number("ECHO_MIRROR_COOLDOWN_MS",60000,0,180000)?,..Settings::default()};
     let max_rooms=number("MAX_ROOMS",32,1,256)? as usize;
     let (stopping, _)=watch::channel(false);
     let app=App{engine:Arc::new(Mutex::new(Engine{rooms:HashMap::new(),peers:HashMap::new(),max_rooms})),origin:Instant::now(),

@@ -3,9 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": ">=22.12.0"
-  },
+  "engines": { "node": ">=22.12.0" },
   "scripts": {
     "dev": "concurrently -k -n server,client \"cargo run -p echo-server\" \"vite\"",
     "build:client": "tsc --noEmit && vite build",
@@ -21,13 +19,12 @@
     "test:network": "cargo build -p echo-server && node --test tests/network.integration.mjs",
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
-    "fixtures": "tsx scripts/movement-fixtures.ts",
-    "fixtures:check": "tsx scripts/movement-fixtures.ts --check",
+    "fixtures": "tsx scripts/movement-fixtures.ts && tsx scripts/gameplay-fixtures.ts",
+    "fixtures:check": "node scripts/build-maps.mjs --check && tsx scripts/movement-fixtures.ts --check && tsx scripts/gameplay-fixtures.ts --check",
+    "maps": "node scripts/build-maps.mjs",
     "test:launcher": "node --test tests/launcher.integration.mjs"
   },
-  "dependencies": {
-    "three": "0.186.0"
-  },
+  "dependencies": { "three": "0.186.0" },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
     "@types/node": "^22.18.0",

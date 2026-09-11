@@ -1,61 +1,78 @@
-import { DEFAULT_SETTINGS, delayLabel, validSettings, type RoomSettings } from '../shared/settings.js';
+import { DEFAULT_SETTINGS, delayLabel, resolveSettings, validSettings, type RoomSettings } from '../shared/settings.js';
+import { MAPS } from '../shared/map.js';
 import type { ClientMessage, Snapshot } from '../shared/types.js';
 import './room-settings.css';
 export class RoomControls {
   private panel = document.createElement('fieldset');
-  private delay: HTMLInputElement; private duration: HTMLInputElement; private seekers: HTMLInputElement;
-  private save: HTMLButtonElement; private output: HTMLOutputElement; private dirty = false; private key = '';
+  private dirty = false; private key = ''; private waiting = false;
   private lobby = document.createElement('button');
+  private input<T extends HTMLElement>(id: string): T { return this.panel.querySelector(`#${id}`)!; }
   constructor(send: (message: ClientMessage) => unknown, notice: (text: string) => void) {
     this.panel.id = 'room-settings';
     const timeline = document.querySelector<HTMLElement>('.timeline-label b'); if (timeline) timeline.id = 'configured-delay';
-    const note = document.querySelector('.matchmaking-note'); if (note) note.textContent = '2–12 players · Optional practice bots';
+    const note = document.querySelector('.matchmaking-note'); if (note) note.textContent = '2–12 players · Three maps · Optional practice bots';
     const pitch = document.querySelector('.hero-description strong'); if (pitch) pitch.textContent = 'the past. You choose how far.';
     const feature = document.querySelectorAll('.feature-strip section p')[1]; if (feature) feature.textContent = 'Hiders leave a configurable delayed echo.';
-    const rulesNote = document.querySelector('#modal-how > .subtle'); if (rulesNote) rulesNote.textContent = 'Roles are preferences. No player-to-player collisions. Static cover blocks shots. Server delay is separate from normal network latency and a 100 ms interpolation buffer.';
+    const rulesNote = document.querySelector('#modal-how > .subtle'); if (rulesNote) rulesNote.textContent = 'Static cover hides you; it does not grant invisibility. Both teams can crouch, jump and use mirrors. Press F near a mirror once per use. Server delay is separate from latency and the 100 ms network buffer.';
     const heading = document.querySelector('#modal-how > .eyebrow'); if (heading) heading.textContent = 'ONE TIMELINE. TWO PERSPECTIVES.';
     this.panel.innerHTML = `<legend>HOST SETTINGS</legend>
+      <label class="wide">Arena<select id="room-map"></select></label>
+      <div class="map-card wide"><canvas id="map-preview" width="240" height="240" role="img" aria-label="Static map layout preview"></canvas><div><strong id="map-size"></strong><p id="map-description"></p><small>Blocks: cover · Dots: spawns · Rings: mirrors. Preview contains no live players.</small></div></div>
       <label>Echo delay <output id="delay-output">3s</output><input id="room-delay" type="range" min="0" max="10" step="0.25" value="3"></label>
-      <label>Round length (seconds)<input id="room-duration" type="number" min="30" max="600" step="30" value="180"></label>
+      <label>Round length (seconds)<input id="room-duration" type="number" min="30" max="600" step="1" value="180"></label>
       <label>Seekers<input id="room-seekers" type="number" min="1" max="3" step="1" value="2"></label>
+      <label>Bunny hopping<select id="room-bhop"><option value="off">Off — original movement</option><option value="timed">Timed jumps + air strafing</option><option value="auto">Hold jump to chain hops</option></select></label>
+      <label>Reload duration (seconds)<input id="room-reload" type="number" min="0" max="10" step="0.1" value="1.5"><small>0 = no reloading / unlimited magazine. Fire rate is unchanged.</small></label>
+      <label>Dash cooldown (seconds)<input id="room-dash" type="number" min="0" max="30" step="0.1" value="3.2"></label>
+      <label>Mirror cooldown (seconds)<input id="room-mirror" type="number" min="0" max="180" step="1" value="60"><small>Per player, shared across all mirrors.</small></label>
       <button id="save-room-settings" type="button">APPLY SETTINGS</button>
-      <small>0s disables the Echo delay. Settings change only between rounds.</small>`;
+      <small class="wide" id="room-settings-note">Change settings between rounds. Apply before starting.</small>`;
     document.getElementById('lobby-note')!.before(this.panel);
-    this.delay = this.panel.querySelector<HTMLInputElement>('#room-delay')!; this.duration = this.panel.querySelector<HTMLInputElement>('#room-duration')!;
-    this.seekers = this.panel.querySelector<HTMLInputElement>('#room-seekers')!; this.save = this.panel.querySelector<HTMLButtonElement>('#save-room-settings')!;
-    this.output = this.panel.querySelector<HTMLOutputElement>('#delay-output')!;
-    this.panel.addEventListener('input', () => { this.dirty = true; this.output.value = delayLabel(Number(this.delay.value) * 1000); });
-    this.save.onclick = () => {
-      const settings = { delayMs: Math.round(Number(this.delay.value) * 1000), roundMs: Math.round(Number(this.duration.value) * 1000), seekerCount: Number(this.seekers.value) };
-      if (!validSettings(settings)) { notice('Choose a delay of 0–10s, a round of 30–600s and 1–3 Seekers.'); return; }
-      send({ type: 'settings', settings }); this.dirty = false;
+    const select = this.input<HTMLSelectElement>('room-map');
+    for (const map of Object.values(MAPS)) { const option = document.createElement('option'); option.value=map.id; option.textContent=`${map.name} · ${map.half*2}×${map.half*2}m`; select.append(option); }
+    this.panel.addEventListener('input', () => { this.dirty=true; this.input<HTMLOutputElement>('delay-output').value=delayLabel(Number(this.input<HTMLInputElement>('room-delay').value)*1000); this.preview(); this.input('room-settings-note').textContent='Unapplied changes. Press APPLY SETTINGS.'; });
+    this.input<HTMLButtonElement>('save-room-settings').onclick = () => {
+      const seconds = (id: string) => Math.round(Number(this.input<HTMLInputElement>(id).value)*1000);
+      const settings = { delayMs:seconds('room-delay'), roundMs:seconds('room-duration'), seekerCount:Number(this.input<HTMLInputElement>('room-seekers').value),
+        mapId:select.value, reloadMs:seconds('room-reload'),dashCooldownMs:seconds('room-dash'),mirrorCooldownMs:seconds('room-mirror'),bunnyHop:this.input<HTMLSelectElement>('room-bhop').value };
+      if (!validSettings(settings)) {notice('Check the map, hop mode, and settings ranges.');return;}
+      send({type:'settings',settings}); this.waiting=true; this.input('room-settings-note').textContent='Applying…';
     };
-    this.lobby.id = 'host-return-lobby'; this.lobby.textContent = 'END ROUND / ROOM SETTINGS';
-    this.lobby.onclick = () => send({ type: 'lobby' });
-    document.getElementById('pause-invite')!.after(this.lobby);
-    this.explain(DEFAULT_SETTINGS);
-    const brand = document.querySelector<HTMLAnchorElement>('a.brand'); if (brand) brand.href = `/${location.hash}`;
-    const botsLabel = document.querySelector('.lobby-options label');
-    if (botsLabel?.lastChild?.nodeType === Node.TEXT_NODE) botsLabel.lastChild.textContent = ' Practice bots (fill to four)';
+    this.lobby.id='host-return-lobby';this.lobby.textContent='END ROUND / ROOM SETTINGS';this.lobby.onclick=()=>send({type:'lobby'});
+    document.getElementById('pause-invite')!.after(this.lobby);this.explain(DEFAULT_SETTINGS);
+    const brand=document.querySelector<HTMLAnchorElement>('a.brand');if(brand)brand.href=`/${location.hash}`;
+    const bots=document.querySelector('.lobby-options label');if(bots?.lastChild?.nodeType===Node.TEXT_NODE)bots.lastChild.textContent=' Practice bots (fill to four)';
+  }
+  private preview(): void {
+    const id=this.input<HTMLSelectElement>('room-map').value as keyof typeof MAPS, map=MAPS[id];if(!map)return;
+    this.input('map-size').textContent=`${map.half*2} × ${map.half*2} m · Suggested: ${map.recommended}`;
+    this.input('map-description').textContent=map.description;
+    const ctx=this.input<HTMLCanvasElement>('map-preview').getContext('2d');if(!ctx)return;
+    const scale=224/(map.half*2),x=(v:number)=>120+v*scale;
+    ctx.fillStyle='#0b1623';ctx.fillRect(0,0,240,240);ctx.strokeStyle='#617587';ctx.strokeRect(8,8,224,224);
+    for(const b of map.boxes){ctx.fillStyle=b.y>0?'#586575':'#99a9b3';ctx.fillRect(x(b.x-b.w/2),x(b.z-b.d/2),Math.max(1,b.w*scale),Math.max(1,b.d*scale));}
+    for(const p of map.spawns){ctx.fillStyle='#72e8be';ctx.beginPath();ctx.arc(x(p.x),x(p.z),2,0,Math.PI*2);ctx.fill();}
+    for(const p of map.mirrors){ctx.strokeStyle='#fb77dd';ctx.beginPath();ctx.arc(x(p.x),x(p.z),4,0,Math.PI*2);ctx.stroke();}
   }
   private explain(settings: RoomSettings): void {
-    const paragraphs = document.querySelectorAll('#modal-how .rules section p');
-    if (paragraphs.length === 3) {
-      paragraphs[0].textContent = `Hiders see live players. Your magenta echo shows you ${delayLabel(settings.delayMs)} ago. Keep moving, change direction, and wave with E.`;
-      paragraphs[1].textContent = `Seekers see Hiders ${delayLabel(settings.delayMs)} late; their own movement and allied Seekers are live. Shoot current positions, not echoes. Two hits catch a Hider.`;
-      paragraphs[2].textContent = `Hiders get a ${Math.max(5, settings.delayMs / 1000)}s head start, then ${settings.roundMs / 1000}s to survive. Capture every Hider, or outlast the clock. Results return to the lobby; the host starts the next round.`;
+    const s=resolveSettings(settings),p=document.querySelectorAll('#modal-how .rules section p');
+    if(p.length===3){
+      p[0].textContent=`Hiders see live players. Your echo shows you ${delayLabel(s.delayMs)} ago. Break sight lines using loops, jump-through windows, alcoves and crouch tunnels. Rebind jump/crouch in Settings.`;
+      p[1].textContent=`Seekers see Hiders ${delayLabel(s.delayMs)} late; allies remain live. Shots hit current crouched/standing bodies. F uses a nearby mirror; each player's shared mirror cooldown is ${delayLabel(s.mirrorCooldownMs)}.`;
+      p[2].textContent=`Head start: ${Math.max(5,s.delayMs/1000)}s; round: ${s.roundMs/1000}s. Capture every Hider or survive. Bunny hop mode: ${s.bunnyHop}. Reload: ${s.reloadMs===0?'disabled':delayLabel(s.reloadMs)}. Results return to the lobby.`;
     }
   }
   update(snapshot: Snapshot): void {
-    const settings = snapshot.settings ?? DEFAULT_SETTINGS, key = `${snapshot.room}:${snapshot.settingsVersion ?? 0}`;
-    const host = snapshot.self.id === snapshot.host;
-    this.panel.disabled = !host || snapshot.phase !== 'lobby';
-    this.lobby.hidden = !host;
-    this.explain(settings);
-    if (key !== this.key || !this.dirty) {
-      this.delay.value = String(settings.delayMs / 1000); this.duration.value = String(settings.roundMs / 1000);
-      this.seekers.value = String(settings.seekerCount); this.output.value = delayLabel(settings.delayMs); this.key = key;
+    const s=resolveSettings(snapshot.settings),key=`${snapshot.room}:${snapshot.settingsVersion}`,host=snapshot.self.id===snapshot.host;
+    this.panel.disabled=!host||snapshot.phase!=='lobby';this.lobby.hidden=!host;this.explain(s);
+    if(key!==this.key){
+      this.input<HTMLInputElement>('room-delay').value=String(s.delayMs/1000);this.input<HTMLOutputElement>('delay-output').value=delayLabel(s.delayMs);
+      this.input<HTMLInputElement>('room-duration').value=String(s.roundMs/1000);this.input<HTMLInputElement>('room-seekers').value=String(s.seekerCount);
+      this.input<HTMLSelectElement>('room-map').value=s.mapId;this.input<HTMLSelectElement>('room-bhop').value=s.bunnyHop;
+      this.input<HTMLInputElement>('room-reload').value=String(s.reloadMs/1000);this.input<HTMLInputElement>('room-dash').value=String(s.dashCooldownMs/1000);
+      this.input<HTMLInputElement>('room-mirror').value=String(s.mirrorCooldownMs/1000);this.key=key;this.dirty=false;this.waiting=false;
+      this.input('room-settings-note').textContent='Settings applied. Change them between rounds.';this.preview();
     }
-    const label = document.getElementById('configured-delay'); if (label) label.textContent = `−${delayLabel(settings.delayMs)}`;
+    const label=document.getElementById('configured-delay');if(label)label.textContent=`−${delayLabel(s.delayMs)}`;
   }
 }

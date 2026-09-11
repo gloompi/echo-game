@@ -21,7 +21,7 @@ test('Rust HTTP + WebSocket protocol, settings, access key, room capacity and ho
   const port = allocator.address().port; await new Promise(resolve => allocator.close(resolve));
   const origin = `http://127.0.0.1:${port}`;
   const binary = resolve(`target/debug/echo-server${process.platform === 'win32' ? '.exe' : ''}`);
-  const server = spawn(binary, [], { env: { ...process.env, HOST: '127.0.0.1', PORT: String(port), ECHO_ACCESS_KEY: 'integration-key', ECHO_CONTROL_TOKEN: 'integration-control', ECHO_PUBLIC_URL: '', ALLOWED_ORIGINS: '', ECHO_DELAY_MS: '3000' }, stdio: ['ignore', 'pipe', 'pipe'] });
+  const server = spawn(binary, [], { env: { ...process.env, HOST: '127.0.0.1', PORT: String(port), ECHO_ACCESS_KEY: 'integration-key', ECHO_CONTROL_TOKEN: 'integration-control', ECHO_PUBLIC_URL: '', ALLOWED_ORIGINS: '', ECHO_DELAY_MS: '3000', ECHO_RELOAD_MS: '1500', ECHO_DASH_COOLDOWN_MS: '3200', ECHO_MIRROR_COOLDOWN_MS: '60000' }, stdio: ['ignore', 'pipe', 'pipe'] });
   let logs = '', spawnError; server.on('error', error => { spawnError = error; });
   server.stdout.on('data', chunk => { logs = (logs + chunk).slice(-50000); }); server.stderr.on('data', chunk => { logs = (logs + chunk).slice(-50000); });
   const clients = [];
@@ -38,7 +38,7 @@ test('Rust HTTP + WebSocket protocol, settings, access key, room capacity and ho
     const forbidden = await peer({ mode: 'create', accessKey: 'wrong' }); assert.equal((await forbidden.wait(s => s.type === 'error')).fatal, true); forbidden.ws.close();
     const host = await peer({ mode: 'create', preference: 'seeker' }); const welcome = await host.wait(s => s.type === 'welcome');
     const friend = await peer({ mode: 'join', room: welcome.room, preference: 'hider' }); const friendWelcome = await friend.wait(s => s.type === 'welcome');
-    const settings = { delayMs: 1250, roundMs: 90000, seekerCount: 1 };
+    const settings = { delayMs: 1250, roundMs: 90000, seekerCount: 1, mapId: 'switchyard', reloadMs: 0, dashCooldownMs: 500, mirrorCooldownMs: 60000, bunnyHop: 'auto' };
     friend.send({ type: 'settings', settings }); assert.equal((await friend.wait(s => s.type === 'error')).fatal, false);
     host.send({ type: 'bots', enabled: false }); host.send({ type: 'settings', settings });
     const configured = await friend.wait(s => s.type === 'snapshot' && s.settings.delayMs === 1250); assert.deepEqual(configured.settings, settings);

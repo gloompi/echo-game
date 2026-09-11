@@ -7,15 +7,17 @@ export interface Box { id: string; x: number; z: number; w: number; d: number; y
 export interface Input {
   seq: number; mx: number; mz: number; yaw: number; pitch: number;
   sprint: boolean; jump: boolean; dash: boolean; shoot: boolean; reload: boolean; wave: boolean;
+  crouch: boolean; interact: boolean;
 }
 export interface Motor extends Vec3 {
   vx: number; vy: number; vz: number; yaw: number; pitch: number;
   grounded: boolean; stamina: number; dashTime: number; dashCooldown: number;
-  jumpHeld: boolean; dashHeld: boolean;
+  jumpHeld: boolean; dashHeld: boolean; crouched: boolean; jumpBuffer: number; warp: number;
 }
 export interface Pose extends Vec3 {
   id: string; yaw: number; pitch: number; role: Role; alive: boolean;
   moving: number; grounded: boolean; waving: boolean; dashing: boolean;
+  crouched?: boolean; warp?: number;
 }
 export interface PublicPlayer {
   id: string; name: string; role: Role; preference: Preference; bot: boolean;
@@ -23,18 +25,17 @@ export interface PublicPlayer {
 }
 export interface Self extends Motor {
   id: string; role: Role; alive: boolean; hp: number; ammo: number;
-  reloadLeft: number; ack: number; waving: boolean; spectating: boolean;
+  reloadLeft: number; mirrorLeft: number; ack: number; waving: boolean; spectating: boolean;
 }
 export interface GameEvent {
-  id: number; at: number; kind: 'shot' | 'tag' | 'catch' | 'wave' | 'dash' | 'round';
+  id: number; at: number; kind: 'shot' | 'tag' | 'catch' | 'wave' | 'dash' | 'round' | 'teleport';
   actor: string; target?: string; from?: Vec3; to?: Vec3; hit?: boolean; echo?: boolean;
 }
 export interface Snapshot {
   type: 'snapshot'; now: number; viewTime: number; room: string; host: string; public: boolean;
   practice: boolean; phase: Phase; endsAt: number; round: number; winner: Role | null;
   roster: PublicPlayer[]; self: Self; players: Pose[]; echo: Pose | null;
-  events: GameEvent[]; botsEnabled: boolean;
-  settings: RoomSettings; settingsVersion: number;
+  events: GameEvent[]; botsEnabled: boolean; settings: RoomSettings; settingsVersion: number;
 }
 export type ClientMessage =
   | { type: 'join'; mode: 'create' | 'join' | 'quick' | 'practice'; name: string; room?: string; preference?: Preference; accessKey?: string; settings?: RoomSettings }
@@ -47,6 +48,6 @@ export type ClientMessage =
 export type ServerMessage = Snapshot | { type: 'welcome'; id: string; room: string; protocolVersion?: number; publicUrl?: string | null }
   | { type: 'error'; message: string; fatal?: boolean } | { type: 'pong'; at: number; now: number };
 export const neutralInput = (seq = 0): Input => ({
-  seq, mx: 0, mz: 0, yaw: 0, pitch: 0, sprint: false,
-  jump: false, dash: false, shoot: false, reload: false, wave: false,
+  seq, mx: 0, mz: 0, yaw: 0, pitch: 0, sprint: false, jump: false,
+  dash: false, shoot: false, reload: false, wave: false, crouch: false, interact: false,
 });
