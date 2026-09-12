@@ -25,13 +25,13 @@ test('framing rejects oversized, empty, truncated and invalid UTF-8 packets',()=
 });
 test('control and movement messages preserve reliable ordering',async()=>{
  const f=fake(),received:string[]=[];const t=new WebTransportTransport({url:'https://localhost:4433/echo',protocolVersion:3},f.factory);
- await t.connect('',v=>received.push(v),()=>{});t.sendReliable('{"type":"join"}');t.sendLatest('{"seq":1}');t.sendLatest('{"seq":2}');
+ await t.connect('',v=>received.push(v.type),()=>{});t.sendReliable('{"type":"join"}');t.sendLatest('{"seq":1}');t.sendLatest('{"seq":2}');
  await tick();const d=new FrameDecoder();assert.deepEqual(f.writes.flatMap(b=>d.push(b)),['{"type":"join"}','{"seq":1}','{"seq":2}']);
- f.send('{"type":"welcome"}');await tick();assert.deepEqual(received,['{"type":"welcome"}']);assert.equal(t.bufferedAmount,0);t.close();
+ f.send('{"type":"welcome","id":"p","room":"ABC","protocolVersion":3}');await tick();assert.deepEqual(received,['welcome']);assert.equal(t.bufferedAmount,0);t.close();
 });
 test('out-of-order and duplicate snapshot streams cannot move the world backwards',async()=>{
  const f=fake(),received:number[]=[];const t=new WebTransportTransport({url:'https://localhost:4433/echo',protocolVersion:3},f.factory);
- await t.connect('',v=>received.push(JSON.parse(v).now),()=>{});f.snapshot(300);f.snapshot(100);f.snapshot(300);f.snapshot(400);await tick();
+ await t.connect('',v=>{if(v.type==='snapshot')received.push(v.now);},()=>{});f.snapshot(300);f.snapshot(100);f.snapshot(300);f.snapshot(400);await tick();
  assert.deepEqual(received,[300,400]);t.close();
 });
 test('close fires failure once, explicit close does not report a lost connection',async()=>{
