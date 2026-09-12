@@ -33,7 +33,11 @@ fn mirror_cooldown_is_per_player_and_shared_across_pairs() {
     let mut room=pair(Settings{map_id:MapId::Switchyard,..Settings::default()});
     at_mirror(&mut room,1,0);assert!(room.use_mirror(1,NOW));
     at_mirror(&mut room,1,2);assert!(!room.use_mirror(1,NOW+59_999.0));
-    at_mirror(&mut room,0,2);assert!(room.use_mirror(0,NOW+1.0));
+    at_mirror(&mut room,0,2);assert!(!room.use_mirror(0,NOW+1.0));
+    let cast=room.settings.balance.teleport.seeker_cast_ms as f64;
+    assert!(!room.use_mirror(0,NOW+cast));
+    assert!(room.use_mirror(0,NOW+1.0+cast));
+    assert_eq!(room.players[0].mirror_until,NOW+1.0+cast+room.settings.balance.teleport.seeker_cooldown_ms as f64);
     assert!(room.use_mirror(1,NOW+60_000.0));
 }
 #[test]
@@ -79,7 +83,7 @@ fn remote_metadata_does_not_publish_current_mirror_cooldowns_or_warp_markers() {
 fn no_reload_mode_keeps_fire_rate_and_infinite_magazine() {
     let mut room=pair(Settings{reload_ms:0,..Settings::default()});
     room.players[0].motor=Motor::new(Vec3{x:20.0,y:0.0,z:10.0});room.players[1].motor.x=10.0;
-    for i in 0..100{let at=NOW+i as f64*rules().fire_interval as f64;room.fire(0,at);room.fire(0,at+1.0);}
+    for i in 0..100{let at=NOW+i as f64*room.settings.balance.weapons.blaster.interval_ms as f64;room.fire(0,at);room.fire(0,at+1.0);}
     assert_eq!(room.players[0].ammo,rules().magazine);assert_eq!(room.players[0].reload_until,0.0);
     // The first duplicate must not generate a second event.
     let mut r=pair(Settings{reload_ms:0,..Settings::default()});r.fire(0,NOW);r.fire(0,NOW+1.0);
@@ -97,7 +101,7 @@ fn crouch_hitbox_is_lower_and_shots_still_hit_current_body() {
     let mut room=pair(Settings::default());room.players[0].motor=Motor::new(Vec3{x:20.0,y:0.0,z:10.0});
     room.players[1].motor=Motor::new(Vec3{x:20.0,y:0.0,z:0.0});room.players[1].motor.crouched=true;
     room.fire(0,NOW);assert_eq!(room.players[1].hp,2); // Standing aim passes above a crouched target.
-    room.players[0].motor.pitch=(-1.0_f64).atan2(10.0);room.fire(0,NOW+200.0);assert_eq!(room.players[1].hp,1);
+    room.players[0].motor.pitch=(-1.0_f64).atan2(10.0);room.fire(0,NOW+room.settings.balance.weapons.blaster.interval_ms as f64);assert_eq!(room.players[1].hp,1);
     assert!(physics::eye(true)<physics::eye(false));
 }
 #[test]

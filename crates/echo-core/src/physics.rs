@@ -9,7 +9,7 @@ pub fn overlaps(x:f64,z:f64,b:&BoxCollider,radius:f64)->bool {
 pub fn can_occupy(p:Vec3,h:f64,boxes:&[BoxCollider])->bool {
     !boxes.iter().any(|b|p.y<b.y+b.h-0.001&&p.y+h>b.y+0.001&&overlaps(p.x,p.z,b,rules().radius))
 }
-fn slide(s:&mut Motor,boxes:&[BoxCollider]) {
+fn resolve_collision(s:&mut Motor,boxes:&[BoxCollider]) {
     let c=rules();let h=height(s.crouched);
     for _ in 0..3 {for b in boxes {
         if s.y>=b.y+b.h-0.001||s.y+h<=b.y+0.001||!overlaps(s.x,s.z,b,c.radius){continue;}
@@ -34,25 +34,41 @@ pub fn step(s:&mut Motor,i:&Input,role:Role){step_configured(s,i,role,&Settings:
 pub fn step_with_boxes(s:&mut Motor,i:&Input,role:Role,boxes:&[BoxCollider]){step_in(s,i,role,boxes,rules().arena_half,&Settings::default());}
 pub fn step_configured(s:&mut Motor,i:&Input,role:Role,settings:&Settings){let layout=map(settings.map_id);step_in(s,i,role,&layout.boxes,layout.half,settings);}
 pub fn step_in(s:&mut Motor,i:&Input,role:Role,boxes:&[BoxCollider],half:f64,options:&Settings){
-    let c=rules();let m=movement();let dt=1.0/c.tick_rate as f64;
-    s.yaw=i.yaw;s.pitch=i.pitch;
-    s.crouched=i.crouch||(s.crouched&&!can_occupy(s.position(),c.height,boxes));let h=height(s.crouched);
-    s.dash_cooldown=(s.dash_cooldown-dt).max(0.0);
+    let c=rules();let m=movement();let dt=1.0/c.tick_rate as f64;let tuning=options.balance.slide;
+    let controlled=s.controlled();s.yaw=i.yaw;s.pitch=i.pitch;
+    s.slide_cooldown=(s.slide_cooldown-dt).max(0.0);
+    if controlled||!i.crouch||i.jump||!tuning.enabled{s.slide_time=0.0;}
+    if !controlled&&role==Role::Hider&&tuning.enabled&&i.crouch&&!s.crouch_held&&i.sprint&&s.grounded&&!s.crouched
+        &&s.slide_cooldown<=0.0&&s.stamina>=tuning.stamina_cost as f64&&s.vx.hypot(s.vz)>=tuning.minimum_speed_cm as f64/100.0{
+        s.slide_time=tuning.duration_ms as f64/1000.0;s.slide_cooldown=tuning.cooldown_ms as f64/1000.0;s.stamina-=tuning.stamina_cost as f64;
+    }
+    s.crouch_held=i.crouch;let sliding=s.slide_time>0.0;
+    if !controlled{s.crouched=i.crouch||sliding||(s.crouched&&!can_occupy(s.position(),c.height,boxes));}
+    let h=height(s.crouched);s.dash_cooldown=(s.dash_cooldown-dt).max(0.0);
     let len=i.mx.hypot(i.mz).max(1.0);
     let mut dx=(i.yaw.cos()*i.mx-i.yaw.sin()*i.mz)/len;let mut dz=(-i.yaw.sin()*i.mx-i.yaw.cos()*i.mz)/len;
-    let moving=dx.hypot(dz)>0.01;let sprint=i.sprint&&s.stamina>1.0&&moving&&!s.crouched;
-    s.stamina=(s.stamina+(if sprint{-20.0}else{16.0})*dt).clamp(0.0,100.0);
-    if i.jump&&!s.jump_held{s.jump_buffer=m.jump_buffer_seconds;}
+    let moving=dx.hypot(dz)>0.01;let sprint=!controlled&&i.sprint&&s.stamina>1.0&&moving&&!s.crouched;
+    s.stamina=(s.stamina+(if sliding{0.0}else if sprint{-20.0}else{16.0})*dt).clamp(0.0,100.0);
+    if !controlled&&i.jump&&!s.jump_held{s.jump_buffer=m.jump_buffer_seconds;}
     let jump=match options.bunny_hop{BunnyHop::Auto=>i.jump,BunnyHop::Timed=>s.jump_buffer>0.0,BunnyHop::Off=>i.jump&&!s.jump_held};
-    if jump&&s.grounded{s.vy=c.jump_speed;s.grounded=false;s.jump_buffer=0.0;}
-    s.jump_buffer=(s.jump_buffer-dt).max(0.0);s.jump_held=i.jump;
-    if s.crouched{s.dash_time=0.0;}
-    if i.dash&&!s.dash_held&&role==Role::Hider&&!s.crouched&&s.dash_cooldown<=0.0&&s.dash_time<=0.0{
+    if !controlled&&jump&&s.grounded{s.vy=c.jump_speed;s.grounded=false;s.jump_buffer=0.0;}
+    s.jump_buffer=if controlled{0.0}else{(s.jump_buffer-dt).max(0.0)};s.jump_held=i.jump;
+    if s.crouched||controlled{s.dash_time=0.0;}
+    if !controlled&&i.dash&&!s.dash_held&&role==Role::Hider&&!s.crouched&&s.dash_cooldown<=0.0&&s.dash_time<=0.0{
         s.dash_time=c.dash_duration;s.dash_cooldown=options.dash_cooldown_ms as f64/1000.0;
         if !moving{dx=-i.yaw.sin();dz=-i.yaw.cos();}s.vx=dx*c.dash_speed;s.vz=dz*c.dash_speed;
     }
     s.dash_held=i.dash;
-    if s.dash_time>0.0{s.dash_time=(s.dash_time-dt).max(0.0);}else{
+    if controlled{
+        s.vx=0.0;s.vz=0.0;
+        if s.pull_left>0.0{let x=s.pull_x-s.x;let z=s.pull_z-s.z;let d=x.hypot(z);
+            if d>1.05{let speed=s.pull_speed.min((d-1.05)/dt);s.vx=x/d*speed;s.vz=z/d*speed;}}
+    }else if sliding{
+        let speed=s.vx.hypot(s.vz);let strength=dx.hypot(dz);
+        if speed>0.01&&strength>0.01{let weight=(tuning.steering_percent as f64/100.0*dt*8.0).min(1.0);
+            let x=s.vx/speed*(1.0-weight)+dx/strength*weight;let z=s.vz/speed*(1.0-weight)+dz/strength*weight;let d=x.hypot(z);
+            if d>0.001{s.vx=x/d*speed;s.vz=z/d*speed;}}
+    }else if s.dash_time>0.0{s.dash_time=(s.dash_time-dt).max(0.0);}else{
         let speed=(if role==Role::Hider{c.hider_speed}else{c.seeker_speed})*(if sprint{c.sprint_multiplier}else{1.0})*(if s.crouched{m.crouch_multiplier}else{1.0});
         if options.bunny_hop==BunnyHop::Off||s.crouched{
             let a=1.0-(-18.0*dt).exp();s.vx+=(dx*speed-s.vx)*a;s.vz+=(dz*speed-s.vz)*a;
@@ -64,7 +80,7 @@ pub fn step_in(s:&mut Motor,i:&Input,role:Role,boxes:&[BoxCollider],half:f64,opt
         if v>cap{s.vx*=cap/v;s.vz*=cap/v;}
     }
     let steps=(s.vx.hypot(s.vz)*dt/0.18).ceil().max(1.0) as usize;
-    for _ in 0..steps{s.x+=s.vx*dt/steps as f64;s.z+=s.vz*dt/steps as f64;slide(s,boxes);}
+    for _ in 0..steps{s.x+=s.vx*dt/steps as f64;s.z+=s.vz*dt/steps as f64;resolve_collision(s,boxes);}
     s.x=s.x.clamp(-half+c.radius,half-c.radius);s.z=s.z.clamp(-half+c.radius,half-c.radius);
     let old_y=s.y;s.vy-=c.gravity*dt;s.y+=s.vy*dt;s.grounded=false;
     for b in boxes{
@@ -73,6 +89,7 @@ pub fn step_in(s:&mut Motor,i:&Input,role:Role,boxes:&[BoxCollider],half:f64,opt
         else if s.vy>0.0&&old_y+h<=b.y+0.001&&s.y+h>=b.y{s.y=b.y-h;s.vy=0.0;}
     }
     if s.y<=0.0{s.y=0.0;s.vy=0.0;s.grounded=true;}
+    s.slide_time=(s.slide_time-dt).max(0.0);s.control_left=(s.control_left-dt).max(0.0);s.pull_left=(s.pull_left-dt).max(0.0);
 }
 pub fn aim(yaw:f64,pitch:f64)->Vec3{Vec3{x:-yaw.sin()*pitch.cos(),y:pitch.sin(),z:-yaw.cos()*pitch.cos()}}
 pub fn ray_box(o:Vec3,d:Vec3,min:Vec3,max:Vec3)->Option<f64>{
