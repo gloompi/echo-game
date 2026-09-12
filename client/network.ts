@@ -1,4 +1,4 @@
-import type { ClientMessage, ServerMessage, Snapshot } from '../shared/types.js';
+import type { ClientMessage, Snapshot } from '../shared/types.js';
 import { type GameTransport, WebTransportTransport } from './transport.js';
 export class Connection {
   ping = 0; offset = 0; synced = false; publicUrl: string | null = null;
@@ -13,10 +13,8 @@ export class Connection {
     const generation = this.generation, transport = this.factory(); this.transport = transport;
     const fail = (reason: string) => { if (generation !== this.generation) return; this.close(); this.failure(reason); };
     this.timeout = setTimeout(() => fail('WebTransport connection timed out. Check the UDP endpoint, certificate, browser support and host connection.'), 12_000);
-    void transport.connect('/api/config', data => {
-      if (generation !== this.generation) return;
-      let msg: ServerMessage; try { msg = JSON.parse(data); } catch { return; }
-      if (!msg || typeof msg !== 'object') return;
+    void transport.connect('/api/config', msg => {
+      if (generation !== this.generation || !msg || typeof msg !== 'object') return;
       if (msg.type === 'welcome') {
         if (msg.protocolVersion !== 3) { fail('Client/server versions differ. Rebuild and restart Echo.'); return; }
         this.publicUrl = msg.publicUrl ?? null;
