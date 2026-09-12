@@ -8,6 +8,8 @@ export class CombatUI {
   private selectors: HTMLSelectElement[] = [];
   private snapshot: Snapshot | null = null;
   private selected: Skin = 'classic';
+  private hurtFrame = 0;
+  private lastText = '';
   constructor(send: (message: ClientMessage) => unknown) {
     const saved = localStorage.getItem('echo-skin'); if (isSkin(saved)) this.selected = saved;
     for (const parent of [document.getElementById('modal-settings'), document.querySelector('.lobby-options')]) {
@@ -32,9 +34,10 @@ export class CombatUI {
   get skin(): Skin { return this.selected; }
   hurt(): void {
     if (localStorage.getItem('echo-blood') === 'off') return;
-    this.blood.classList.remove('hit'); void this.blood.offsetWidth; this.blood.classList.add('hit');
+    this.blood.classList.remove('hit'); cancelAnimationFrame(this.hurtFrame);
+    this.hurtFrame=requestAnimationFrame(()=>{this.hurtFrame=requestAnimationFrame(()=>this.blood.classList.add('hit'));});
   }
-  clear(): void { this.snapshot=null;this.panel.replaceChildren();this.blood.classList.remove('hit');for(const select of this.selectors)select.disabled=false; }
+  clear(): void { this.snapshot=null;this.panel.replaceChildren();this.lastText='';cancelAnimationFrame(this.hurtFrame);this.blood.classList.remove('hit');for(const select of this.selectors)select.disabled=false; }
   receive(snapshot: Snapshot): void {
     this.snapshot = snapshot;
     for (const select of this.selectors) select.disabled = snapshot.phase !== 'lobby';
@@ -60,6 +63,6 @@ export class CombatUI {
     if ((motor.controlLeft??0)>0) lines.push(`${(motor.pullLeft??0)>0?'PULLED':'ROOTED / STUNNED'} · ${(motor.controlLeft??0).toFixed(1)}s`);
     else if (left(a.immuneLeft)>0) lines.push('CONTROL IMMUNITY · '+label(a.immuneLeft));
     if (left(a.teleportCastLeft)>0) lines.push('MIRROR CHANNEL · '+label(a.teleportCastLeft));
-    this.panel.textContent = lines.join('\n');
+    const text=lines.join('\n');if(text!==this.lastText){this.lastText=text;this.panel.textContent=text;}
   }
 }
