@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [main]
+    branches: [main, feat/echo-webtransport-abilities]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -12,33 +12,34 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
       - name: Rust toolchain
         run: rustup update stable --no-self-update && rustup default stable
       - name: Install JavaScript dependencies
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+        run: pnpm install --frozen-lockfile
       - name: Browser-side logic and motor fixtures
-        run: npm run test:ts && npm run fixtures:check && npm run test:launcher
+        run: pnpm run test:ts && pnpm run fixtures:check && pnpm run test:launcher
       - name: Rust simulation, protocol and motor parity
-        run: cargo test --workspace
+        run: cargo test --workspace --locked
       - name: Typecheck and production build
-        run: npm run build
-      - name: Real Rust WebSocket integration
-        run: npm run test:network
+        run: pnpm run build
       - name: Install browser
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Real Rust and browser WebTransport integration
+        run: pnpm run test:network
       - name: Two-client WebGL checks
-        run: npm run test:e2e
+        run: pnpm run test:e2e
       - name: Retain actual generated lockfiles for review
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: dependency-lockfiles
           path: |
-            package-lock.json
+            pnpm-lock.yaml
             Cargo.lock
           if-no-files-found: ignore
       - uses: actions/upload-artifact@v4

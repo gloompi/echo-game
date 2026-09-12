@@ -2,9 +2,9 @@
 
 ## Automated gate
 
-Run `npm run test:ts`, `npm run fixtures:check`, `cargo test --workspace`, `npm run build`, `npm run test:network`, and `npm run test:e2e` in a dependency-enabled checkout. The Rust suite covers current-hit/echo-miss semantics, delay boundaries including 0 and 10 seconds, host permissions, input limits, role rotation, capacity, history and JS motor parity. The network suite uses the real Rust binary and native Node WebSocket clients. Browser checks use the real production client, WebGL, two independent contexts and the Rust server.
+Run `pnpm run test:ts`, `pnpm run fixtures:check`, `cargo test --workspace --locked`, `pnpm run build`, `pnpm run test:network`, and `pnpm run test:e2e` in a dependency-enabled checkout. The Rust suite covers current-hit/echo-miss semantics, delay boundaries including 0 and 10 seconds, host permissions, input limits, role rotation, capacity, history, abilities and JS motor parity. The network suite uses the real Rust binary and native Chromium WebTransport. Browser checks use the real production client, WebGL, two independent contexts and the Rust server.
 
-The offline authoring environment passed 33 JS logic tests and regenerated/checked six motor scenarios; a mock-service launcher lifecycle test also passed. Full Rust, frontend build, socket, browser, Docker and public-tunnel checks were not run there. Do not count checked-in tests as passed merely because they exist. See CI for the next verification result.
+See [observed validation results](VALIDATION.md) for local build, Rust, browser, transport, launcher and Docker results. External-network checks below remain pending. Do not count checked-in tests as passed merely because they exist.
 
 ## Two-person functional playtest
 
@@ -16,6 +16,6 @@ Use the host's pause-menu return-to-lobby button during a round. Both clients sh
 
 ## Friends-over-Internet check
 
-Use `npm run share`, open the local URL before or after the tunnel is ready, then create a room and copy its link. Confirm the copied origin is the public tunnel rather than localhost and the fragment key is retained. A friend on another Internet connection should join directly in a desktop browser. A missing/wrong key should produce an actionable error. Stop the terminal and confirm the public game stops.
+Configure a reachable `ECHO_WT_PUBLIC_URL` and use `pnpm run share`; the HTTP tunnel alone does not carry game UDP. Open the local URL, create a room and copy its link. Confirm the copied origin is the public tunnel and the fragment key is retained. A friend on another Internet connection should join in a WebTransport-capable desktop browser. A missing/wrong key should produce an actionable error. Stop the terminal and confirm the public game stops.
 
 Join up to twelve clients (host included); the thirteenth must be rejected without affecting the room. Try Wi-Fi, background-tab pause/resume and moderate network jitter. Measure FPS, ping, corrections and browser/server CPU. Compare direct localhost with tunnel play before drawing conclusions about WebSocket suitability. Do not promise lag-free play based on a transport or a tick-rate number alone.

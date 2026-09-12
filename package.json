@@ -3,20 +3,22 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22.12.0" },
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "concurrently -k -n server,client \"cargo run -p echo-server\" \"vite\"",
     "build:client": "tsc --noEmit && vite build",
     "build:server": "cargo build --release -p echo-server",
-    "build": "npm run build:client && npm run build:server",
+    "build": "pnpm run build:client && pnpm run build:server",
     "start": "node scripts/play.mjs",
-    "play": "npm run build && npm start",
-    "share": "npm run build && node scripts/play.mjs --share",
+    "play": "pnpm run build && pnpm start",
+    "share": "pnpm run build && node scripts/play.mjs --share",
     "share:built": "node scripts/play.mjs --share",
-    "test": "npm run test:ts && npm run test:rust",
+    "test": "pnpm run test:ts && pnpm run test:rust",
     "test:ts": "tsx --test tests/*.test.ts",
     "test:rust": "cargo test --workspace",
-    "test:network": "cargo build -p echo-server && node --test tests/network.integration.mjs",
+    "test:network": "cargo build --locked -p echo-server && node --test tests/network.integration.mjs",
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "fixtures": "tsx scripts/movement-fixtures.ts && tsx scripts/gameplay-fixtures.ts",
@@ -24,7 +26,9 @@
     "maps": "node scripts/build-maps.mjs",
     "test:launcher": "node --test tests/launcher.integration.mjs"
   },
-  "dependencies": { "three": "0.186.0" },
+  "dependencies": {
+    "three": "0.186.0"
+  },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
     "@types/node": "^22.18.0",
@@ -33,5 +37,6 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vite": "^7.3.1"
-  }
+  },
+  "packageManager": "pnpm@10.23.0"
 }

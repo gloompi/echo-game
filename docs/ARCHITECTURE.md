@@ -1,4 +1,4 @@
-# Echo architecture — protocol v2
+# Echo architecture — protocol v3
 
 ## Boundaries
 
@@ -27,15 +27,13 @@ The browser predicts its own motor at 60 Hz and sends sequenced controls. The se
 
 Snapshots are produced at 20 Hz. The renderer is independent of both frequencies. Tokio's loop skips missed deadlines instead of running an unbounded catch-up burst; an overloaded host still degrades gameplay and must be measured.
 
-WebSockets are the only implemented transport. `GameTransport` distinguishes reliable messages from latest-state traffic so a future datagram transport has a clean insertion point, but both methods still use reliable ordered TCP today. Inputs have bounded client buffering; slow output readers cannot accumulate unlimited server snapshots because a watch channel retains only the latest unsent state. Reliable control messages have a separate bounded queue. WebSocket packet loss can still cause head-of-line blocking.
-
-WebTransport is a future measured optimization, not automatically usable through the current HTTP/WebSocket Quick Tunnel. A production QUIC endpoint would require its own deployment/support work. No P2P mesh, TURN service or host-authority-in-browser is used.
+Native WebTransport carries protocol v3 over HTTP/3 and QUIC. One reliable bidirectional stream preserves input and control ordering; separate expiring unidirectional streams carry snapshots. A watch channel retains only the latest unsent snapshot, and the client rejects stale timestamps. Stream counts, frame lengths, deadlines and output queues are bounded. No WebSocket fallback or lossy input datagrams are used. See [wire format and deployment](ABILITIES_AND_TRANSPORT.md).
 
 ## Local hosting
 
-The Rust process serves `dist/client`, `/socket`, `/health` and `/api/config` on one port. `scripts/play.mjs --share` explicitly publishes that port through cloudflared, generates a playtest access key and a separate control token, and registers the resulting public origin. Only the game is published, not the project directory or development server.
+The Rust process serves `dist/client`, `/health` and `/api/config` on an HTTP port and `/echo` over a separate UDP WebTransport listener. `scripts/play.mjs --share` requires an explicit public UDP endpoint and publishes the frontend/API port through cloudflared, generates a playtest access key and a separate control token, and registers the resulting public origin. Only the game is published, not the project directory or development server.
 
-The public-origin control route requires a loopback connection plus the control token. Browser joins require the configured access key. Same-host/explicitly allowed Origin checks, 2048-byte messages, connection/message limits, bounded queues and heartbeat timeouts are baseline protections for private playtests, not a complete production anti-abuse system.
+The public-origin control route requires a loopback connection plus the control token. Browser joins require the configured access key. Exact allowed/registered frontend Origin checks, 16,384-byte control frames, connection/message limits, bounded queues and heartbeat timeouts are baseline protections for private playtests, not a complete production anti-abuse system.
 
 Settings, scores and rooms are not persisted. A leaving host browser hands host controls to another human. Server process failure is not host migration and ends the session.
 

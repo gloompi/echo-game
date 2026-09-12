@@ -1,5 +1,5 @@
-import { bindable, changeBinding, DEFAULT_BINDINGS, keyName, normalizeKey, readBindings, type Action } from '../shared/controls.js';
-const fixed = ['KeyW','KeyA','KeyS','KeyD','ShiftLeft','ShiftRight','KeyE','KeyQ','KeyR','KeyF','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'];
+import { changeBinding, COMBAT_KEYS, DEFAULT_BINDINGS, keyName, normalizeKey, readBindings, type Action } from '../shared/controls.js';
+const fixed = ['KeyW','KeyA','KeyS','KeyD','ShiftLeft','ShiftRight','KeyE','KeyQ','KeyR','KeyF','ArrowUp','ArrowDown','ArrowLeft','ArrowRight', ...COMBAT_KEYS];
 export class PlayerControls {
   bindings = readBindings(localStorage.getItem('echo-bindings'));
   sensitivity = 1;
@@ -8,7 +8,7 @@ export class PlayerControls {
   private buttons: Record<Action, HTMLButtonElement>;
   constructor(private notice: (message: string) => void) {
     const panel = document.createElement('fieldset'); panel.id = 'player-bindings';
-    panel.innerHTML = '<legend>MOVEMENT KEYS</legend><label>Jump <button id="bind-jump" type="button"></button></label><label>Crouch (hold) <button id="bind-crouch" type="button"></button></label><button id="reset-controls" type="button">RESET CONTROLS</button><small>Click a binding, then press a key. Jump also accepts the mouse wheel. F uses a mirror. Browsers may reserve Ctrl shortcuts; C is a useful alternative.</small>';
+    panel.innerHTML = '<legend>MOVEMENT KEYS</legend><label>Jump <button id="bind-jump" type="button"></button></label><label>Crouch / slide <button id="bind-crouch" type="button"></button></label><button id="reset-controls" type="button">RESET CONTROLS</button><small>Click a binding, then press a key. Jump also accepts the mouse wheel. Sprint then press crouch to slide. G: shield / hook. V: mine. B: scan. 1–4: weapons. F: mirror. Browsers may reserve Ctrl shortcuts; C is an alternative.</small>';
     document.getElementById('modal-settings')!.append(panel);
     this.buttons = { jump: panel.querySelector('#bind-jump')!, crouch: panel.querySelector('#bind-crouch')! };
     for (const action of ['jump','crouch'] as const) this.buttons[action].onclick = () => { this.waiting = action; this.render(); };
@@ -46,9 +46,9 @@ export class PlayerControls {
   private save(): void { localStorage.setItem('echo-bindings',JSON.stringify(this.bindings)); this.clear(); this.render(); }
   private render(): void {
     for (const action of ['jump','crouch'] as const) this.buttons[action].textContent = this.waiting === action ? 'PRESS A KEY…' : keyName(this.bindings[action]);
-    const hint = document.querySelector('#capture small'); if (hint) hint.textContent = `WASD · ${keyName(this.bindings.jump)} jump · ${keyName(this.bindings.crouch)} crouch · F mirror`;
-    const firstHint = document.querySelector('.control-hint span'); if (firstHint) firstHint.textContent = `${keyName(this.bindings.jump)} Jump / ${keyName(this.bindings.crouch)} Crouch`;
-    const guide = document.querySelectorAll('.key-guide span')[3]; if (guide) guide.textContent = `${keyName(this.bindings.jump)} Jump · ${keyName(this.bindings.crouch)} Crouch · F Mirror`;
+    const hint = document.querySelector('#capture small'); if (hint) hint.textContent = `WASD · ${keyName(this.bindings.jump)} jump · ${keyName(this.bindings.crouch)} crouch / slide · G shield / hook · F mirror`;
+    const firstHint = document.querySelector('.control-hint span'); if (firstHint) firstHint.textContent = `${keyName(this.bindings.jump)} Jump / ${keyName(this.bindings.crouch)} Crouch / Slide`;
+    const guide = document.querySelectorAll('.key-guide span')[3]; if (guide) guide.textContent = 'G Shield / Hook · V Mine · B Scan · 1–4 Weapons';
   }
   handles(code: string): boolean { const key=normalizeKey(code); return fixed.includes(key) || key === this.bindings.jump || key === this.bindings.crouch; }
   crouch(keys: Set<string>): boolean { return keys.has(this.bindings.crouch); }
