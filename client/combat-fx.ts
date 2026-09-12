@@ -14,9 +14,14 @@ export class CombatFX {
   private webGeometry = new T.IcosahedronGeometry(1,1);
   private webMaterial = new T.MeshBasicMaterial({color:0xe1fdff,wireframe:true});
   private scanAt = -Infinity;
+  private snapshotRef?: Snapshot;
   update(scene: T.Scene, snapshot: Snapshot, players: Pose[], sampledAt: number, now: number): void {
-    this.sync(this.mines,snapshot.mines??[],scene,() => new T.Mesh(this.mineGeometry,this.mineMaterial), (mesh,value) => { mesh.position.set(value.x,value.y+.07,value.z); mesh.scale.setScalar('armed' in value && value.armed ? 1:.7); });
-    this.sync(this.webs,snapshot.projectiles??[],scene,() => new T.Mesh(this.webGeometry,this.webMaterial), (mesh,value) => { mesh.position.set(value.x,value.y,value.z); mesh.rotation.y=now/180; mesh.scale.setScalar('radius' in value ? Number(value.radius) : .18); });
+    if (snapshot !== this.snapshotRef) {
+      this.snapshotRef = snapshot;
+      this.sync(this.mines,snapshot.mines??[],scene,() => new T.Mesh(this.mineGeometry,this.mineMaterial), (mesh,value) => { mesh.position.set(value.x,value.y+.07,value.z); mesh.scale.setScalar('armed' in value && value.armed ? 1:.7); });
+      this.sync(this.webs,snapshot.projectiles??[],scene,() => new T.Mesh(this.webGeometry,this.webMaterial), (mesh,value) => { mesh.position.set(value.x,value.y,value.z); mesh.scale.setScalar('radius' in value ? Number(value.radius) : .18); });
+    }
+    for (const mesh of this.webs.values()) mesh.rotation.y=now/180;
     const active = snapshot.self.role==='seeker'&&snapshot.self.alive&&!snapshot.self.spectating&&snapshot.phase==='playing'
       &&(snapshot.self.abilities?.scanLeft??0)>Math.max(0,now-snapshot.now);
     if (!active) { for(const ring of this.rings)ring.visible=false; this.scanAt=-Infinity; return; }
@@ -31,10 +36,10 @@ export class CombatFX {
     for(let i=count;i<this.rings.length;i++)this.rings[i].visible=false;
   }
   private sync<P extends Vec3 & {id:number}>(map: Map<number,T.Mesh>, values: P[],scene: T.Scene,create:()=>T.Mesh,update:(mesh:T.Mesh,value:P)=>void):void {
-    const ids=new Set(values.map(value=>value.id));
-    for(const [id,mesh] of map)if(!ids.has(id)){mesh.removeFromParent();map.delete(id);}
-    for(const value of values){let mesh=map.get(value.id);if(!mesh){mesh=create();map.set(value.id,mesh);scene.add(mesh);}update(mesh,value);}
+    const present = new Set<number>();
+    for(const value of values){present.add(value.id);let mesh=map.get(value.id);if(!mesh){mesh=create();map.set(value.id,mesh);scene.add(mesh);}update(mesh,value);}
+    for(const [id,mesh] of map)if(!present.has(id)){mesh.removeFromParent();map.delete(id);}
   }
-  clear():void {for(const mesh of [...this.mines.values(),...this.webs.values(),...this.rings])mesh.removeFromParent();this.mines.clear();this.webs.clear();this.rings=[];this.scanAt=-Infinity;}
+  clear():void {for(const mesh of [...this.mines.values(),...this.webs.values(),...this.rings])mesh.removeFromParent();this.mines.clear();this.webs.clear();this.rings=[];this.scanAt=-Infinity;this.snapshotRef=undefined;}
   dispose():void {this.clear();for(const item of [this.ringGeometry,this.ringMaterial,this.mineGeometry,this.mineMaterial,this.webGeometry,this.webMaterial])item.dispose();}
 }
