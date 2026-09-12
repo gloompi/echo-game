@@ -1,0 +1,380 @@
+{
+  "slide.enabled": {
+    "kind": "boolean"
+  },
+  "slide.durationMs": {
+    "kind": "number",
+    "min": 100,
+    "max": 10000,
+    "step": 50
+  },
+  "slide.cooldownMs": {
+    "kind": "number",
+    "min": 250,
+    "max": 180000,
+    "step": 50
+  },
+  "slide.minimumSpeedCm": {
+    "kind": "number",
+    "min": 100,
+    "max": 2000,
+    "step": 10
+  },
+  "slide.staminaCost": {
+    "kind": "number",
+    "min": 0,
+    "max": 100,
+    "step": 1
+  },
+  "slide.steeringPercent": {
+    "kind": "number",
+    "min": 0,
+    "max": 100,
+    "step": 1
+  },
+  "shield.enabled": {
+    "kind": "boolean"
+  },
+  "shield.durationMs": {
+    "kind": "number",
+    "min": 100,
+    "max": 10000,
+    "step": 50
+  },
+  "shield.cooldownMs": {
+    "kind": "number",
+    "min": 250,
+    "max": 180000,
+    "step": 50
+  },
+  "shield.staminaCost": {
+    "kind": "number",
+    "min": 0,
+    "max": 100,
+    "step": 1
+  },
+  "mine.enabled": {
+    "kind": "boolean"
+  },
+  "mine.rootMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 5000,
+    "step": 50
+  },
+  "mine.cooldownMs": {
+    "kind": "number",
+    "min": 250,
+    "max": 180000,
+    "step": 50
+  },
+  "mine.armMs": {
+    "kind": "number",
+    "min": 250,
+    "max": 10000,
+    "step": 50
+  },
+  "mine.lifeMs": {
+    "kind": "number",
+    "min": 1000,
+    "max": 120000,
+    "step": 50
+  },
+  "mine.triggerRadiusCm": {
+    "kind": "number",
+    "min": 25,
+    "max": 300,
+    "step": 5
+  },
+  "mine.maxActive": {
+    "kind": "number",
+    "min": 1,
+    "max": 8,
+    "step": 1
+  },
+  "hook.enabled": {
+    "kind": "boolean"
+  },
+  "hook.cooldownMs": {
+    "kind": "number",
+    "min": 250,
+    "max": 180000,
+    "step": 50
+  },
+  "hook.rangeCm": {
+    "kind": "number",
+    "min": 1,
+    "max": 10000,
+    "step": 10
+  },
+  "hook.widthCm": {
+    "kind": "number",
+    "min": 10,
+    "max": 300,
+    "step": 5
+  },
+  "hook.pullSpeedCm": {
+    "kind": "number",
+    "min": 100,
+    "max": 2500,
+    "step": 10
+  },
+  "hook.pullMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 5000,
+    "step": 50
+  },
+  "hook.stunMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 5000,
+    "step": 50
+  },
+  "hook.maxTargets": {
+    "kind": "number",
+    "min": 1,
+    "max": 8,
+    "step": 1
+  },
+  "hook.friendlyFire": {
+    "kind": "boolean"
+  },
+  "scan.enabled": {
+    "kind": "boolean"
+  },
+  "scan.durationMs": {
+    "kind": "number",
+    "min": 100,
+    "max": 10000,
+    "step": 50
+  },
+  "scan.cooldownMs": {
+    "kind": "number",
+    "min": 250,
+    "max": 180000,
+    "step": 50
+  },
+  "teleport.seekerCooldownMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 180000,
+    "step": 50
+  },
+  "teleport.seekerCastMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 180000,
+    "step": 50
+  },
+  "control.immunityMs": {
+    "kind": "number",
+    "min": 250,
+    "max": 10000,
+    "step": 50
+  },
+  "control.switchMs": {
+    "kind": "number",
+    "min": 100,
+    "max": 5000,
+    "step": 50
+  },
+  "weapons.blaster.enabled": {
+    "kind": "boolean"
+  },
+  "weapons.blaster.intervalMs": {
+    "kind": "number",
+    "min": 150,
+    "max": 10000,
+    "step": 50
+  },
+  "weapons.blaster.rangeCm": {
+    "kind": "number",
+    "min": 1,
+    "max": 10000,
+    "step": 10
+  },
+  "weapons.blaster.magazine": {
+    "kind": "number",
+    "min": 1,
+    "max": 60,
+    "step": 1
+  },
+  "weapons.blaster.reloadMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 180000,
+    "step": 50
+  },
+  "weapons.blaster.pellets": {
+    "kind": "number",
+    "min": 1,
+    "max": 12,
+    "step": 1
+  },
+  "weapons.blaster.spreadMrad": {
+    "kind": "number",
+    "min": 0,
+    "max": 500,
+    "step": 5
+  },
+  "weapons.blaster.damage": {
+    "kind": "number",
+    "min": 0,
+    "max": 2,
+    "step": 1
+  },
+  "weapons.scatter.enabled": {
+    "kind": "boolean"
+  },
+  "weapons.scatter.intervalMs": {
+    "kind": "number",
+    "min": 150,
+    "max": 10000,
+    "step": 50
+  },
+  "weapons.scatter.rangeCm": {
+    "kind": "number",
+    "min": 1,
+    "max": 10000,
+    "step": 10
+  },
+  "weapons.scatter.magazine": {
+    "kind": "number",
+    "min": 1,
+    "max": 60,
+    "step": 1
+  },
+  "weapons.scatter.reloadMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 180000,
+    "step": 50
+  },
+  "weapons.scatter.pellets": {
+    "kind": "number",
+    "min": 1,
+    "max": 12,
+    "step": 1
+  },
+  "weapons.scatter.spreadMrad": {
+    "kind": "number",
+    "min": 0,
+    "max": 500,
+    "step": 5
+  },
+  "weapons.scatter.damage": {
+    "kind": "number",
+    "min": 0,
+    "max": 2,
+    "step": 1
+  },
+  "weapons.repeater.enabled": {
+    "kind": "boolean"
+  },
+  "weapons.repeater.intervalMs": {
+    "kind": "number",
+    "min": 150,
+    "max": 10000,
+    "step": 50
+  },
+  "weapons.repeater.rangeCm": {
+    "kind": "number",
+    "min": 1,
+    "max": 10000,
+    "step": 10
+  },
+  "weapons.repeater.magazine": {
+    "kind": "number",
+    "min": 1,
+    "max": 60,
+    "step": 1
+  },
+  "weapons.repeater.reloadMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 180000,
+    "step": 50
+  },
+  "weapons.repeater.pellets": {
+    "kind": "number",
+    "min": 1,
+    "max": 12,
+    "step": 1
+  },
+  "weapons.repeater.spreadMrad": {
+    "kind": "number",
+    "min": 0,
+    "max": 500,
+    "step": 5
+  },
+  "weapons.repeater.damage": {
+    "kind": "number",
+    "min": 0,
+    "max": 2,
+    "step": 1
+  },
+  "weapons.web.enabled": {
+    "kind": "boolean"
+  },
+  "weapons.web.intervalMs": {
+    "kind": "number",
+    "min": 150,
+    "max": 10000,
+    "step": 50
+  },
+  "weapons.web.rangeCm": {
+    "kind": "number",
+    "min": 1,
+    "max": 10000,
+    "step": 10
+  },
+  "weapons.web.magazine": {
+    "kind": "number",
+    "min": 1,
+    "max": 60,
+    "step": 1
+  },
+  "weapons.web.reloadMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 180000,
+    "step": 50
+  },
+  "weapons.web.pellets": {
+    "kind": "number",
+    "min": 1,
+    "max": 1,
+    "step": 1
+  },
+  "weapons.web.spreadMrad": {
+    "kind": "number",
+    "min": 0,
+    "max": 0,
+    "step": 5
+  },
+  "weapons.web.damage": {
+    "kind": "number",
+    "min": 0,
+    "max": 0,
+    "step": 1
+  },
+  "web.speedCm": {
+    "kind": "number",
+    "min": 100,
+    "max": 6000,
+    "step": 10
+  },
+  "web.radiusCm": {
+    "kind": "number",
+    "min": 5,
+    "max": 60,
+    "step": 1
+  },
+  "web.rootMs": {
+    "kind": "number",
+    "min": 0,
+    "max": 5000,
+    "step": 50
+  }
+}

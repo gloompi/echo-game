@@ -2,28 +2,28 @@
 
 A browser party hunt for **2–12 players**. Hiders are fully visible, but Seekers receive their poses on a configurable **0–10 second server holdback**. Your own movement is predicted locally; shots hit current authoritative positions, not echoes.
 
-This branch replaces the Node game server with **Rust (Axum + Tokio)** while retaining the Three.js characters, arena, audio, controls and survival mode. Node is used for frontend tooling and the cross-platform launcher, not the game simulation.
+This branch uses **Rust (Axum + Tokio + WebTransport)** with configurable slides, shields, mines, hooks, possibility scans, four weapons, independent seeker teleport timing, and eight cosmetic palettes. It retains the Three.js characters and survival mode. Node is used for frontend tooling and the cross-platform launcher, not the game simulation.
 
 ## Play on your PC
 
-Install Node.js 22.12+ and stable Rust/Cargo, then:
+Install Node.js 22.12+, pnpm 10.23.0 and stable Rust/Cargo, then:
 
 ```sh
-npm install
-npm run play
+pnpm install --frozen-lockfile
+pnpm run play
 ```
 
 Open the local URL printed by the launcher. Use **PRACTICE** for bots or **CREATE A ROOM** for friends.
 
-To publish a temporary invite without deploying a permanent server, install `cloudflared` and run:
+To publish a temporary invite, install `cloudflared` and arrange a reachable UDP endpoint (router forwarding or a UDP relay), then run:
 
 ```sh
-npm run share
+ECHO_WT_PUBLIC_URL=https://YOUR-UDP-HOST:4433/echo pnpm run share
 ```
 
-The launcher builds the client and Rust server, starts both game HTTP and WebSocket traffic on one loopback port, launches a Cloudflare Quick Tunnel, and prints local and public URLs. It generates a random playtest access key unless `ECHO_ACCESS_KEY` is already configured. Open the local URL, create a room, then use **COPY LINK** for the public room-specific invitation. Keep the PC and terminal running. Ctrl+C stops both processes.
+The launcher builds the client and Rust server, serves the frontend/API over HTTP and the game over HTTP/3 WebTransport on UDP 4433. A Cloudflare Quick Tunnel publishes only the frontend/API; sharing requires an explicit reachable UDP endpoint. It prints a local URL and frontend invitation. It generates a random playtest access key unless `ECHO_ACCESS_KEY` is already configured. Open the local URL, create a room, then use **COPY LINK** for the public room-specific invitation. Keep the PC and terminal running. Ctrl+C stops both processes.
 
-Friends need only the complete invitation and a desktop browser with keyboard and mouse. They do not need Rust, Node, cloudflared, port forwarding or a VPN.
+Friends need the complete invitation, a desktop browser with native WebTransport and certificate-pin support, keyboard/mouse, and network access to the host’s UDP endpoint. The host configures forwarding or a relay. Localhost or HTTPS is required.
 
 See [local hosting and troubleshooting](docs/LOCAL_PLAY.md), including Windows prerequisites and a Docker alternative. Quick Tunnels are a development convenience, not a production hosting/SLA solution.
 
@@ -47,19 +47,19 @@ Zero disables the special Echo holdback, not ordinary Internet latency. The disp
 ## Development and verification
 
 ```sh
-npm run dev             # Rust server + Vite; no public tunnel
-npm run build           # Typecheck, browser production build, Rust release binary
-npm start               # Run an existing build locally
-npm run share:built     # Publish an existing build through a temporary tunnel
-npm run test:ts         # Browser-side rules, movement, transport/connection tests
-npm run test:launcher   # Launcher lifecycle test with mock services (POSIX)
-npm run fixtures:check  # JS motor must reproduce checked-in parity fixtures
+pnpm run dev             # Rust server + Vite; no public tunnel
+pnpm run build           # Typecheck, browser production build, Rust release binary
+pnpm start               # Run an existing build locally
+pnpm run share:built     # Publish an existing build through a temporary tunnel
+pnpm run test:ts         # Browser-side rules, movement, transport/connection tests
+pnpm run test:launcher   # Launcher lifecycle test with mock services (POSIX)
+pnpm run fixtures:check  # JS motor must reproduce checked-in parity fixtures
 cargo test --workspace  # Rust rules, delay boundaries, hits, permissions, motor parity
-npm run test:network    # Actual Rust HTTP/WebSocket integration; build client first
-npm run test:e2e        # Actual two-browser WebGL flow; build first
+pnpm run test:network    # Actual Rust + native Chromium WebTransport integration; build client first
+pnpm run test:e2e        # Actual two-browser WebGL flow; build first
 ```
 
-For browser tests, install Chromium once with `npx playwright install chromium` (CI uses `--with-deps`). No database or paid backend service is required by this implementation. Dependency installation requires access to npm and crates.io. Commit **real generated** `package-lock.json` and `Cargo.lock` after a successful dependency-enabled build; neither should be fabricated. CI retains generated lockfiles as artifacts for review.
+For browser tests, install Chromium once with `pnpm exec playwright install chromium` (CI uses `--with-deps`). No database or paid backend service is required by this implementation. Dependency installation requires access to npm and crates.io. The generated `pnpm-lock.yaml` and `Cargo.lock` are committed. Use frozen/locked installs to reproduce them.
 
 ## Code layout
 
@@ -70,7 +70,7 @@ shared/arena.json            One collision layout/spawn list for TS and Rust
 shared/physics.ts            Browser prediction motor
 shared/settings.ts          Room-setting validation and labels
 crates/echo-core/            Engine-independent Rust simulation and rules
-crates/echo-server/          HTTP, WebSockets, room lifecycle and fixed-step loop
+crates/echo-server/          HTTP, WebTransport, room lifecycle and fixed-step loop
 scripts/play.mjs             Local/public playtest launcher
 scripts/movement-fixtures.ts Cross-language movement fixture generator
 ```
@@ -81,6 +81,6 @@ scripts/movement-fixtures.ts Cross-language movement fixture generator
 
 Included: Rust authoritative rooms; current-position hits; server-held Hider history; live allied Seekers; local prediction/reconciliation; 60 Hz simulation and 20 Hz snapshots; bounded input/output queues; lobby configuration; private-room invites; practice bots; host transfer; local/temporary-public hosting; automated regression suites.
 
-This is still the existing survival game, not the later Signal Heist/objective mode. WebTransport, Rapier/WASM-shared movement, React UI conversion, persistent accounts, reconnect/resume, full GLB animation authoring and a native-engine client are **not implemented** here. The existing collider motor is ported and covered by cross-language fixtures rather than changing movement engines during the server migration. No zero-lag guarantee is made.
+This is still the existing survival game, not the later Signal Heist/objective mode. Rapier/WASM-shared movement, React UI conversion, persistent accounts, reconnect/resume, full GLB animation authoring and a native-engine client are **not implemented** here. The existing collider motor is ported and covered by cross-language fixtures rather than changing movement engines during the server migration. No zero-lag guarantee is made.
 
-At authoring time, 33 browser-side logic tests and the six JS fixture scenarios passed in an offline check using TypeScript 5.8.3. A launcher lifecycle integration test using mock server/tunnel processes also passed. The full dependency-backed frontend build, Rust compilation/tests, real socket/browser integration, Docker build and a live Internet tunnel were not executable in that environment. CI and the commands above are the remaining verification gate; do not treat this branch as a verified release until those pass.
+See [current validation results and remaining checks](docs/VALIDATION.md) and [ability controls, balance and transport setup](docs/ABILITIES_AND_TRANSPORT.md). Competitive balance and Internet deployment still require playtesting.

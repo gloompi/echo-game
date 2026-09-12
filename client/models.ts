@@ -1,4 +1,6 @@
 import * as T from 'three';
+import type { Skin, Weapon } from '../shared/balance.js';
+import { eyeHeight } from '../shared/physics.js';
 import type { Pose, Role } from '../shared/types.js';
 const cube = new T.BoxGeometry(1, 1, 1);
 const outlineMat = new T.MeshBasicMaterial({ color: 0x080d1b, side: T.BackSide });
@@ -26,15 +28,45 @@ export function makeBlaster(): T.Group {
   block(gun, [0.25, 0.23, 0.30], [0, 0, -0.27], 0xe87629, true);
   block(gun, [0.13, 0.05, 0.15], [0, 0.29, 0.06], 0x15283d);
   block(gun, [0.03, 0.05, 0.08], [0, 0.3, 0.64], 0x52ffee, false, 1);
+  const muzzle = new T.Object3D(); muzzle.name = 'muzzle'; muzzle.position.set(0, 0.13, 1.06); gun.add(muzzle);
   return gun;
 }
+/** Different silhouettes share a named, authoritative muzzle socket. */
+export function makeWeapon(weapon: Weapon = 'blaster'): T.Group {
+  const gun = makeBlaster(); gun.userData.weapon = weapon;
+  if (weapon === 'scatter') {
+    for (const side of [-1, 1]) block(gun, [0.12,0.18,0.55], [side*0.2,0.13,0.73], 0xba562c, true);
+    block(gun, [0.53,0.13,0.26], [0,-0.08,0.7], 0xfad484, true);
+  } else if (weapon === 'repeater') {
+    block(gun, [0.12,0.2,0.95], [0,0.32,0.48], 0x304b61, true);
+    block(gun, [0.2,0.42,0.28], [0,-0.35,0.25], 0x283344, true);
+    for (let i=0;i<4;i++) block(gun,[0.34,0.035,0.06],[0,0.27,0.37+i*0.12],0x62eee6,false,.7);
+  } else if (weapon === 'web') {
+    for (const side of [-1,1]) {
+      block(gun,[0.1,0.45,0.55],[side*0.27,0.13,0.75],0x89e8e0,true);
+      block(gun,[0.15,0.08,0.08],[side*0.2,0.13,1],0xf6ffff,false,1);
+    }
+    block(gun,[0.43,0.25,0.32],[0,-0.23,0.3],0x4f6c86,true);
+    for(let i=0;i<4;i++) block(gun,[0.44,0.03,0.32],[0,-0.31+i*0.055,0.3],0xe1f5ff);
+  }
+  return gun;
+}
+const PALETTES: Record<Skin, [number,number]> = {
+  classic:[0xf4eee7,0x39566f],cobalt:[0xb6d8f4,0x17478f],ember:[0xffd8b4,0x9b422e],jade:[0xc6e5cf,0x267c68],
+  violet:[0xe0d2f4,0x7350a5],arctic:[0xf1f8ff,0x72929f],sunset:[0xffdfae,0xb25373],carbon:[0x949fad,0x283343],
+};
 export class Character {
   readonly group = new T.Group();
   readonly body = new T.Group();
   readonly arms: T.Group[] = [];
   readonly legs: T.Group[] = [];
   readonly head = new T.Group();
-  readonly gun?: T.Group;
+  gun?: T.Group;
+  private skin: Skin = 'classic';
+  private weapon: Weapon = 'blaster';
+  private hitLeft = 0; private lastHitAt = -1e9;
+  private ownedGeometry: T.BufferGeometry[] = [];
+  private shield?: T.Mesh; private bindRing?: T.Mesh;
   private phase = Math.random() * Math.PI * 2;
   private ownedMaterials: T.Material[] = [];
   constructor(readonly role: Role, readonly ghost = false) {
@@ -88,7 +120,7 @@ export class Character {
         block(this.head, [0.045, 0.19, 0.16], [side * 0.59, 1.77, 0], 0x655a72);
       }
       block(this.head, [0.29, 0.035, 0.028], [0.025, 1.49, 0.314], 0x7c4040).rotation.z = 0.08;
-      this.gun = makeBlaster(); this.gun.position.set(0.16, 1.03, 0.43); this.body.add(this.gun);
+      this.gun = makeWeapon(); this.gun.scale.setScalar(.47); this.group.add(this.gun);
     } else {
       block(this.head, [0.76, 0.22, 0.67], [0, 2.005, -0.015], 0x55352b, true);
       block(this.head, [0.74, 0.38, 0.17], [0, 1.86, -0.31], 0x492b28, true);
@@ -98,6 +130,15 @@ export class Character {
       const mouth = block(this.head, [0.36, 0.13, 0.027], [0.03, 1.505, 0.315], 0x552c32); mouth.rotation.z = -0.04;
       block(this.head, [0.30, 0.067, 0.029], [0.03, 1.535, 0.33], 0xfff7e2);
       block(this.head, [0.105, 0.05, 0.03], [-0.25, 1.615, 0.31], 0xd28b77);
+    }
+    if (!ghost) {
+      const shieldGeometry = new T.SphereGeometry(.94, 16, 12);
+      const shieldMaterial = new T.MeshBasicMaterial({color:0x60efe4,wireframe:true,transparent:true,opacity:.3,depthWrite:false});
+      this.shield = new T.Mesh(shieldGeometry,shieldMaterial); this.shield.position.y = 1.1; this.shield.scale.y = 1.35; this.shield.visible = false; this.group.add(this.shield);
+      const bindGeometry = new T.TorusGeometry(.54,.04,5,24);
+      const bindMaterial = new T.MeshBasicMaterial({color:0xe5f3ff,transparent:true,opacity:.9,depthWrite:false});
+      this.bindRing = new T.Mesh(bindGeometry,bindMaterial); this.bindRing.rotation.x = Math.PI/2; this.bindRing.position.y = .4; this.bindRing.visible = false; this.group.add(this.bindRing);
+      this.ownedGeometry.push(shieldGeometry,bindGeometry); this.ownedMaterials.push(shieldMaterial,bindMaterial);
     }
     if (ghost) {
       this.group.traverse(o => {
@@ -110,7 +151,34 @@ export class Character {
       ring.rotation.x = -Math.PI / 2; ring.position.y = 0.025; this.group.add(ring);
     }
   }
-  animate(pose: Pick<Pose, 'moving' | 'grounded' | 'waving' | 'dashing'>, dt: number, time: number): void {
+  setSkin(skin: Skin = 'classic'): void {
+    if (this.ghost || this.skin === skin) return;
+    this.skin = skin; const [light,dark] = PALETTES[skin];
+    const shirts = new Set([0xf4eee7,0xf3ece5]), trousers = new Set([0x39566f,0x3c556a]);
+    const armor = new Set([0x2e4057,0x4e6377,0x4e6277,0x506d86,0x6a879e,0x8dacbe,0x344962,0x49627b,0x405772]);
+    this.body.traverse(object => {
+      if (!(object instanceof T.Mesh) || !(object.material instanceof T.MeshStandardMaterial)) return;
+      const base = (object.userData.originalColor ?? object.material.color.getHex()) as number;
+      if (!shirts.has(base) && !trousers.has(base) && !armor.has(base)) return;
+      if (object.userData.originalColor === undefined) {
+        object.userData.originalColor = base; object.material = object.material.clone(); this.ownedMaterials.push(object.material);
+      }
+      const color = skin === 'classic' ? base : shirts.has(base) ? light : dark;
+      object.material.color.setHex(color); object.material.emissive.setHex(color);
+    });
+  }
+  setWeapon(weapon: Weapon = 'blaster'): void {
+    if (this.role !== 'seeker' || this.weapon === weapon) return;
+    this.weapon = weapon; this.gun?.removeFromParent(); this.gun = makeWeapon(weapon); this.gun.scale.setScalar(.47); this.group.add(this.gun);
+  }
+  hit(): void { this.hitLeft = .42; }
+  animate(pose: Pick<Pose, 'moving' | 'grounded' | 'waving' | 'dashing'> & Partial<Pose>, dt: number, time: number): void {
+    this.setSkin(pose.skin); this.setWeapon(pose.weapon);
+    if (pose.hitAt !== undefined && pose.hitAt > this.lastHitAt) { this.lastHitAt = pose.hitAt; if (time*1000-pose.hitAt < 650) this.hit(); }
+    this.hitLeft = Math.max(0,this.hitLeft-dt);
+    if (this.shield) { this.shield.visible = !!pose.shielded; this.shield.position.y = pose.crouched ? .65 : 1.1; this.shield.scale.y = pose.crouched ? .75 : 1.35; }
+    if (this.bindRing) { this.bindRing.visible = !!pose.controlled; this.bindRing.rotation.z = time*3; }
+
     this.phase += dt * (pose.moving > 0.5 ? pose.moving * 2.3 : 2);
     const walk = Math.min(1, pose.moving / 6), swing = Math.sin(this.phase) * 0.70 * walk;
     this.legs[0].rotation.x = pose.grounded ? swing : -0.6;
@@ -119,15 +187,23 @@ export class Character {
     this.body.rotation.z = pose.dashing ? 0.1 : Math.sin(this.phase) * walk * 0.022;
     if (this.role === 'seeker') {
       this.arms[0].rotation.set(-1.16, -0.28, -0.16); this.arms[1].rotation.set(-1.03, 0.28, 0.18);
-      if (this.gun) this.gun.rotation.x = Math.sin(this.phase) * walk * 0.028;
+      if (this.gun) {
+        const pitch = pose.pitch ?? 0;
+        this.gun.position.set(-.27, eyeHeight(pose.crouched)-.33*Math.cos(pitch)+.49*Math.sin(pitch), .33*Math.sin(pitch)+.49*Math.cos(pitch));
+        this.gun.rotation.x = -pitch;
+      }
     } else {
       this.arms[0].rotation.set(-swing * 0.75, 0, -0.08); this.arms[1].rotation.set(swing * 0.75, 0, 0.08);
       if (pose.waving) this.arms[0].rotation.set(0.1, 0, -2.45 + Math.sin(time * 12) * 0.24);
     }
+    this.body.rotation.x = pose.sliding ? -.42 : this.hitLeft > 0 ? -.16*Math.sin(this.hitLeft*30) : 0;
+    if (pose.sliding) { this.legs[0].rotation.x = -1.2; this.legs[1].rotation.x = -.75; this.arms[0].rotation.x = .7; this.arms[1].rotation.x = .7; }
+    if (this.hitLeft > 0) this.body.rotation.z += Math.sin(this.hitLeft*40)*this.hitLeft*.35;
   }
   dispose(): void {
     this.group.removeFromParent();
     this.group.traverse(o => { if (o instanceof T.Mesh && o.geometry instanceof T.RingGeometry) { o.geometry.dispose(); (o.material as T.Material).dispose(); } });
     for (const m of this.ownedMaterials) m.dispose();
+    for (const geometry of this.ownedGeometry) geometry.dispose();
   }
 }

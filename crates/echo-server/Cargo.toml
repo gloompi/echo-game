@@ -7,9 +7,9 @@ edition.workspace = true
 echo-core = { path = "../echo-core" }
 serde.workspace = true
 serde_json.workspace = true
-axum = { version = "0.8", features = ["ws"] }
+axum = "0.8"
 tokio = { version = "1", features = ["full"] }
 tower-http = { version = "0.6", features = ["fs", "set-header"] }
-futures-util = "0.3"
 uuid = { version = "1", features = ["v4"] }
 dotenvy = "0.15"
+wtransport = { version = "=0.7.2", features = ["quinn", "self-signed"] }

@@ -1,7 +1,8 @@
 export type Action = 'jump' | 'crouch';
 export interface Bindings { jump: string; crouch: string }
 export const DEFAULT_BINDINGS: Readonly<Bindings> = Object.freeze({ jump: 'Space', crouch: 'ControlLeft' });
-const reserved = new Set(['KeyW','KeyA','KeyS','KeyD','KeyQ','KeyE','KeyR','KeyF']);
+export const COMBAT_KEYS = ['KeyG','KeyV','KeyB','Digit1','Digit2','Digit3','Digit4'] as const;
+const reserved = new Set(['KeyW','KeyA','KeyS','KeyD','KeyQ','KeyE','KeyR','KeyF', ...COMBAT_KEYS]);
 export const normalizeKey = (code: string) => code === 'ControlRight' ? 'ControlLeft' : code === 'AltRight' ? 'AltLeft' : code;
 export function bindable(action: Action, code: string): boolean {
   code = normalizeKey(code);
@@ -12,10 +13,7 @@ export function changeBinding(bindings: Bindings, action: Action, code: string):
   code = normalizeKey(code); if (!bindable(action, code)) return null;
   const other: Action = action === 'jump' ? 'crouch' : 'jump';
   const next = { ...bindings, [action]: code };
-  if (next[other] === code) {
-    if (!bindable(other, bindings[action])) return null;
-    next[other] = bindings[action];
-  }
+  if (next[other] === code) { if (!bindable(other, bindings[action])) return null; next[other] = bindings[action]; }
   return next;
 }
 export function readBindings(raw: string | null): Bindings {

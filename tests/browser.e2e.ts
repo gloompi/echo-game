@@ -1,3 +1,5 @@
+import { connectPeer } from './webtransport-peer.mjs';
+import type { Snapshot } from '../shared/types.js';
 import { test, expect } from '@playwright/test';
 test('menu initializes WebGL and hider practice without browser errors', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
@@ -8,7 +10,8 @@ test('menu initializes WebGL and hider practice without browser errors', async (
   expect(errors).toEqual([]);
 });
 test('two browsers synchronize host settings, play, and return to the lobby', async ({ browser }) => {
-  const a = await browser.newContext({ baseURL: 'http://127.0.0.1:3000' }), b = await browser.newContext({ baseURL: 'http://127.0.0.1:3000' });
+  const baseURL = test.info().project.use.baseURL;
+  const a = await browser.newContext({ baseURL }), b = await browser.newContext({ baseURL });
   try {
     const host = await a.newPage(), friend = await b.newPage(); const errors: string[] = [];
     host.on('pageerror', e => errors.push(e.message)); friend.on('pageerror', e => errors.push(e.message));
@@ -33,22 +36,13 @@ test('two browsers synchronize host settings, play, and return to the lobby', as
     expect(errors).toEqual([]);
   } finally { await a.close(); await b.close(); }
 });
-test('real seeker WebSocket feed excludes current Hiders during warmup', async ({ page }) => {
+test('real seeker WebTransport feed excludes current Hiders during warmup', async ({ page }) => {
   await page.goto('/');
-  const result = await page.evaluate(async () => {
-    const ws = new WebSocket(`ws://${location.host}/socket`);
-    return await new Promise<{ firstEmpty: boolean; age: number; laterVisible: boolean }>((resolve, reject) => {
-      let firstEmpty = false, seen = false;
-      const timer = setTimeout(() => { ws.close(); reject(new Error('Snapshot timeout')); }, 9000);
-      ws.onerror = () => { clearTimeout(timer); ws.close(); reject(new Error('WebSocket error')); };
-      ws.onopen = () => ws.send(JSON.stringify({ type: 'join', mode: 'practice', name: 'ProtocolTest', preference: 'seeker' }));
-      ws.onmessage = event => {
-        const s = JSON.parse(event.data); if (s.type !== 'snapshot') return;
-        const hiders = s.players.filter((p: { role: string }) => p.role === 'hider');
-        if (!seen) { firstEmpty = hiders.length === 0; seen = true; }
-        if (hiders.length > 0) { clearTimeout(timer); ws.close(); resolve({ firstEmpty, age: s.now - s.viewTime, laterVisible: true }); }
-      };
-    });
-  });
-  expect(result.firstEmpty).toBe(true); expect(result.laterVisible).toBe(true); expect(result.age).toBeCloseTo(3000, 5);
+  const peer = await connectPeer(page, { type: 'join', mode: 'practice', name: 'ProtocolTest', preference: 'seeker' });
+  try {
+    const first = await peer.wait((s: Snapshot) => s.type === 'snapshot');
+    expect(first.players.filter((p: { role: string }) => p.role === 'hider')).toHaveLength(0);
+    const later = await peer.wait((s: Snapshot) => s.type === 'snapshot' && s.players.some(p => p.role === 'hider'));
+    expect(later.now - later.viewTime).toBeCloseTo(3000, 5);
+  } finally { await peer.close(); }
 });

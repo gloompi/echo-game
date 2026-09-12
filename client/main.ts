@@ -3,15 +3,17 @@ import { CFG } from '../shared/config.js';
 import { DEFAULT_SETTINGS, delayLabel, resolveSettings } from '../shared/settings.js';
 import { angleLerp, aimDirection, arenaRay, clamp, move, bodyHeight, eyeHeight, configureMovement } from '../shared/physics.js';
 import { neutralInput, type Input, type Motor, type Pose, type Preference, type Snapshot, type GameEvent } from '../shared/types.js';
-import { Character, makeBlaster } from './models.js';
+import { Character, makeWeapon } from './models.js';
 import { makeStage, CYAN } from './world.js';
 import { makeArena } from './map-world.js';
 import { ACTIVE_MAP, selectMap } from '../shared/map.js';
 import { normalizeKey } from '../shared/controls.js';
 import { PlayerControls } from './player-controls.js';
 import M from '../shared/movement.json';
-import { Connection } from './network.js';
 import { RoomControls } from './room-settings.js';
+import { CombatUI } from './combat-ui.js';
+import { CombatFX } from './combat-fx.js';
+import { Connection } from './network.js';
 import { GameAudio } from './audio.js';
 const $ = <E extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as E;
 const canvas = $<HTMLCanvasElement>('game');
@@ -23,7 +25,7 @@ let arena = makeArena();
 const stage = makeStage();
 const camera = new T.PerspectiveCamera(72, innerWidth / innerHeight, 0.05, 180);
 const stageCamera = new T.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
-const foregroundGun = makeBlaster(); foregroundGun.scale.setScalar(0.47); foregroundGun.position.set(0.27, -0.33, -0.49); foregroundGun.rotation.y = Math.PI; camera.add(foregroundGun); arena.scene.add(camera);
+let foregroundGun = makeWeapon(); foregroundGun.scale.setScalar(0.47); foregroundGun.position.set(0.27, -0.33, -0.49); foregroundGun.rotation.y = Math.PI; camera.add(foregroundGun); arena.scene.add(camera);
 const heroHider = new Character('hider'), heroSeeker = new Character('seeker'), heroGhost = new Character('hider', true);
 heroHider.group.scale.setScalar(1.23); heroHider.group.position.set(-0.8, 0, 0.85); heroHider.group.rotation.y = 0.22;
 heroSeeker.group.scale.setScalar(1.3); heroSeeker.group.position.set(1.45, 0, -0.1); heroSeeker.group.rotation.y = -0.68;
@@ -45,6 +47,8 @@ const effects: FX[] = [];
 const connection = new Connection(onSnapshot, reason => { leave(false); toast(reason, 7000); }, reason => toast(reason, 5000));
 const roomControls = new RoomControls(message => connection.send(message), toast);
 const controls = new PlayerControls(toast);
+const combatUI = new CombatUI(message => connection.send(message));
+const combatFX = new CombatFX();
 const movementReadout = document.createElement('div'); movementReadout.id = 'movement-readout'; movementReadout.innerHTML = '<span id=movement-speed></span><span id=mirror-hint></span>'; $('hud').append(movementReadout);
 function toast(text: string, ms = 2700) { clearTimeout(toastTimer); $('toast').textContent = text; $('toast').classList.add('show'); toastTimer = setTimeout(() => $('toast').classList.remove('show'), ms); }
 function setBusy(value: boolean) { connecting = value; for (const id of ['quick-play', 'practice', 'create-room']) $<HTMLButtonElement>(id).disabled = value; }
@@ -59,7 +63,7 @@ function join(mode: 'create' | 'join' | 'quick' | 'practice', room?: string) {
   if (connecting) return;
   audio.unlock(); setBusy(true); sequence = 0; currentRound = -1; frames = []; pending = []; seenEvents.clear(); lastLobbyKey = ''; lastScoreKey = ''; accumulator = 0;
   const name = $<HTMLInputElement>('player-name').value.trim().slice(0, 18) || 'Runner'; localStorage.setItem('echo-name', name);
-  connection.connect({ type: 'join', mode, room, name, preference });
+  connection.connect({ type: 'join', mode, room, name, preference, skin: combatUI.skin });
 }
 $('quick-play').onclick = () => join('quick'); $('practice').onclick = () => join('practice'); $('create-room').onclick = () => join('create');
 $('start-round').onclick = () => { audio.unlock(); connection.send({ type: 'start' }); };
@@ -84,9 +88,11 @@ $<HTMLInputElement>('show-echo').onchange = e => { showEcho = (e.target as HTMLI
 async function invite() {
   if (!snapshot) return;
   if (snapshot.practice) { toast('Practice is solo. Create a private room to invite friends.'); return; }
-  const url = await connection.invite(snapshot.room);
-  try { await navigator.clipboard.writeText(url); toast('Invite link copied. Keep the server and tunnel running.'); }
-  catch { window.prompt('Copy this invite link:', url); }
+  try {
+    const url = await connection.invite(snapshot.room);
+    try { await navigator.clipboard.writeText(url); toast('Invite link copied. Keep the host and UDP endpoint running.'); }
+    catch { window.prompt('Copy this invite link:', url); }
+  } catch (error) { toast(error instanceof Error ? error.message : 'Could not create invitation.'); }
 }
 for (const id of ['hud-room', 'lobby-code', 'pause-invite']) $(id).onclick = () => void invite();
 function pause() { if (!snapshot || snapshot.phase === 'lobby') return; active = false; keys.clear(); controls.clear(); shoot = false; if (document.pointerLockElement) document.exitPointerLock(); $('pause').classList.remove('hidden'); $('capture').classList.add('hidden'); }
@@ -101,12 +107,13 @@ function clearArenaActors() {
   localCharacter?.dispose(); localCharacter = null; ownEcho?.dispose(); ownEcho = null;
   for (const obj of remote.values()) { obj.character.dispose(); obj.label.remove(); } remote.clear();
   for (const f of effects) { f.mesh.removeFromParent(); f.mesh.geometry.dispose(); (f.mesh.material as T.Material).dispose(); } effects.length = 0;
+  combatFX.clear();
 }
 function leave(notify: boolean) {
-  connection.close(); active = false; connecting = false; snapshot = null; predicted = null; frames = []; pending = []; currentRound = -1; keys.clear(); controls.clear(); shoot = false; lastLobbyKey = ''; lastScoreKey = '';
+  connection.close(); active = false; connecting = false; snapshot = null; predicted = null; frames = []; pending = []; currentRound = -1; keys.clear(); controls.clear(); shoot = false;
   if (document.pointerLockElement) document.exitPointerLock();
   for (const id of ['hud', 'lobby', 'pause', 'scoreboard']) $(id).classList.add('hidden'); $('menu').classList.remove('hidden'); setBusy(false);
-  clearArenaActors();
+  clearArenaActors(); combatUI.clear(); lastLobbyKey = ''; lastScoreKey = '';
   const url = new URL(location.href); url.searchParams.delete('room'); history.replaceState(null, '', url.pathname + url.search + url.hash);
   document.body.classList.remove('hider'); if (notify) toast('You left the room.');
 }
@@ -134,7 +141,7 @@ function onSnapshot(s: Snapshot) {
     selectMap(settings.mapId); arena = makeArena(); arena.scene.add(camera); frames = [];
   }
   configureMovement(settings);
-  snapshot = s; setBusy(false); roomControls.update(s);
+  snapshot = s; setBusy(false); roomControls.update(s); combatUI.receive(s);
   const fresh = currentRound !== s.round || !predicted || previous?.self.role !== s.self.role || previous?.settingsVersion !== s.settingsVersion;
   if (fresh) {
     currentRound = s.round; predicted = { ...s.self }; pending = []; frames = []; correction.set(0, 0, 0); yaw = s.self.yaw; pitch = s.self.pitch; sequence = Math.max(sequence, s.self.ack);
@@ -168,7 +175,7 @@ function onSnapshot(s: Snapshot) {
     $('capture').classList.add('hidden'); $('pause').classList.add('hidden'); $('scoreboard').classList.remove('hidden'); renderScores();
   } else if (!scoreHeld) $('scoreboard').classList.add('hidden');
   if (!s.self.alive || s.self.spectating) $('capture').classList.add('hidden');
-  if (previous && previous.self.hp > s.self.hp && !fresh) { document.body.classList.add('hurt'); setTimeout(() => document.body.classList.remove('hurt'), 200); }
+  if (previous && previous.self.hp > s.self.hp && !fresh) { combatUI.hurt(); localCharacter?.hit(); document.body.classList.add('hurt'); setTimeout(() => document.body.classList.remove('hurt'), 200); }
   for (const e of s.events) if (!seenEvents.has(e.id)) { seenEvents.add(e.id); handleEvent(e); }
   if (seenEvents.size > 1500) for (const id of [...seenEvents].slice(0, 500)) seenEvents.delete(id);
 }
@@ -209,17 +216,21 @@ function handleEvent(e: GameEvent) {
   if (!snapshot) return; const me = e.actor === snapshot.self.id;
   if (e.kind === 'shot' && e.from && e.to) {
     const from = new T.Vector3(e.from.x, e.from.y, e.from.z);
-    if (me && predicted) { from.set(predicted.x + Math.cos(yaw) * 0.24, predicted.y + eyeHeight(predicted.crouched) - 0.15, predicted.z - Math.sin(yaw) * 0.24); gunKick = 1; }
+    if (me && predicted) { camera.updateMatrixWorld(true); foregroundGun.getObjectByName('muzzle')?.getWorldPosition(from); gunKick = 1; }
     beam(from, new T.Vector3(e.to.x, e.to.y, e.to.z), !!e.hit); audio.play(me ? 'shot' : 'echo');
     if (me && e.hit) { $('hit-marker').classList.add('show'); setTimeout(() => $('hit-marker').classList.remove('show'), 130); audio.play('hit'); }
     if (e.echo && performance.now() - lastToastAt > 1200) {
       if (me) { toast('ONLY AN ECHO. Aim ahead.', 1000); lastToastAt = performance.now(); }
       else if (e.target === snapshot.self.id) { toast('THEY SHOT YOUR ECHO. Keep moving.', 1400); lastToastAt = performance.now(); }
     }
+  } else if (e.kind === 'hook' && e.from && e.to) {
+    beam(new T.Vector3(e.from.x,e.from.y,e.from.z),new T.Vector3(e.to.x,e.to.y,e.to.z),true);
+    if (me) audio.play('dash');
+  } else if (e.kind === 'web' && me) { gunKick = .65; audio.play('shot');
   } else if (e.kind === 'catch') {
     const name = snapshot.roster.find(p => p.id === e.target)?.name ?? 'A hider';
     const item = document.createElement('div'); item.className = 'feed-item'; item.textContent = `${name} was caught in the present.`; $('feed').append(item); setTimeout(() => item.remove(), 4500);
-  } else if (me && e.kind === 'teleport') { audio.play('dash'); toast('MIRROR SHIFT. Your echo stays behind.', 1400); } else if (me && e.kind === 'wave') audio.play('wave'); else if (me && e.kind === 'dash') audio.play('dash');
+  } else if (me && e.kind === 'teleport') { audio.play('dash'); toast('MIRROR SHIFT.', 1400); } else if (me && e.kind === 'wave') audio.play('wave'); else if (me && e.kind === 'dash') audio.play('dash');
 }
 function inputTick() {
   if (!snapshot || !predicted || snapshot.phase === 'lobby') return;
@@ -227,7 +238,7 @@ function inputTick() {
   if (active && !document.hidden) {
     input.mx = Number(keys.has('KeyD') || keys.has('ArrowRight')) - Number(keys.has('KeyA') || keys.has('ArrowLeft'));
     input.mz = Number(keys.has('KeyW') || keys.has('ArrowUp')) - Number(keys.has('KeyS') || keys.has('ArrowDown'));
-    input.sprint = keys.has('ShiftLeft') || keys.has('ShiftRight'); input.jump = controls.jump(keys); input.crouch = controls.crouch(keys); input.interact = keys.has('KeyF'); input.dash = keys.has('KeyQ'); input.wave = keys.has('KeyE'); input.reload = keys.has('KeyR'); input.shoot = shoot;
+    input.sprint = keys.has('ShiftLeft') || keys.has('ShiftRight'); input.jump = controls.jump(keys); input.crouch = controls.crouch(keys); input.interact = keys.has('KeyF'); combatUI.input(input, keys); input.dash = keys.has('KeyQ'); input.wave = keys.has('KeyE'); input.reload = keys.has('KeyR'); input.shoot = shoot;
   }
   if (!connection.send({ type: 'input', input }) || !snapshot || !predicted) return;
   pending.push(input); if (pending.length > 120) pending.shift();
@@ -238,28 +249,29 @@ function interpolatePose(a: Pose, b: Pose, t: number): Pose {
   if (a.alive !== b.alive || a.role !== b.role || (a.warp ?? 0) !== (b.warp ?? 0)) return a;
   return { ...a, x: T.MathUtils.lerp(a.x, b.x, t), y: T.MathUtils.lerp(a.y, b.y, t), z: T.MathUtils.lerp(a.z, b.z, t), yaw: angleLerp(a.yaw, b.yaw, t), pitch: T.MathUtils.lerp(a.pitch, b.pitch, t), moving: T.MathUtils.lerp(a.moving, b.moving, t) };
 }
-function viewFrame(): { players: Pose[]; echo: Pose | null } {
-  if (!snapshot || frames.length < 2) return { players: snapshot?.players ?? [], echo: snapshot?.echo ?? null };
-  // Server holdback is already applied. This is ONLY a network jitter buffer.
+function viewFrame(): { players: Pose[]; echo: Pose | null; sampledAt: number } {
+  if (!snapshot || frames.length < 2) return { players: snapshot?.players ?? [], echo: snapshot?.echo ?? null, sampledAt: snapshot?.viewTime ?? connection.now };
+  // Server holdback has already been applied; this is only network jitter buffering.
   const at = connection.now - 100; let a = frames[0], b = a;
   for (let i = 0; i < frames.length - 1; i++) { if (frames[i].now <= at) { a = frames[i]; b = frames[i + 1]; } }
-  if (at >= frames[frames.length - 1].now) return frames[frames.length - 1];
+  if (at >= frames[frames.length - 1].now) return { ...frames[frames.length - 1], sampledAt: frames[frames.length - 1].viewTime };
   const t = clamp((at - a.now) / Math.max(1, b.now - a.now), 0, 1), next = new Map(b.players.map(p => [p.id, p]));
-  return { players: a.players.map(p => next.has(p.id) ? interpolatePose(p, next.get(p.id)!, t) : p), echo: a.echo && b.echo ? interpolatePose(a.echo, b.echo, t) : a.echo };
+  return { sampledAt: a.viewTime, players: a.players.map(p => next.has(p.id) ? interpolatePose(p, next.get(p.id)!, t) : p), echo: a.echo && b.echo ? interpolatePose(a.echo, b.echo, t) : a.echo };
 }
 const localPos = new T.Vector3(), aim = new T.Vector3(), cameraGoal = new T.Vector3(), cameraBase = new T.Vector3();
 function updateGame(dt: number, time: number) {
   if (!snapshot || !predicted || !localCharacter) return;
   correction.multiplyScalar(Math.exp(-16 * dt)); localPos.set(predicted.x, predicted.y, predicted.z).add(correction);
-  const seeker = snapshot.self.role === 'seeker', delayMs = (snapshot.settings ?? DEFAULT_SETTINGS).delayMs;
+  const seeker = snapshot.self.role === 'seeker', settings = resolveSettings(snapshot.settings), delayMs = settings.delayMs;
   localCharacter.group.visible = !seeker && snapshot.self.alive && !snapshot.self.spectating;
-  localCharacter.group.position.copy(localPos); localCharacter.group.rotation.y = yaw + Math.PI; localCharacter.group.scale.y = bodyHeight(predicted.crouched) / CFG.height;
-  localCharacter.animate({ moving: Math.hypot(predicted.vx, predicted.vz), grounded: predicted.grounded, waving: snapshot.self.waving || (active && keys.has('KeyE')), dashing: predicted.dashTime > 0 }, dt, time);
+  localCharacter.group.position.copy(localPos); localCharacter.group.rotation.y = yaw + Math.PI; localCharacter.body.scale.y = bodyHeight(predicted.crouched) / CFG.height;
+  localCharacter.animate({ moving: Math.hypot(predicted.vx, predicted.vz), grounded: predicted.grounded, waving: snapshot.self.waving || (active && keys.has('KeyE')), dashing: predicted.dashTime > 0, sliding: (predicted.slideTime??0)>0, controlled: (predicted.controlLeft??0)>0, shielded: (snapshot.self.abilities?.shieldLeft??0)>Math.max(0,connection.now-snapshot.now), crouched: predicted.crouched, skin: snapshot.self.skin }, dt, connection.now/1000);
   const direction = aimDirection(yaw, pitch); aim.set(direction.x, direction.y, direction.z);
   if (seeker) {
     camera.position.copy(localPos).add(new T.Vector3(0, eyeHeight(predicted.crouched), 0)); camera.lookAt(camera.position.clone().add(aim));
   } else {
     cameraBase.copy(localPos).add(new T.Vector3(0, predicted.crouched ? .8 : 1.35, 0));
+    // Lift the third-person camera without changing movement-relative yaw.
     const hiderAim = new T.Vector3(-Math.sin(yaw) * Math.cos(pitch - 0.18), Math.sin(pitch - 0.18), -Math.cos(yaw) * Math.cos(pitch - 0.18));
     cameraGoal.copy(cameraBase).addScaledVector(hiderAim, -5.2).add(new T.Vector3(0, 1.0, 0));
     const offset = cameraGoal.clone().sub(cameraBase), distance = offset.length(); offset.normalize();
@@ -268,6 +280,10 @@ function updateGame(dt: number, time: number) {
   }
   if (snapshot.self.spectating || !snapshot.self.alive) { camera.position.set(0, 17, 19); camera.lookAt(0, 0, 0); }
   camera.updateMatrixWorld();
+  const weapon = snapshot.self.weapon ?? 'blaster';
+  if (foregroundGun.userData.weapon !== weapon) {
+    foregroundGun.removeFromParent(); foregroundGun = makeWeapon(weapon); foregroundGun.scale.setScalar(.47); foregroundGun.rotation.y = Math.PI; camera.add(foregroundGun);
+  }
   foregroundGun.visible = seeker && snapshot.self.alive && !snapshot.self.spectating;
   gunKick *= Math.exp(-18 * dt);
   foregroundGun.position.set(0.27 + Math.sin(time * 9) * Math.min(0.008, Math.hypot(predicted.vx, predicted.vz) * 0.001), -0.33 - (snapshot.self.reloadLeft > 0 ? 0.16 : 0), -0.49 + gunKick * 0.10);
@@ -280,9 +296,9 @@ function updateGame(dt: number, time: number) {
     if (!obj) {
       const character = new Character(p.role); arena.scene.add(character.group); const label = document.createElement('div'); label.className = 'nameplate'; plateLayer.append(label); obj = { character, label }; remote.set(p.id, obj);
     }
+    obj.character.group.visible = p.alive; obj.character.group.position.set(p.x, p.y, p.z); obj.character.group.rotation.y = p.yaw + Math.PI; obj.character.body.scale.y = bodyHeight(p.crouched) / CFG.height;
     const delayed = seeker && p.role === 'hider';
-    obj.character.group.visible = p.alive; obj.character.group.position.set(p.x, p.y, p.z); obj.character.group.rotation.y = p.yaw + Math.PI; obj.character.group.scale.y = bodyHeight(p.crouched) / CFG.height;
-    obj.character.animate(p, dt, time - (delayed ? delayMs / 1000 : 0)); if (obj.character.gun) obj.character.gun.rotation.x -= p.pitch;
+    obj.character.animate(p, dt, (delayed ? view.sampledAt : connection.now)/1000);
     const name = snapshot.roster.find(q => q.id === p.id)?.name ?? 'Runner'; obj.label.textContent = name + (delayed ? ` / −${delayLabel(delayMs)}` : '');
     const pos = new T.Vector3(p.x, p.y + bodyHeight(p.crouched) + .39, p.z), dir = pos.clone().sub(camera.position), distance = dir.length(); dir.normalize();
     const occluded = arenaRay(camera.position, dir, distance) < distance - 0.6; pos.project(camera);
@@ -291,13 +307,14 @@ function updateGame(dt: number, time: number) {
   }
   if (ownEcho) {
     ownEcho.group.visible = showEcho && !!view.echo?.alive && snapshot.self.alive;
-    if (view.echo) { const e = view.echo; ownEcho.group.position.set(e.x, e.y, e.z); ownEcho.group.rotation.y = e.yaw + Math.PI; ownEcho.group.scale.y = bodyHeight(e.crouched) / CFG.height; ownEcho.animate(e, dt, time - delayMs / 1000); }
+    if (view.echo) { const e = view.echo; ownEcho.group.position.set(e.x, e.y, e.z); ownEcho.group.rotation.y = e.yaw + Math.PI; ownEcho.body.scale.y = bodyHeight(e.crouched) / CFG.height; ownEcho.animate(e, dt, view.sampledAt/1000); }
   }
   for (let i = effects.length - 1; i >= 0; i--) {
     const f = effects[i]; f.life -= dt; (f.mesh.material as T.MeshBasicMaterial).opacity = Math.max(0, f.life / f.max);
     if (f.velocity) { f.mesh.position.addScaledVector(f.velocity, dt); f.velocity.y -= dt * 5; }
     if (f.life <= 0) { f.mesh.removeFromParent(); f.mesh.geometry.dispose(); (f.mesh.material as T.Material).dispose(); effects.splice(i, 1); }
   }
+  combatFX.update(arena.scene,snapshot,view.players,view.sampledAt,connection.now);
   arena.animate(time); renderer.render(arena.scene, camera);
 }
 function updateHUD() {
@@ -309,12 +326,14 @@ function updateHUD() {
   $('ping').textContent = String(Math.round(connection.ping));
   $('stamina-fill').style.width = `${predicted.stamina}%`; $('dash-cooldown').textContent = predicted.dashCooldown > 0 ? `${predicted.dashCooldown.toFixed(1)}s` : 'READY';
   const hearts = $('health').querySelectorAll('i'); hearts.forEach((heart, i) => heart.classList.toggle('empty', i >= s.self.hp)); $('health').querySelector('span')!.textContent = `${s.self.hp} / 2`;
-  $('ammo').textContent = settings.reloadMs === 0 ? '∞' : String(s.self.ammo).padStart(2, '0');
-  $('reload-fill').style.width = settings.reloadMs > 0 && s.self.reloadLeft > 0 ? `${clamp(100 - s.self.reloadLeft / settings.reloadMs * 100, 0, 100)}%` : '0%';
-  document.querySelector<HTMLElement>('.ammo > span')!.textContent = settings.reloadMs === 0 ? 'NO RELOAD' : '/ 12';
-  document.querySelector<HTMLElement>('.ammo kbd')!.hidden = settings.reloadMs === 0;
-  $('movement-speed').textContent = `${ACTIVE_MAP.name} · ${Math.hypot(predicted.vx,predicted.vz).toFixed(1)} m/s · ${predicted.crouched ? 'CROUCHED' : 'HOP: '+settings.bunnyHop.toUpperCase()}`;
-  const mirrorLeft = Math.max(0,(s.self.mirrorLeft ?? 0)-Math.max(0,connection.now-s.now));
+  const weapon = s.self.weapon ?? 'blaster', spec = settings.balance.weapons[weapon];
+  const reload = settings.reloadMs === 0 ? 0 : spec.reloadMs || settings.reloadMs;
+  $('ammo').textContent = reload === 0 ? '∞' : String(s.self.ammo).padStart(2,'0');
+  $('reload-fill').style.width = reload > 0 && s.self.reloadLeft > 0 ? `${clamp(100-s.self.reloadLeft/reload*100,0,100)}%` : '0%';
+  document.querySelector<HTMLElement>('.ammo > span')!.textContent = reload === 0 ? 'NO RELOAD' : `/ ${spec.magazine}`;
+  document.querySelector<HTMLElement>('.ammo kbd')!.hidden = reload === 0;
+  $('movement-speed').textContent = `${ACTIVE_MAP.name} · ${Math.hypot(predicted.vx,predicted.vz).toFixed(1)} m/s · ${(predicted.slideTime??0)>0?'SLIDING':predicted.crouched?'CROUCHED':'HOP: '+settings.bunnyHop.toUpperCase()}`;
+  const mirrorLeft = Math.max(0,(s.self.mirrorLeft??0)-Math.max(0,connection.now-s.now));
   const nearby = ACTIVE_MAP.mirrors.find(m => {
     if (Math.hypot(m.x-predicted!.x,m.z-predicted!.z)>M.mirrorRadius || Math.abs(m.y-predicted!.y)>=1.3) return false;
     const from = { x:predicted!.x, y:predicted!.y+eyeHeight(predicted!.crouched), z:predicted!.z };
@@ -322,6 +341,7 @@ function updateHUD() {
     return d<.001 || arenaRay(from,delta.normalize())>=d-.1;
   });
   $('mirror-hint').textContent = !playable(s) ? '' : mirrorLeft>0 ? `MIRROR RECHARGING · ${Math.ceil(mirrorLeft/1000)}s` : nearby ? `F · ${nearby.label} MIRROR · TELEPORT` : 'MIRROR READY · F NEAR A MIRROR';
+  combatUI.update(s,predicted,connection.now);
   $('baits').textContent = String(s.roster.find(p => p.id === s.self.id)?.baits ?? 0).padStart(2, '0');
   const banner = $('round-banner'); banner.style.opacity = s.phase === 'headstart' || s.self.spectating || !s.self.alive ? '1' : '0';
   if (s.self.spectating) { $('banner-kicker').textContent = 'ROUND IN PROGRESS'; $('banner-title').textContent = 'YOU’RE UP NEXT.'; $('banner-subtitle').textContent = 'You’ll join when the host starts the next round.'; }
@@ -339,9 +359,9 @@ function frame(at: number) {
   const time = at / 1000;
   if (snapshot && snapshot.phase !== 'lobby') updateGame(dt, time);
   else {
-    heroHider.animate({ moving: 0, grounded: true, waving: true, dashing: false }, dt, time);
-    heroSeeker.animate({ moving: 0, grounded: true, waving: false, dashing: false }, dt, time);
-    heroGhost.animate({ moving: 1.5, grounded: true, waving: true, dashing: false }, dt, time - CFG.delayMs / 1000);
+    heroHider.animate({ skin: combatUI.skin, moving: 0, grounded: true, waving: true, dashing: false }, dt, time);
+    heroSeeker.animate({ skin: combatUI.skin, moving: 0, grounded: true, waving: false, dashing: false }, dt, time);
+    heroGhost.animate({ moving: 1.5, grounded: true, waving: true, dashing: false }, dt, time - CFG.delayMs/1000);
     const orbit = Math.sin(time * 0.13) * 0.18;
     stageCamera.position.set(7.8 + orbit, 4.6, 12.4); stageCamera.lookAt(-3.8, 1.18, 0); renderer.render(stage.scene, stageCamera);
   }
