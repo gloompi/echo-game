@@ -125,22 +125,42 @@ export function move(s: Motor, input: Input, role: Role, dt = CFG.dt, boxes: rea
 }
 export function rayBox(origin: Vec3, dir: Vec3, min: Vec3, max: Vec3): number | null {
   let near = 0, far = Infinity;
-  for (const k of ['x','y','z'] as const) {
-    if (Math.abs(dir[k]) < 1e-9) { if (origin[k] < min[k] || origin[k] > max[k]) return null; }
-    else { const a = (min[k]-origin[k])/dir[k], b = (max[k]-origin[k])/dir[k]; near = Math.max(near, Math.min(a,b)); far = Math.min(far,Math.max(a,b)); if (near > far) return null; }
+  const axis = (o: number, d: number, lo: number, hi: number): boolean => {
+    if (Math.abs(d) < 1e-9) return o >= lo && o <= hi;
+    const a = (lo-o)/d, b = (hi-o)/d;
+    near = Math.max(near, Math.min(a,b)); far = Math.min(far,Math.max(a,b)); return near <= far;
+  };
+  return axis(origin.x,dir.x,min.x,max.x) && axis(origin.y,dir.y,min.y,max.y) && axis(origin.z,dir.z,min.z,max.z) && far >= 0 ? near : null;
+}
+interface ArenaBound { minX:number; minY:number; minZ:number; maxX:number; maxY:number; maxZ:number }
+const boundCache = new WeakMap<readonly Box[], readonly ArenaBound[]>();
+function arenaBounds(boxes: readonly Box[] = ARENA): readonly ArenaBound[] {
+  let bounds = boundCache.get(boxes); if (bounds) return bounds;
+  bounds = boxes.map(b => ({ minX:b.x-b.w/2,minY:b.y,minZ:b.z-b.d/2,maxX:b.x+b.w/2,maxY:b.y+b.h,maxZ:b.z+b.d/2 }));
+  boundCache.set(boxes,bounds); return bounds;
+}
+function rayBound(origin: Vec3, dir: Vec3, b: ArenaBound): number | null {
+  let near=0,far=Infinity;
+  const axis=(o:number,d:number,lo:number,hi:number)=>{
+    if(Math.abs(d)<1e-9)return o>=lo&&o<=hi;
+    const a=(lo-o)/d,c=(hi-o)/d;near=Math.max(near,Math.min(a,c));far=Math.min(far,Math.max(a,c));return near<=far;
+  };
+  return axis(origin.x,dir.x,b.minX,b.maxX)&&axis(origin.y,dir.y,b.minY,b.maxY)&&axis(origin.z,dir.z,b.minZ,b.maxZ)&&far>=0?near:null;
+}
+export function arenaOccluded(origin: Vec3, dir: Vec3, range: number): boolean {
+  for (const b of arenaBounds()) { const d=rayBound(origin,dir,b); if(d!==null&&d<range)return true; }
+  if (dir.y < -1e-6 && -origin.y/dir.y < range) return true;
+  for (const axis of ['x','z'] as const) if (Math.abs(dir[axis]) > 1e-6) {
+    const d=((dir[axis]>0?MAP_HALF:-MAP_HALF)-origin[axis])/dir[axis]; if(d>=0&&d<range)return true;
   }
-  return far >= 0 ? near : null;
+  return false;
 }
 export function arenaRay(origin: Vec3, dir: Vec3, range: number = CFG.shotRange): number {
   let distance = range;
-  for (const b of ARENA) {
-    const d = rayBox(origin,dir,{x:b.x-b.w/2,y:b.y,z:b.z-b.d/2},{x:b.x+b.w/2,y:b.y+b.h,z:b.z+b.d/2});
-    if (d !== null) distance = Math.min(distance,d);
-  }
+  for (const b of arenaBounds()) { const d=rayBound(origin,dir,b); if(d!==null&&d<distance)distance=d; }
   if (dir.y < -1e-6) distance = Math.min(distance,-origin.y/dir.y);
-  for (const axis of ['x','z'] as const) if (Math.abs(dir[axis]) > 1e-6) {
-    const d = ((dir[axis] > 0 ? MAP_HALF : -MAP_HALF) - origin[axis])/dir[axis]; if (d >= 0) distance = Math.min(distance,d);
-  }
+  if (Math.abs(dir.x)>1e-6) { const d=((dir.x>0?MAP_HALF:-MAP_HALF)-origin.x)/dir.x; if(d>=0)distance=Math.min(distance,d); }
+  if (Math.abs(dir.z)>1e-6) { const d=((dir.z>0?MAP_HALF:-MAP_HALF)-origin.z)/dir.z; if(d>=0)distance=Math.min(distance,d); }
   return Math.max(0,distance);
 }
 export const aimDirection = (yaw: number, pitch: number): Vec3 => ({ x: -Math.sin(yaw)*Math.cos(pitch), y: Math.sin(pitch), z: -Math.cos(yaw)*Math.cos(pitch) });

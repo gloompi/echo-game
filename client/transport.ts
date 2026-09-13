@@ -1,7 +1,8 @@
 import { encodeFrame, FrameDecoder, MAX_CONTROL_BYTES, MAX_SNAPSHOT_BYTES } from '../shared/framing.js';
+import type { ServerMessage } from '../shared/types.js';
 export interface GameTransport {
   readonly bufferedAmount: number;
-  connect(url: string, message: (data: string) => void, closed: () => void): Promise<void>;
+  connect(url: string, message: (data: ServerMessage) => void, closed: () => void): Promise<void>;
   sendReliable(data: string): boolean;
   sendLatest(data: string): boolean;
   close(): void;
@@ -20,6 +21,11 @@ const browserFactory: TransportFactory = (url, options) => {
   if (!Constructor) throw new Error('This browser does not support WebTransport. Use a WebTransport-capable browser on HTTPS or localhost.');
   return new Constructor(url, options);
 };
+function parseServerMessage(text: string): ServerMessage {
+  const value = JSON.parse(text) as ServerMessage;
+  if (!value || typeof value !== 'object' || typeof value.type !== 'string') throw new Error('Invalid server message.');
+  return value;
+}
 /** Inputs remain ordered for deterministic prediction. Independent, short-lived
  * snapshot streams avoid a lost old snapshot blocking newer observations. No WS fallback. */
 export class WebTransportTransport implements GameTransport {
@@ -31,7 +37,7 @@ export class WebTransportTransport implements GameTransport {
   private tail: Promise<void> = Promise.resolve(); private newest = -Infinity;
   constructor(private config?: TransportConfig, private factory: TransportFactory = browserFactory) {}
   get bufferedAmount(): number { return this.queued; }
-  async connect(url: string, message: (data: string) => void, closed: () => void): Promise<void> {
+  async connect(url: string, message: (data: ServerMessage) => void, closed: () => void): Promise<void> {
     this.close(); const generation = this.generation; this.closedCallback = closed;
     const config = this.config ?? await this.discover(url);
     if (generation !== this.generation) throw new Error('Connection cancelled.');
@@ -68,7 +74,7 @@ export class WebTransportTransport implements GameTransport {
     if (!value.transport) throw new Error('The server has no WebTransport endpoint configured.');
     return value.transport;
   }
-  private async acceptSnapshots(transport: BrowserTransport, message: (data: string) => void, generation: number): Promise<void> {
+  private async acceptSnapshots(transport: BrowserTransport, message: (data: ServerMessage) => void, generation: number): Promise<void> {
     const reader = transport.incomingUnidirectionalStreams.getReader(); this.accepting = reader;
     const active = new Set<Promise<void>>();
     try {
@@ -82,24 +88,24 @@ export class WebTransportTransport implements GameTransport {
       }
     } finally { reader.releaseLock(); await Promise.allSettled(active); }
   }
-  private async read(stream: ReadableStream<Uint8Array>, snapshot: boolean, message: (data: string) => void, generation: number): Promise<void> {
+  private async read(stream: ReadableStream<Uint8Array>, snapshot: boolean, message: (data: ServerMessage) => void, generation: number): Promise<void> {
     const reader = stream.getReader(); this.readers.add(reader);
     const decoder = new FrameDecoder(snapshot ? MAX_SNAPSHOT_BYTES : MAX_CONTROL_BYTES);
-    let count = 0; let snapshotText: string | undefined;
+    let count = 0; let snapshotMessage: ServerMessage | undefined;
     const expiry = snapshot ? setTimeout(() => { void reader.cancel('stale snapshot').catch(() => {}); }, 2000) : undefined;
     try {
       while (generation === this.generation) {
         const item = await reader.read(); if (item.done) break;
         for (const text of decoder.push(item.value)) {
-          if (snapshot) { if (++count !== 1) throw new Error('Multiple frames in a snapshot stream.'); snapshotText = text; }
-          else message(text);
+          const value = parseServerMessage(text);
+          if (snapshot) { if (++count !== 1) throw new Error('Multiple frames in a snapshot stream.'); snapshotMessage = value; }
+          else message(value);
         }
       }
       decoder.finish();
-      if (snapshot && snapshotText && generation === this.generation) {
-        const value = JSON.parse(snapshotText) as { type?: string; now?: number };
-        if (value.type !== 'snapshot' || typeof value.now !== 'number' || !Number.isFinite(value.now)) throw new Error('Invalid snapshot envelope.');
-        if (value.now > this.newest) { this.newest = value.now; message(snapshotText); }
+      if (snapshot && snapshotMessage && generation === this.generation) {
+        if (snapshotMessage.type !== 'snapshot' || typeof snapshotMessage.now !== 'number' || !Number.isFinite(snapshotMessage.now)) throw new Error('Invalid snapshot envelope.');
+        if (snapshotMessage.now > this.newest) { this.newest = snapshotMessage.now; message(snapshotMessage); }
       }
     } finally { if (expiry) clearTimeout(expiry); this.readers.delete(reader); reader.releaseLock(); }
   }

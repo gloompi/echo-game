@@ -13,6 +13,7 @@ export class FrameDecoder {
   private headerUsed = 0;
   private body: Uint8Array | undefined;
   private bodyUsed = 0;
+  private decoder = new TextDecoder('utf-8', { fatal: true });
   constructor(private maximum = MAX_CONTROL_BYTES) {}
   push(chunk: Uint8Array): string[] {
     const messages: string[] = []; let offset = 0;
@@ -28,7 +29,7 @@ export class FrameDecoder {
       const n = Math.min(this.body.length - this.bodyUsed, chunk.length - offset);
       this.body.set(chunk.subarray(offset, offset + n), this.bodyUsed); this.bodyUsed += n; offset += n;
       if (this.bodyUsed === this.body.length) {
-        messages.push(new TextDecoder('utf-8', { fatal: true }).decode(this.body));
+        messages.push(this.decoder.decode(this.body));
         this.body = undefined; this.headerUsed = 0; this.bodyUsed = 0;
       }
     }
