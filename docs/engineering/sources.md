@@ -15,7 +15,7 @@ Reviewed for this refactor on 2026-09-14. These references inform the repository
 
 SOLID, KISS, and YAGNI are used as design heuristics here: separate reasons for change, keep capability interfaces narrow, make dependencies explicit, and avoid speculative abstractions. Rust ownership/enum idioms and TypeScript structural interfaces are preferred over mechanically copying an object-oriented class hierarchy.
 
-- ESLint runtime requirements: https://eslint.org/docs/latest/use/getting-started â€” Node version requirements reflected in package.json.
-- Prettier installation: https://prettier.io/docs/install â€” exact formatter pin, check-only CI and generator-owned exclusions.
-- Playwright tracing: https://playwright.dev/docs/api/class-tracing â€” prefer Test configuration tracing, which includes assertions; do not start an overlapping context trace.
-- Node test runner: https://nodejs.org/api/test.html â€” top-level registration promises may be discarded because the runner reports results; await child test promises before their parent ends.
+- ESLint runtime requirements: https://eslint.org/docs/latest/use/getting-started — Node version requirements reflected in package.json.
+- Prettier installation: https://prettier.io/docs/install — exact formatter pin, check-only CI and generator-owned exclusions.
+- Playwright tracing: https://playwright.dev/docs/api/class-tracing — prefer Test configuration tracing, which includes assertions; do not start an overlapping context trace.
+- Node test runner: https://nodejs.org/api/test.html — top-level registration promises may be discarded because the runner reports results; await child test promises before their parent ends.

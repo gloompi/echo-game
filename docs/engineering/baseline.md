@@ -1,4 +1,4 @@
-# Verification evidence â€” 14 September 2026
+# Verification evidence — 14 September 2026
 
 Branch: `refactor/quality-foundation`. This continuation starts from `5ab1cb65cd70f285b44f779099b226c4feb20d69`, following the initial foundation based on main `dfd1df1d85c558a2aac3efb4c671abaee9ae1f4a`.
 

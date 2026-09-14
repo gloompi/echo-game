@@ -75,7 +75,7 @@ pub(super) async fn run() -> Result<(), Box<dyn Error>> {
     let listener =
         tokio::net::TcpListener::bind(format!("{}:{}", config.host, config.port)).await?;
     println!(
-        "ECHO: http://{}:{} Â· WebTransport UDP {} Â· protocol 3",
+        "ECHO: http://{}:{} · WebTransport UDP {} · protocol 3",
         config.host, config.port, config.transport.bind
     );
     if generated {

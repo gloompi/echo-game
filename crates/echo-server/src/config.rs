@@ -127,7 +127,7 @@ fn number(
 ) -> ConfigResult<u64> {
     let value = get(name).map(|s| s.parse::<u64>()).unwrap_or(Ok(default))?;
     if !(min..=max).contains(&value) {
-        return Err(format!("{name} must be {min}â€“{max}").into());
+        return Err(format!("{name} must be {min}–{max}").into());
     }
     Ok(value)
 }
