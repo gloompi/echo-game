@@ -2,9 +2,9 @@
 
 Mirror Yard and Neon Carnival are original Blender environments based on the two supplied concept images. They are additional selectable maps; Afterhours, Switchyard and Glassworks remain available. A third concept reference was not present in the supplied assets and has no invented map entry.
 
-| Map | Editable source | Authoring script | Runtime model |
-| --- | --- | --- | --- |
-| Mirror Yard | `assets-src/worlds/mirror-yard/mirror-yard.blend` | `scripts/worlds/mirror_yard.py` | `public/assets/worlds/mirror-yard.glb` |
+| Map           | Editable source                                       | Authoring script                  | Runtime model                            |
+| ------------- | ----------------------------------------------------- | --------------------------------- | ---------------------------------------- |
+| Mirror Yard   | `assets-src/worlds/mirror-yard/mirror-yard.blend`     | `scripts/worlds/mirror_yard.py`   | `public/assets/worlds/mirror-yard.glb`   |
 | Neon Carnival | `assets-src/worlds/neon-carnival/neon-carnival.blend` | `scripts/worlds/neon_carnival.py` | `public/assets/worlds/neon-carnival.glb` |
 
 Each source directory also contains its generated `map.json`, Blender previews and authoring metadata. These models use original geometry and materials rather than downloaded environment meshes. The reference images establish visual direction; the playable layouts are adaptations with measured stairs, passages, cover, spawn points and mirror exits.

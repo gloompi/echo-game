@@ -6,7 +6,7 @@ This branch uses **Rust (Axum + Tokio + WebTransport)** with configurable slides
 
 ## Play on your PC
 
-Install Node.js 22.12+, pnpm 10.23.0 and stable Rust/Cargo, then:
+Install Node.js 22.13+, pnpm 10.23.0 and stable Rust/Cargo, then:
 
 ```sh
 pnpm install --frozen-lockfile
@@ -48,17 +48,29 @@ Zero disables the special Echo holdback, not ordinary Internet latency. The disp
 
 ## Development and verification
 
+Read [engineering instructions](AGENTS.md), [architecture](docs/engineering/architecture.md), and [verification setup](docs/engineering/verification.md). Use Node 22.13+ (22.x) or Node 24+, the declared pnpm version, and Rust with rustfmt/Clippy.
+
+```sh
+pnpm install --frozen-lockfile
+pnpm exec playwright install chromium
+pnpm hooks:install
+pnpm verify:quick  # typechecks, formatting, lint, tests and fixtures
+pnpm verify        # also builds and runs real network + multiplayer browser tests
+```
+
+The pre-commit hook verifies fully staged work. Pre-push verifies clean HEAD including the real application. Hooks never stash/reset your work; hosted required checks remain the merge-enforcement layer.
+
 ```sh
 pnpm run dev             # Rust server + Vite; no public tunnel
 pnpm run build           # Typecheck, browser production build, Rust release binary
 pnpm start               # Run an existing build locally
 pnpm run share:built     # Publish an existing build through a temporary tunnel
 pnpm run test:ts         # Browser-side rules, movement, transport/connection tests
-pnpm run test:launcher   # Launcher lifecycle test with mock services (POSIX)
+pnpm run test:launcher   # Launcher lifecycle tests with owned mock services
 pnpm run fixtures:check  # JS motor must reproduce checked-in parity fixtures
 cargo test --workspace  # Rust rules, delay boundaries, hits, permissions, motor parity
 pnpm run test:network    # Actual Rust + native Chromium WebTransport integration; build client first
-pnpm run test:e2e        # Actual two-browser WebGL flow; build first
+pnpm run test:e2e        # Build and run actual two-browser WebGL flows
 ```
 
 For browser tests, install Chromium once with `pnpm exec playwright install chromium` (CI uses `--with-deps`). No database or paid backend service is required by this implementation. Dependency installation requires access to npm and crates.io. The generated `pnpm-lock.yaml` and `Cargo.lock` are committed. Use frozen/locked installs to reproduce them.
@@ -67,6 +79,8 @@ For browser tests, install Chromium once with `pnpm exec playwright install chro
 
 ```text
 client/                     Three.js rendering, DOM UI, audio, input, networking
+client/game/                Bounded snapshot interpolation policies
+client/ui/                  DOM bindings and roster presentation
 shared/rules.json            One set of numeric tunings for TS and Rust
 shared/arena.json            One collision layout/spawn list for TS and Rust
 shared/physics.ts            Browser prediction motor
@@ -85,4 +99,4 @@ Included: Rust authoritative rooms; current-position hits; server-held Hider his
 
 This is still the existing survival game, not the later Signal Heist/objective mode. Rapier/WASM-shared movement, React UI conversion, persistent accounts, reconnect/resume, full GLB animation authoring and a native-engine client are **not implemented** here. The existing collider motor is ported and covered by cross-language fixtures rather than changing movement engines during the server migration. No zero-lag guarantee is made.
 
-See [current validation results and remaining checks](docs/VALIDATION.md) and [ability controls, balance and transport setup](docs/ABILITIES_AND_TRANSPORT.md). Competitive balance and Internet deployment still require playtesting.
+See [current refactor verification results](docs/engineering/baseline.md) and [ability controls, balance and transport setup](docs/ABILITIES_AND_TRANSPORT.md). Competitive balance and Internet deployment still require playtesting.
