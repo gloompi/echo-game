@@ -17,7 +17,10 @@ client/
     invite.ts                   fragment-safe invitation policy
     transport-config.ts         discovery validation and endpoint policy
   transport.ts                  WebTransport streams and bounded queues
-  main.ts                       existing composition/rendering entry point
+  game/snapshot-buffer.ts       bounded authorized-observation interpolation
+  ui/dom.ts                     required-element bindings and idempotent text updates
+  ui/roster-panels.ts            lobby/score rendering and cache ownership
+  main.ts                       remaining game/render composition
 shared/                         TS contracts, prediction, shared JSON
 crates/
   echo-core/src/
@@ -30,7 +33,16 @@ crates/
     physics.rs                  authoritative movement
     room.rs, room/combat.rs      room and combat policies
     balance.rs                  ability/weapon/skin balance
-  echo-server/src/              HTTP, WebTransport, startup, orchestration
+  echo-server/src/
+    main.rs                     executable entry point only
+    runtime.rs                  startup/shutdown ownership
+    config.rs                   validated configuration with injectable values
+    state.rs                    server state and monotonic clock
+    protocol.rs, security.rs    wire contracts, origin/endpoint policies
+    http.rs                     API handlers and static assets
+    commands.rs                 room orchestration and bounded control enqueue
+    sessions.rs                 WebTransport stream/session lifecycle
+    simulation.rs               fixed-rate scheduling
 scripts/quality/                verification, lint, hooks, E2E process ownership
 tests/quality/                  regressions for the verification infrastructure
 tests/e2e/                     real multiplayer journey and player fixtures
@@ -47,8 +59,14 @@ Rust uses module privacy and explicit reexports rather than object hierarchies. 
 
 KISS/YAGNI and measured performance are constraints: do not trade a predictable hot loop for allocations or trait/closure machinery without a benefit. Cache and pool ownership must stay explicit.
 
-## Deliberately incomplete migrations
+## Remaining incremental work
 
-This change is a foundation, not a complete decomposition of every file. `client/main.ts` still combines rendering, input, presentation, and orchestration; `echo-server/src/main.rs` still combines configuration, HTTP, session handling, and scheduling. Extract these incrementally behind regression tests after a real all-green baseline is available.
+The server executable is decomposed and its configuration, protocol, queue, core/parity, and real-network behavior are tested. Client observation sampling and roster presentation are extracted and tested; `client/main.ts` still composes input, prediction, camera/rendering and HUD state. Further extraction should preserve gameplay behavior and resource ownership rather than create abstractions solely to hit a line count.
 
-The WebTransport adapter still checks only the server-message envelope, not a complete deep schema. New quality scripts have strict checkJs coverage; older `.mjs` scripts do not yet all have it. The JS AST checker is narrow and has no general style formatter; a complete typed ESLint/Prettier rollout requires a genuine dependency install, lockfile update, and reviewed whole-repository fixes. Do not confuse these remaining tasks with completed checks.
+Typed ESLint now covers all TypeScript and recommended ESLint covers JavaScript. Prettier and rustfmt cover hand-maintained source. Strict checkJs covers quality tooling, not every legacy `.mjs` script yet. The browser transport's server-message guard still validates only the envelope rather than a complete deep schema. These remain separate follow-up improvements; do not claim runtime schema validation just because types/lint pass.
+
+## Resource and protocol regressions discovered during execution
+
+Snapshot scratch caches now release absent players and clear on room/map/round changes. Reused poses explicitly overwrite missing optional fields, preventing stale shield/skin/warp state. Interpolation keeps the older observation's discrete state and never extrapolates current hidden-player positions.
+
+Serde tagged unit variants accepted extra fields despite the container's unknown-field policy. Fieldless commands now use empty struct variants and negative tests; valid protocol-v3 payloads are unchanged. Control enqueue uses bounded synchronous `try_send`, not an async wrapper under the simulation mutex.

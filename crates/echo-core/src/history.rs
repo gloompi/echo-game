@@ -110,7 +110,9 @@ mod tests {
         for tick in 0..10000 {
             history.record(tick as f64 * 1000.0 / rules().tick_rate as f64, vec![]);
         }
-        assert!(history.frames.len() <= (rules().history_ms * rules().tick_rate / 1000 + 2) as usize);
+        assert!(
+            history.frames.len() <= (rules().history_ms * rules().tick_rate / 1000 + 2) as usize
+        );
     }
 
     #[test]

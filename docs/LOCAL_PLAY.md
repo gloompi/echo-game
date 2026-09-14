@@ -56,17 +56,17 @@ This builds both languages inside containers and publishes the frontend on `127.
 
 ## Troubleshooting
 
-| Symptom | Check |
-| --- | --- |
-| `cargo` not found | Install Rust/rustup, restart the terminal, verify `cargo --version`. |
-| Windows linker / `link.exe` missing | Complete Rust's Visual Studio C++ build-tools and Windows SDK prerequisites. |
-| Missing cloudflared | Install the official package and add the executable to PATH. |
-| Port busy | Stop the old instance, or choose another PORT in `.env`; do not publish an unknown existing process. |
-| No public URL / Quick Tunnel fails | Check Internet/firewall access and cloudflared output. Cloudflare notes Quick Tunnels may conflict with an existing `.cloudflared/config.yaml`; review that configuration rather than deleting it blindly. |
-| Friends see a key error | Resend the complete printed/copied invitation including `#key=...`; old keys stop working after restart unless configured persistently. |
-| Room not found | Confirm the same current tunnel URL and room code; rooms are in-memory and vanish when the server stops or all humans leave. |
-| Copy contains localhost | Ensure the tunnel URL was registered successfully and use COPY LINK again. Check `/api/config` on the local server for `publicUrl`; never manually share localhost. |
-| WebTransport rejected or times out | Check UDP reachability, HTTPS/localhost, browser certificate-pin support, refreshed pins after restart, and exact ALLOWED_ORIGINS. An HTTP proxy alone is insufficient. |
-| Stutter / high ping | Compare localhost, LAN and tunnel paths; stop bulk uploads, use Ethernet where possible, check GPU settings and server load. A tunnel is not a latency benchmark for a future regional server. |
+| Symptom                             | Check                                                                                                                                                                                                      |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cargo` not found                   | Install Rust/rustup, restart the terminal, verify `cargo --version`.                                                                                                                                       |
+| Windows linker / `link.exe` missing | Complete Rust's Visual Studio C++ build-tools and Windows SDK prerequisites.                                                                                                                               |
+| Missing cloudflared                 | Install the official package and add the executable to PATH.                                                                                                                                               |
+| Port busy                           | Stop the old instance, or choose another PORT in `.env`; do not publish an unknown existing process.                                                                                                       |
+| No public URL / Quick Tunnel fails  | Check Internet/firewall access and cloudflared output. Cloudflare notes Quick Tunnels may conflict with an existing `.cloudflared/config.yaml`; review that configuration rather than deleting it blindly. |
+| Friends see a key error             | Resend the complete printed/copied invitation including `#key=...`; old keys stop working after restart unless configured persistently.                                                                    |
+| Room not found                      | Confirm the same current tunnel URL and room code; rooms are in-memory and vanish when the server stops or all humans leave.                                                                               |
+| Copy contains localhost             | Ensure the tunnel URL was registered successfully and use COPY LINK again. Check `/api/config` on the local server for `publicUrl`; never manually share localhost.                                        |
+| WebTransport rejected or times out  | Check UDP reachability, HTTPS/localhost, browser certificate-pin support, refreshed pins after restart, and exact ALLOWED_ORIGINS. An HTTP proxy alone is insufficient.                                    |
+| Stutter / high ping                 | Compare localhost, LAN and tunnel paths; stop bulk uploads, use Ethernet where possible, check GPU settings and server load. A tunnel is not a latency benchmark for a future regional server.             |
 
 Cloudflare [Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/trycloudflare/) are intended for testing, use temporary generated hostnames, have no SLA and currently limit concurrent in-flight requests. The game UDP endpoint must be reachable separately. Do not rely on a Quick Tunnel for a public production launch.

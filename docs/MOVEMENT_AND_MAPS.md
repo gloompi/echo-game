@@ -4,14 +4,14 @@ This is an extension of the Rust playtest branch. Start with `npm run share` (pu
 
 ## Controls on each player's device
 
-| Action | Default | Configuration |
-| --- | --- | --- |
-| Move / sprint | WASD / Shift | Existing controls |
-| Jump | Space | Settings → Movement keys; keyboard or wheel up/down |
-| Crouch | Hold Ctrl (either side) | Settings → Movement keys; bind a held key such as C |
-| Use nearby mirror | Press F | Fixed interact key |
-| Hider dash / wave / reload | Q / E / R | Existing controls |
-| Mouse sensitivity | 1× | Settings slider, 0.1×–4×; saved locally |
+| Action                     | Default                 | Configuration                                       |
+| -------------------------- | ----------------------- | --------------------------------------------------- |
+| Move / sprint              | WASD / Shift            | Existing controls                                   |
+| Jump                       | Space                   | Settings → Movement keys; keyboard or wheel up/down |
+| Crouch                     | Hold Ctrl (either side) | Settings → Movement keys; bind a held key such as C |
+| Use nearby mirror          | Press F                 | Fixed interact key                                  |
+| Hider dash / wave / reload | Q / E / R               | Existing controls                                   |
+| Mouse sensitivity          | 1×                      | Settings slider, 0.1×–4×; saved locally             |
 
 Jump/crouch bindings are saved locally, with conflict checks and a reset button. Movement/action keys W/A/S/D/Q/E/R/F are reserved. Swapping jump and crouch keys is supported unless it would bind a held action to the wheel. Browsers may reserve Ctrl shortcuts (notably Ctrl+W); rebinding crouch to C avoids those combinations. Ctrl is nevertheless the requested default.
 
@@ -19,14 +19,14 @@ Crouch is a real 1.12 m collider, not just a camera animation. It lowers the eye
 
 ## Host settings, between rounds
 
-| Setting | Default | Allowed range / behavior |
-| --- | --- | --- |
-| Echo delay | 3 s | 0–10 s (existing feature) |
-| Reload duration | 1.5 s | 0–10 s; 0 means no reload and unlimited magazine |
-| Dash cooldown | 3.2 s | 0–30 s; still requires a new Q press, and dash duration is unchanged |
-| Mirror cooldown | 60 s | 0–180 s; per player, shared across all mirrors |
-| Bunny hopping | Timed | Off, timed, or hold-to-hop |
-| Map | Afterhours | Afterhours, Switchyard or Glassworks |
+| Setting         | Default    | Allowed range / behavior                                             |
+| --------------- | ---------- | -------------------------------------------------------------------- |
+| Echo delay      | 3 s        | 0–10 s (existing feature)                                            |
+| Reload duration | 1.5 s      | 0–10 s; 0 means no reload and unlimited magazine                     |
+| Dash cooldown   | 3.2 s      | 0–30 s; still requires a new Q press, and dash duration is unchanged |
+| Mirror cooldown | 60 s       | 0–180 s; per player, shared across all mirrors                       |
+| Bunny hopping   | Timed      | Off, timed, or hold-to-hop                                           |
+| Map             | Afterhours | Afterhours, Switchyard or Glassworks                                 |
 
 Press APPLY SETTINGS before START ROUND. The HUD reports the authoritative settings. Esc → END ROUND / ROOM SETTINGS returns everyone to the lobby. Changes cannot retime ghosts, replace maps or alter movement rules halfway through a hunt. The host settings are server-validated; ordinary players cannot override them.
 
@@ -54,11 +54,11 @@ A Hider's teleport, crouch state and spatial event are delayed for Seekers. An i
 
 ## Maps and layout intent
 
-| Map | Footprint | Suggested group | Distinct routes |
-| --- | --- | --- | --- |
-| Afterhours | 46 × 46 m | 2–6 | Existing neon cover and balconies, one diagonal mirror pair |
-| Switchyard | 80 × 80 m | 4–10 | Four warehouse loops, jump-through windows, crouch exits, open hiding alcoves, two lofts, two mirror pairs |
-| Glassworks | 112 × 112 m | 8–12 | Four courtyard loops, offset hedge cover, central ring, four overlooks, three mirror pairs |
+| Map        | Footprint   | Suggested group | Distinct routes                                                                                            |
+| ---------- | ----------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
+| Afterhours | 46 × 46 m   | 2–6             | Existing neon cover and balconies, one diagonal mirror pair                                                |
+| Switchyard | 80 × 80 m   | 4–10            | Four warehouse loops, jump-through windows, crouch exits, open hiding alcoves, two lofts, two mirror pairs |
+| Glassworks | 112 × 112 m | 8–12            | Four courtyard loops, offset hedge cover, central ring, four overlooks, three mirror pairs                 |
 
 These are original procedural playtest layouts, not copies of Dead by Daylight maps. They borrow the idea of looping around cover and choosing alternate exits. They do **not** yet implement movable pallets, interaction-based vault animations, locker searches or final environment art. Ground routes connect the spawns and mirror approaches; upper routes add shortcuts. The larger map is an option, not automatically the recommended choice for a small lobby.
 

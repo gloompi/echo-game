@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22.12.0"
+    "node": "^22.13.0 || >=24.0.0"
   },
   "scripts": {
     "dev": "concurrently -k -n server,client \"cargo run -p echo-server\" \"vite\"",
@@ -25,7 +25,7 @@
     "typecheck": "tsc --noEmit",
     "typecheck:tools": "tsc --project tsconfig.tools.json",
     "lint": "pnpm run lint:ts && pnpm run lint:rust",
-    "lint:ts": "node scripts/quality/lint.mjs",
+    "lint:ts": "eslint . --max-warnings 0 && node scripts/quality/lint.mjs",
     "lint:rust": "cargo clippy --workspace --all-targets --locked -- -D warnings",
     "format:rust": "cargo fmt --all",
     "format:rust:check": "cargo fmt --all -- --check",
@@ -36,18 +36,26 @@
     "fixtures": "tsx scripts/movement-fixtures.ts && tsx scripts/gameplay-fixtures.ts",
     "fixtures:check": "node scripts/build-maps.mjs --check && tsx scripts/movement-fixtures.ts --check && tsx scripts/gameplay-fixtures.ts --check",
     "maps": "node scripts/build-maps.mjs",
-    "test:launcher": "node --test tests/launcher.integration.mjs"
+    "test:launcher": "node --test tests/launcher.integration.mjs",
+    "format:check": "prettier . --check",
+    "format": "prettier . --write && cargo fmt --all"
   },
   "dependencies": {
     "three": "0.186.0"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@playwright/test": "^1.55.0",
     "@types/node": "^22.18.0",
     "@types/three": "^0.183.1",
     "concurrently": "^9.2.1",
+    "eslint": "10.10.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.12.0",
+    "prettier": "3.9.6",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
+    "typescript-eslint": "8.70.0",
     "vite": "^7.3.1"
   },
   "packageManager": "pnpm@10.23.0"

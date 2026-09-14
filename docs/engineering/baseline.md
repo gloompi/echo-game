@@ -1,24 +1,41 @@
-# Refactor evidence and remaining verification
+# Verification evidence â€” 14 September 2026
 
-Date: 2026-09-14. Starting main commit: `dfd1df1d85c558a2aac3efb4c671abaee9ae1f4a`. Work branch: `refactor/quality-foundation`.
+Branch: `refactor/quality-foundation`. This continuation starts from `5ab1cb65cd70f285b44f779099b226c4feb20d69`, following the initial foundation based on main `dfd1df1d85c558a2aac3efb4c671abaee9ae1f4a`.
 
-## Observed passing checks
+## Native Windows execution
 
-- 34 isolated network tests passed: 13 unchanged connection/WebTransport tests from the starting revision plus 21 new policy/lifecycle tests. Sources were transpiled using the available TypeScript 5.8.3 compiler and executed with Node 22.16.0. This is not the repository's locked `tsx`/TypeScript installation and not the entire TS test suite.
-- 22 new verification/lint/hook tooling tests passed with Node 22.16.0. Hook tests used actual temporary Git repositories.
-- Strict typechecking passed for `clock.ts`, `invite.ts`, and `transport-config.ts` with TypeScript 5.8.3.
-- Strict `checkJs` passed for the new quality scripts/tests using TypeScript 5.8.3 and the available Node declarations, not a frozen project install.
+The full `pnpm verify` run passed all 15 verification groups after the Rust server decomposition, client sampling/UI extraction, typed ESLint/Prettier rollout and regression fixes. The actual production Rust server and built client were started locally, and Chromium rendered WebGL and connected over native WebTransport. No mock backend or hidden-player debug hooks were used by E2E.
 
-## Not established
+Observed environment: Windows x64, Node 24.11.1, pnpm 10.23.0, Rust/Cargo 1.98.1, project TypeScript 5.9.3, Playwright 1.63.0, Vite 7.3.6. Dependencies came from the real project lockfiles; the formatter/linter installation generated a genuine pnpm lockfile update. Main and the pre-existing unfinished working directory were not modified.
 
-No passing result is claimed for the full project typecheck, all-source lint, complete TS suite, Rust compilation/formatting/Clippy/tests, production build, fixture parity, launcher/network integration, or actual browser E2E. The Rust/history tests and new E2E have been added but were not executed against the real application here.
+| Check                                              | Observed result                                                                   |
+| -------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Full project TypeScript check                      | Passed, including unused-local/parameter checks                                   |
+| Strict quality-tooling checkJs                     | Passed                                                                            |
+| Typed ESLint + project import-boundary checker     | Passed, zero warnings                                                             |
+| Prettier and rustfmt                               | Passed                                                                            |
+| Quality-tooling/hook tests                         | 30 passed, 0 failed, 0 skipped                                                    |
+| TypeScript unit tests                              | 129 passed, 0 failed, 0 skipped                                                   |
+| Generated maps and TS/Rust fixtures                | Passed without changing fixture expectations                                      |
+| Launcher integration                               | 1 passed; 1 pre-existing POSIX-only mock-tunnel lifecycle test skipped on Windows |
+| Rust workspace unit/integration tests              | 79 passed, 0 failed, 0 ignored; doc-test command passed (0 doc tests)             |
+| Clippy workspace/all-targets with warnings denied  | Passed                                                                            |
+| Production client and release server builds        | Passed                                                                            |
+| Live Rust/native Chromium WebTransport integration | 1 passed, 0 failed, 0 skipped                                                     |
+| Real-app browser E2E                               | 9 passed, 0 failed; retries disabled                                              |
 
-The authoring environment had no Cargo/Rust/pnpm or project dependency installation, and direct network downloads were unavailable. A diagnostic GitHub Actions run also failed before recording any build/test steps: https://github.com/gloompi/echo-game/actions/runs/34839797366 (including a retry). The connector returned no step/log evidence explaining the startup failure. Its cause was not established; this is not evidence that project tests failed or passed. The temporary diagnostic workflow is removed from the final tree.
+The nine browser tests include hider ability/skin tuning, all four seeker weapons and scan, menu/practice WebGL, two-player lobby settings, delayed-Hider feed privacy, the complete create/join/play/move/return/leave/rejoin journey, input-setting persistence, host map settings, and two-client play in both authored Blender worlds.
 
-## Merge blockers / unfinished work
+## Initial baseline and regressions fixed
 
-1. Restore a runner or development environment with the real locked dependencies and Rust toolchain. Run `pnpm verify` and fix every failure, including likely pre-existing Rust formatting/Clippy debt. Run the actual two-browser journey and retain its diagnostics.
-2. Configure required `quality-gate` branch protection/ruleset after verifying its job name on the PR. Repository instructions/hooks alone cannot guarantee every future session obeys them.
-3. Continue decomposing `client/main.ts` and `echo-server/src/main.rs`, complete deep server-message validation, migrate legacy JS tooling to typechecked code, and add a complete typed-ESLint/style-formatter setup with a genuine lockfile update. These are not completed by the smaller AST checker or module split.
+Running the untouched starting revision on the same machine established passing compilation, Rust tests and live networking, but failed rustfmt/Clippy and the new E2E fixture. Eight of nine original browser tests passed; the ninth started tracing twice. Playwright Test now owns tracing, avoiding overlapping manual traces. Cleanup failures no longer mask the original test error.
 
-Keep the PR draft while required checks are failing or unverified. Do not replace this evidence with an all-green statement merely because configuration files exist. Future sessions should update this document only with observed results tied to their revision.
+The refactor added deterministic configuration, protocol and bounded-control-queue tests on Rust; snapshot interpolation/cache lifecycle and DOM policy tests on TypeScript; and formatter/Windows subprocess regressions in tooling. A protocol regression exposed surplus fields being accepted by serde unit variants: fieldless commands now use empty struct variants with strict negative tests.
+
+The earlier isolated Linux checks and runner limitations recorded in the initial PR are historical; they are not the current local verification baseline. The PR's latest execution comment should identify the exact committed revision and hosted check status. Do not infer hosted CI success from this Windows run.
+
+## Remaining scope and enforcement
+
+Hosted Actions, Linux/macOS, Docker, public Internet UDP reachability and the POSIX-only mock-tunnel lifecycle are not established by this Windows execution. The existing multi-platform tooling jobs and Linux full-app CI remain configured; required branch protection/rulesets are still an administrator setting and have not been installed by a workflow file or local Git hook.
+
+Further client composition extraction, full deep runtime validation of server messages, and broader legacy-JavaScript checkJs migration remain incremental improvements. Keep the PR draft while required hosted checks are failing or unverified. Update this record only with executed results; never count a skip or unavailable tool as a pass.

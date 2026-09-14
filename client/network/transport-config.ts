@@ -22,11 +22,19 @@ export function readTransportConfig(value: unknown): TransportConfig {
   if (!transport || typeof transport !== 'object') {
     throw new Error('The server has no WebTransport endpoint configured.');
   }
-  if (!('url' in transport) || typeof transport.url !== 'string'
-    || !('protocolVersion' in transport) || typeof transport.protocolVersion !== 'number') {
+  if (
+    !('url' in transport) ||
+    typeof transport.url !== 'string' ||
+    !('protocolVersion' in transport) ||
+    typeof transport.protocolVersion !== 'number'
+  ) {
     throw new Error('Invalid WebTransport configuration.');
   }
-  if ('loopbackUrl' in transport && transport.loopbackUrl != null && typeof transport.loopbackUrl !== 'string') {
+  if (
+    'loopbackUrl' in transport &&
+    transport.loopbackUrl != null &&
+    typeof transport.loopbackUrl !== 'string'
+  ) {
     throw new Error('Invalid local WebTransport endpoint.');
   }
   const hashes = 'certificateHashes' in transport ? transport.certificateHashes : undefined;
@@ -37,15 +45,24 @@ export function readTransportConfig(value: unknown): TransportConfig {
     url: transport.url,
     protocolVersion: transport.protocolVersion,
     certificateHashes: hashes,
-    loopbackUrl: 'loopbackUrl' in transport && typeof transport.loopbackUrl === 'string'
-      ? transport.loopbackUrl : undefined,
+    loopbackUrl:
+      'loopbackUrl' in transport && typeof transport.loopbackUrl === 'string'
+        ? transport.loopbackUrl
+        : undefined,
   };
 }
 
 function validHashes(value: unknown): value is number[][] {
-  return Array.isArray(value) && value.length <= 2 && value.every(hash =>
-    Array.isArray(hash) && hash.length === 32
-      && hash.every(byte => Number.isInteger(byte) && byte >= 0 && byte <= 255));
+  return (
+    Array.isArray(value) &&
+    value.length <= 2 &&
+    value.every(
+      (hash) =>
+        Array.isArray(hash) &&
+        hash.length === 32 &&
+        hash.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255),
+    )
+  );
 }
 
 /** Pure endpoint policy: it can be tested without constructing a QUIC connection. */
@@ -74,8 +91,13 @@ export function resolveTransportConfig(
   }
   return {
     endpoint: endpoint.href,
-    options: hashes?.length ? {
-      serverCertificateHashes: hashes.map(hash => ({ algorithm: 'sha-256', value: new Uint8Array(hash) })),
-    } : {},
+    options: hashes?.length
+      ? {
+          serverCertificateHashes: hashes.map((hash) => ({
+            algorithm: 'sha-256',
+            value: new Uint8Array(hash),
+          })),
+        }
+      : {},
   };
 }

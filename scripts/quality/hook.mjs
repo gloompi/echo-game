@@ -23,7 +23,9 @@ function git(root, args, env) {
 export function checkedRevision(root, kind, env = process.env) {
   git(root, ['diff', '--quiet', '--ignore-submodules=none'], env);
   if (git(root, ['ls-files', '--others', '--exclude-standard'], env)) {
-    throw new Error('Untracked files are present. Stage or explicitly ignore them before verification.');
+    throw new Error(
+      'Untracked files are present. Stage or explicitly ignore them before verification.',
+    );
   }
   if (kind === 'pre-push') {
     git(root, ['diff', '--cached', '--quiet'], env);
@@ -40,7 +42,9 @@ export function validatePush(input, head) {
     const localSha = fields[1];
     if (/^0+$/.test(localSha)) continue; // Deleting a remote ref does not publish code.
     if (localSha !== head) {
-      throw new Error('Check out the commit being pushed and verify it; this hook only verifies HEAD.');
+      throw new Error(
+        'Check out the commit being pushed and verify it; this hook only verifies HEAD.',
+      );
     }
   }
 }
@@ -48,17 +52,22 @@ export function validatePush(input, head) {
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
     const kind = process.argv[2];
-    if (kind !== 'pre-commit' && kind !== 'pre-push') throw new Error('Expected pre-commit or pre-push.');
+    if (kind !== 'pre-commit' && kind !== 'pre-push')
+      throw new Error('Expected pre-commit or pre-push.');
     const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
     const before = checkedRevision(root, kind);
     if (kind === 'pre-push') validatePush(readFileSync(0, 'utf8'), before);
     const args = [joinVerification(root), ...(kind === 'pre-commit' ? ['--quick'] : [])];
     const result = spawnSync(process.execPath, args, { cwd: root, stdio: 'inherit' });
-    if (result.error || result.status !== 0) throw new Error('Verification failed; nothing was committed or pushed by this hook.');
-    if (checkedRevision(root, kind) !== before) throw new Error('The index or HEAD changed during verification. Run the hook again.');
+    if (result.error || result.status !== 0)
+      throw new Error('Verification failed; nothing was committed or pushed by this hook.');
+    if (checkedRevision(root, kind) !== before)
+      throw new Error('The index or HEAD changed during verification. Run the hook again.');
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
-    console.error('Hooks require a fully staged working tree (pre-commit), or a clean HEAD (pre-push). No stash or reset was performed.');
+    console.error(
+      'Hooks require a fully staged working tree (pre-commit), or a clean HEAD (pre-push). No stash or reset was performed.',
+    );
     process.exitCode = 1;
   }
 }

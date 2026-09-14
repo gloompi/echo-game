@@ -25,7 +25,7 @@ Node is frontend/build/launcher tooling; the game server is `crates/echo-server`
 
 The root `pnpm verify` command is the common contract for local work, Git hooks, and CI. Hooks are installed per checkout, can be bypassed, and do not replace required GitHub checks. See `docs/engineering/verification.md` for their deliberately strict staging policy and remaining repository-administration setup.
 
-The current JS lint is a small AST-based architecture/safety checker, not a complete typed ESLint configuration. Legacy JS tooling and large client/server entry points still need further migration; see the baseline rather than assuming this branch completed every refactor.
+JS/TS lint uses ESLint recommended rules and type-aware TypeScript rules, plus the project import-boundary checker. Prettier and rustfmt are required read-only verification gates. Do not disable unsafe-assignment, promise-handling or unused-code checks to make a change pass. Root `.mjs` tooling is linted; strict checkJs currently covers `scripts/quality/` and its tests. See the architecture document for remaining incremental extractions.
 
 ## Local play and secrets
 

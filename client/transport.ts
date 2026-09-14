@@ -1,6 +1,15 @@
-import { encodeFrame, FrameDecoder, MAX_CONTROL_BYTES, MAX_SNAPSHOT_BYTES } from '../shared/framing.js';
+import {
+  encodeFrame,
+  FrameDecoder,
+  MAX_CONTROL_BYTES,
+  MAX_SNAPSHOT_BYTES,
+} from '../shared/framing.js';
 import type { ServerMessage } from '../shared/types.js';
-import { readTransportConfig, resolveTransportConfig, type TransportConfig } from './network/transport-config.js';
+import {
+  readTransportConfig,
+  resolveTransportConfig,
+  type TransportConfig,
+} from './network/transport-config.js';
 
 export type { TransportConfig } from './network/transport-config.js';
 
@@ -35,11 +44,15 @@ const MAX_SNAPSHOT_STREAMS = 4;
 const STREAM_TIMEOUT_MS = 2_000;
 
 const browserFactory: TransportFactory = (url, options) => {
-  const Constructor = (globalThis as unknown as {
-    WebTransport?: new (url: string, options: unknown) => BrowserTransport;
-  }).WebTransport;
+  const Constructor = (
+    globalThis as unknown as {
+      WebTransport?: new (url: string, options: unknown) => BrowserTransport;
+    }
+  ).WebTransport;
   if (!Constructor) {
-    throw new Error('This browser does not support WebTransport. Use a WebTransport-capable browser on HTTPS or localhost.');
+    throw new Error(
+      'This browser does not support WebTransport. Use a WebTransport-capable browser on HTTPS or localhost.',
+    );
   }
   return new Constructor(url, options);
 };
@@ -73,7 +86,9 @@ export class WebTransportTransport implements GameTransport {
     private readonly factory: TransportFactory = browserFactory,
   ) {}
 
-  get bufferedAmount(): number { return this.queued; }
+  get bufferedAmount(): number {
+    return this.queued;
+  }
 
   async connect(
     url: string,
@@ -83,13 +98,16 @@ export class WebTransportTransport implements GameTransport {
     this.close();
     const generation = this.generation;
     this.closedCallback = closed;
-    const config = this.config ?? await this.discover(url);
+    const config = this.config ?? (await this.discover(url));
     if (generation !== this.generation) throw new Error('Connection cancelled.');
     const hostname = typeof location === 'undefined' ? undefined : location.hostname;
     const { endpoint, options } = resolveTransportConfig(config, hostname);
     const transport = this.factory(endpoint, options);
     this.transport = transport;
-    void transport.closed.then(() => this.fail(generation), () => this.fail(generation));
+    void transport.closed.then(
+      () => this.fail(generation),
+      () => this.fail(generation),
+    );
     try {
       await transport.ready;
       if (generation !== this.generation) {
@@ -103,8 +121,10 @@ export class WebTransportTransport implements GameTransport {
       }
       this.writer = stream.writable.getWriter();
       void this.writer.closed.catch(() => this.fail(generation));
-      void this.read(stream.readable, false, message, generation)
-        .then(() => this.fail(generation), () => this.fail(generation));
+      void this.read(stream.readable, false, message, generation).then(
+        () => this.fail(generation),
+        () => this.fail(generation),
+      );
       void this.acceptSnapshots(transport, message, generation).catch(() => this.fail(generation));
     } catch (error) {
       if (generation === this.generation) this.close();
@@ -132,9 +152,11 @@ export class WebTransportTransport implements GameTransport {
         if (active.size >= MAX_SNAPSHOT_STREAMS) await Promise.race(active);
         const item = await reader.read();
         if (item.done) break;
-        const task = this.read(item.value, true, message, generation).catch(() => {
-          // Reset/expired snapshot streams are intentionally disposable.
-        }).finally(() => active.delete(task));
+        const task = this.read(item.value, true, message, generation)
+          .catch(() => {
+            // Reset/expired snapshot streams are intentionally disposable.
+          })
+          .finally(() => active.delete(task));
         active.add(task);
       }
     } finally {
@@ -154,9 +176,11 @@ export class WebTransportTransport implements GameTransport {
     const decoder = new FrameDecoder(snapshot ? MAX_SNAPSHOT_BYTES : MAX_CONTROL_BYTES);
     let count = 0;
     let snapshotMessage: ServerMessage | undefined;
-    const expiry = snapshot ? setTimeout(() => {
-      void reader.cancel('stale snapshot').catch(() => {});
-    }, STREAM_TIMEOUT_MS) : undefined;
+    const expiry = snapshot
+      ? setTimeout(() => {
+          void reader.cancel('stale snapshot').catch(() => {});
+        }, STREAM_TIMEOUT_MS)
+      : undefined;
     try {
       while (generation === this.generation) {
         const item = await reader.read();
@@ -205,25 +229,32 @@ export class WebTransportTransport implements GameTransport {
     const writer = this.writer;
     const generation = this.generation;
     this.queued += bytes.length;
-    this.tail = this.tail.then(async () => {
-      if (generation !== this.generation) return;
-      let timer: ReturnType<typeof setTimeout> | undefined;
-      try {
-        await Promise.race([
-          writer.write(bytes),
-          new Promise<never>((_, reject) => {
-            timer = setTimeout(() => reject(new Error('Congested connection')), STREAM_TIMEOUT_MS);
-          }),
-        ]);
-      } finally {
-        if (timer !== undefined) clearTimeout(timer);
-        if (generation === this.generation) this.queued -= bytes.length;
-      }
-    }).catch(() => this.fail(generation));
+    this.tail = this.tail
+      .then(async () => {
+        if (generation !== this.generation) return;
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        try {
+          await Promise.race([
+            writer.write(bytes),
+            new Promise<never>((_, reject) => {
+              timer = setTimeout(
+                () => reject(new Error('Congested connection')),
+                STREAM_TIMEOUT_MS,
+              );
+            }),
+          ]);
+        } finally {
+          if (timer !== undefined) clearTimeout(timer);
+          if (generation === this.generation) this.queued -= bytes.length;
+        }
+      })
+      .catch(() => this.fail(generation));
     return true;
   }
 
-  sendLatest(data: string): boolean { return this.sendReliable(data); }
+  sendLatest(data: string): boolean {
+    return this.sendReliable(data);
+  }
 
   private fail(generation: number): void {
     if (generation !== this.generation) return;

@@ -1,10 +1,18 @@
 import { test, expect } from './fixtures.js';
 
-test('friends create, join, play, move, return to lobby, leave, and rejoin', async ({ players, request }) => {
+test('friends create, join, play, move, return to lobby, leave, and rejoin', async ({
+  players,
+  request,
+}) => {
   const { host, friend } = players;
   const health = await request.get('/health');
   expect(health.ok()).toBe(true);
-  expect(await health.json()).toMatchObject({ ok: true, server: 'rust', transport: 'webtransport', protocolVersion: 3 });
+  expect(await health.json()).toMatchObject({
+    ok: true,
+    server: 'rust',
+    transport: 'webtransport',
+    protocolVersion: 3,
+  });
 
   await test.step('create a private room and configure it through the real UI', async () => {
     await host.goto('/');
@@ -34,7 +42,10 @@ test('friends create, join, play, move, return to lobby, leave, and rejoin', asy
     await friend.getByRole('button', { name: 'Hider', exact: true }).click();
     await friend.goto(`/?room=${encodeURIComponent(code)}`);
     await expect(friend.locator('#loading')).toBeHidden();
-    await friend.locator('#join-form').getByRole('button', { name: /JOIN ROOM/ }).click();
+    await friend
+      .locator('#join-form')
+      .getByRole('button', { name: /JOIN ROOM/ })
+      .click();
     await expect(host.locator('.lobby-player')).toHaveCount(2);
     await expect(friend.locator('.lobby-player')).toHaveCount(2);
     await expect(friend.locator('#room-delay')).toHaveValue(delayValue);
@@ -58,10 +69,15 @@ test('friends create, join, play, move, return to lobby, leave, and rejoin', asy
     await friend.locator('#capture').click();
     await friend.keyboard.down('KeyW');
     try {
-      await expect.poll(async () => {
-        const readout = await friend.locator('#movement-speed').innerText();
-        return Number(readout.match(/·\s*([\d.]+)\s*m\/s/)?.[1] ?? 0);
-      }, { timeout: 5_000, message: 'The hider movement HUD should show actual running speed.' }).toBeGreaterThan(0.5);
+      await expect
+        .poll(
+          async () => {
+            const readout = await friend.locator('#movement-speed').innerText();
+            return Number(readout.match(/·\s*([\d.]+)\s*m\/s/)?.[1] ?? 0);
+          },
+          { timeout: 5_000, message: 'The hider movement HUD should show actual running speed.' },
+        )
+        .toBeGreaterThan(0.5);
     } finally {
       await friend.keyboard.up('KeyW');
     }
@@ -73,11 +89,17 @@ test('friends create, join, play, move, return to lobby, leave, and rejoin', asy
     await host.locator('#host-return-lobby').click();
     await expect(host.locator('#lobby')).toBeVisible();
     await expect(friend.locator('#lobby')).toBeVisible();
-    await friend.locator('#lobby').getByRole('button', { name: /LEAVE ROOM/ }).click();
+    await friend
+      .locator('#lobby')
+      .getByRole('button', { name: /LEAVE ROOM/ })
+      .click();
     await expect(friend.locator('#menu')).toBeVisible();
     await expect(host.locator('.lobby-player')).toHaveCount(1);
     await friend.goto(`/?room=${encodeURIComponent(code)}`);
-    await friend.locator('#join-form').getByRole('button', { name: /JOIN ROOM/ }).click();
+    await friend
+      .locator('#join-form')
+      .getByRole('button', { name: /JOIN ROOM/ })
+      .click();
     await expect(host.locator('.lobby-player')).toHaveCount(2);
     await expect(friend.locator('#lobby')).toBeVisible();
     await expect(friend.locator('#room-delay')).toHaveValue(delayValue);

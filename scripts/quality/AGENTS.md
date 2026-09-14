@@ -4,6 +4,8 @@ Inherit `scripts/AGENTS.md`. These files are strict `checkJs` code covered by `t
 
 `verify.mjs` is the common command registry for local work and CI. Missing tools and blocked prerequisites are failures, not successful skips. Keep independent checks running after an unrelated failure and show an explicit summary. Browser checks require successful production builds.
 
-The AST linter is intentionally a small architecture/safety policy; do not claim it replaces typed ESLint. Add tests for every new rule, including string/comment false positives and all relevant import forms. Never add exceptions solely to green a migration.
+Typed ESLint is the language-safety gate; the smaller AST checker additionally enforces project-specific dependency direction. Prettier validates hand-maintained text/code while generated fixture formatting belongs to the generators. Add tests for every new rule, including string/comment false positives and all relevant import forms. Never add exceptions solely to green a migration.
 
 Hooks must not stash/reset user files or test a different tree than the one committed/pushed. Preserve existing custom hook configuration. Test hook behavior using temporary Git repositories. E2E startup must use the real release binary, a built client, loopback ports, sanitized environment, and isolated empty `.env`.
+
+Use `commandInvocation` for Windows package-manager shims. Prefer the pnpm-provided JavaScript entrypoint; the explicit cmd fallback accepts only fixed allowlisted registry tokens, never filenames or arbitrary user arguments. Do not reintroduce `spawnSync` with `shell: true` and an argument array.

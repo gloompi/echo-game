@@ -1,8 +1,28 @@
+import { createElementLookup, setText } from './ui/dom.js';
+import { RosterPanels } from './ui/roster-panels.js';
+import { SnapshotBuffer } from './game/snapshot-buffer.js';
 import * as T from 'three';
 import { CFG } from '../shared/config.js';
 import { DEFAULT_SETTINGS, delayLabel, resolveSettings } from '../shared/settings.js';
-import { angleLerp, aimDirection, arenaRay, arenaOccluded, clamp, move, bodyHeight, eyeHeight, configureMovement } from '../shared/physics.js';
-import { neutralInput, type Input, type Motor, type Pose, type Preference, type Snapshot, type GameEvent, type PublicPlayer } from '../shared/types.js';
+import {
+  aimDirection,
+  arenaRay,
+  arenaOccluded,
+  clamp,
+  move,
+  bodyHeight,
+  eyeHeight,
+  configureMovement,
+} from '../shared/physics.js';
+import {
+  neutralInput,
+  type Input,
+  type Motor,
+  type Preference,
+  type Snapshot,
+  type GameEvent,
+  type PublicPlayer,
+} from '../shared/types.js';
 import { Character, makeWeapon } from './models.js';
 import { makeStage, CYAN } from './world.js';
 import { makeArena } from './map-world.js';
@@ -16,82 +36,1029 @@ import { CombatFX } from './combat-fx.js';
 import { CombatEffectPool } from './effect-pool.js';
 import { Connection } from './network.js';
 import { GameAudio } from './audio.js';
-const elementCache=new Map<string,HTMLElement>();
-const $=<E extends HTMLElement=HTMLElement>(id:string)=>{let value=elementCache.get(id);if(!value){value=document.getElementById(id)!;elementCache.set(id,value);}return value as E;};
-const setText=(element:HTMLElement,value:string)=>{if(element.textContent!==value)element.textContent=value;};
-const canvas=$<HTMLCanvasElement>('game');
-const renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.13;renderer.shadowMap.enabled=localStorage.getItem('echo-shadows')!=='off';renderer.shadowMap.type=T.PCFShadowMap;
-let renderScale=Number(localStorage.getItem('echo-render-scale')??1);if(!Number.isFinite(renderScale)||renderScale<.6||renderScale>1)renderScale=1;
-function resizeRenderer(){renderer.setPixelRatio(Math.min(devicePixelRatio,1.75)*renderScale);renderer.setSize(innerWidth,innerHeight);camera.aspect=stageCamera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();stageCamera.updateProjectionMatrix();}
-const stage=makeStage(),camera=new T.PerspectiveCamera(72,innerWidth/innerHeight,.05,180),stageCamera=new T.PerspectiveCamera(36,innerWidth/innerHeight,.1,100);let arena:ReturnType<typeof makeArena>|null=null;
-let foregroundGun=makeWeapon();foregroundGun.scale.setScalar(.47);foregroundGun.position.set(.27,-.33,-.49);foregroundGun.rotation.y=Math.PI;camera.add(foregroundGun);resizeRenderer();
-const heroHider=new Character('hider'),heroSeeker=new Character('seeker'),heroGhost=new Character('hider',true);heroHider.group.scale.setScalar(1.23);heroHider.group.position.set(-.8,0,.85);heroHider.group.rotation.y=.22;heroSeeker.group.scale.setScalar(1.3);heroSeeker.group.position.set(1.45,0,-.1);heroSeeker.group.rotation.y=-.68;heroGhost.group.scale.setScalar(1.23);heroGhost.group.position.set(.55,0,-1.5);heroGhost.group.rotation.y=.3;stage.stage.add(heroHider.group,heroSeeker.group,heroGhost.group);
-const audio=new GameAudio();let showEcho=localStorage.getItem('echo-show-echo')!=='off';let preference:Preference=(localStorage.getItem('echo-role') as Preference)||'auto';if(!['hider','seeker','auto'].includes(preference))preference='auto';
-let snapshot:Snapshot|null=null,predicted:Motor|null=null,sequence=0,currentRound=-1,pending:Input[]=[],frames:Snapshot[]=[],active=false,connecting=false,yaw=0,pitch=0,shoot=false,dragging=false,localCharacter:Character|null=null,ownEcho:Character|null=null;
-let roomSettings=resolveSettings(DEFAULT_SETTINGS),settingsVersion=-1,renderToken=0,hidersAlive=0,ownBaits=0;
-const rosterById=new Map<string,PublicPlayer>(),frameIndexes=new WeakMap<Snapshot,ReadonlyMap<string,Pose>>(),interpolatedById=new Map<string,Pose>(),interpolatedPlayers:Pose[]=[];
-const correction=new T.Vector3(),keys=new Set<string>(),seenEvents=new Set<number>();
-interface RemoteActor{character:Character;label:HTMLDivElement;seen:number;text:string;visible:boolean;past:boolean}
-const remote=new Map<string,RemoteActor>(),plateLayer=document.createElement('div');plateLayer.id='nameplates';$('hud').append(plateLayer);
-let toastTimer:ReturnType<typeof setTimeout>,uiAccumulator=0,accumulator=0,lastTime=performance.now(),gunKick=0,lastLobbyKey='',lastScoreKey='',scoreHeld=false,lastToastAt=0,menuRenderedAt=0;
-const connection=new Connection(onSnapshot,reason=>{leave(false);toast(reason,7000);},reason=>toast(reason,5000)),roomControls=new RoomControls(message=>connection.send(message),toast),controls=new PlayerControls(toast),combatUI=new CombatUI(message=>connection.send(message)),combatFX=new CombatFX(),effects=new CombatEffectPool(()=>arena?.scene??stage.scene);
-const movementReadout=document.createElement('div');movementReadout.id='movement-readout';movementReadout.innerHTML='<span id=movement-speed></span><span id=mirror-hint></span>';$('hud').append(movementReadout);
-const resolutionLabel=document.createElement('label');resolutionLabel.className='skin-choice';resolutionLabel.textContent='Render resolution';const resolutionSelect=document.createElement('select');resolutionSelect.setAttribute('aria-label','Render resolution');for(const [label,value] of [['Performance','0.65'],['Balanced','0.85'],['Native','1']]){const option=document.createElement('option');option.value=value;option.textContent=label;resolutionSelect.append(option);}resolutionSelect.value=String(renderScale);resolutionSelect.onchange=()=>{renderScale=Number(resolutionSelect.value);localStorage.setItem('echo-render-scale',String(renderScale));resizeRenderer();};resolutionLabel.append(resolutionSelect);$('modal-settings').append(resolutionLabel);
-const perfEnabled=new URL(location.href).searchParams.get('perf')==='1',perfPanel=perfEnabled?document.createElement('pre'):null;if(perfPanel){perfPanel.style.cssText='position:fixed;right:8px;top:8px;z-index:9999;margin:0;padding:6px 8px;background:#000a;color:#9ff;font:11px monospace;pointer-events:none';document.body.append(perfPanel);}let perfFrames=0,perfAt=performance.now();
-const ammoSuffix=document.querySelector<HTMLElement>('.ammo > span')!,ammoKey=document.querySelector<HTMLElement>('.ammo kbd')!,healthHearts=[...$('health').querySelectorAll<HTMLElement>('i')],healthText=$('health').querySelector<HTMLElement>('span')!;
-function toast(text:string,ms=2700){clearTimeout(toastTimer);setText($('toast'),text);$('toast').classList.add('show');toastTimer=setTimeout(()=>$('toast').classList.remove('show'),ms);}
-function setBusy(value:boolean){connecting=value;for(const id of ['quick-play','practice','create-room'])$<HTMLButtonElement>(id).disabled=value;}
-function chooseRole(value:Preference){preference=value;localStorage.setItem('echo-role',value);$<HTMLSelectElement>('lobby-preference').value=value;for(const el of document.querySelectorAll<HTMLButtonElement>('.role-choice')){const yes=el.dataset.role===value;el.classList.toggle('active',yes);el.setAttribute('aria-pressed',String(yes));}}
-chooseRole(preference);$<HTMLInputElement>('player-name').value=localStorage.getItem('echo-name')||'Runner';for(const el of document.querySelectorAll<HTMLButtonElement>('.role-choice'))el.onclick=()=>chooseRole(el.dataset.role as Preference);
-function join(mode:'create'|'join'|'quick'|'practice',room?:string){if(connecting)return;audio.unlock();setBusy(true);sequence=0;currentRound=-1;frames=[];pending=[];seenEvents.clear();lastLobbyKey='';lastScoreKey='';accumulator=0;settingsVersion=-1;rosterById.clear();const name=$<HTMLInputElement>('player-name').value.trim().slice(0,18)||'Runner';localStorage.setItem('echo-name',name);connection.connect({type:'join',mode,room,name,preference,skin:combatUI.skin});}
-$('quick-play').onclick=()=>join('quick');$('practice').onclick=()=>join('practice');$('create-room').onclick=()=>join('create');$('start-round').onclick=()=>{audio.unlock();connection.send({type:'start'});};$('join-form').onsubmit=event=>{event.preventDefault();$<HTMLDialogElement>('modal-join').close();join('join',$<HTMLInputElement>('join-code').value.toUpperCase());};$<HTMLSelectElement>('lobby-preference').onchange=event=>{const value=(event.target as HTMLSelectElement).value as Preference;chooseRole(value);connection.send({type:'preference',value});};$<HTMLInputElement>('fill-bots').onchange=event=>connection.send({type:'bots',enabled:(event.target as HTMLInputElement).checked});$('nav-play').onclick=()=>$<HTMLButtonElement>('quick-play').focus();
-for(const el of document.querySelectorAll<HTMLButtonElement>('[data-modal]'))el.onclick=()=>{if(document.pointerLockElement)document.exitPointerLock();active=false;keys.clear();controls.clear();shoot=false;$<HTMLDialogElement>(`modal-${el.dataset.modal}`).showModal();};for(const el of document.querySelectorAll<HTMLButtonElement>('.close-modal'))el.onclick=()=>el.closest('dialog')?.close();for(const dialog of document.querySelectorAll<HTMLDialogElement>('dialog'))dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
-function soundButtons(){for(const button of document.querySelectorAll<HTMLButtonElement>('.sound-toggle')){button.classList.toggle('muted',!audio.enabled);setText(button,audio.enabled?'♪':'∅');button.setAttribute('aria-pressed',String(audio.enabled));}}for(const button of document.querySelectorAll<HTMLButtonElement>('.sound-toggle'))button.onclick=()=>{audio.unlock();audio.enabled=!audio.enabled;localStorage.setItem('echo-sound',audio.enabled?'on':'off');soundButtons();};soundButtons();$<HTMLInputElement>('volume').value=String(audio.volume);$<HTMLInputElement>('shadows').checked=renderer.shadowMap.enabled;$<HTMLInputElement>('show-echo').checked=showEcho;$<HTMLInputElement>('volume').oninput=e=>{audio.volume=Number((e.target as HTMLInputElement).value);localStorage.setItem('echo-volume',String(audio.volume));audio.unlock();audio.play('wave');};$<HTMLInputElement>('shadows').onchange=e=>{renderer.shadowMap.enabled=(e.target as HTMLInputElement).checked;localStorage.setItem('echo-shadows',renderer.shadowMap.enabled?'on':'off');};$<HTMLInputElement>('show-echo').onchange=e=>{showEcho=(e.target as HTMLInputElement).checked;localStorage.setItem('echo-show-echo',showEcho?'on':'off');};
-async function invite(){if(!snapshot)return;if(snapshot.practice){toast('Practice is solo. Create a private room to invite friends.');return;}try{const url=await connection.invite(snapshot.room);try{await navigator.clipboard.writeText(url);toast('Invite link copied. Keep the host and UDP endpoint running.');}catch{window.prompt('Copy this invite link:',url);}}catch(error){toast(error instanceof Error?error.message:'Could not create invitation.');}}for(const id of ['hud-room','lobby-code','pause-invite'])$(id).onclick=()=>void invite();
-function pause(){if(!snapshot||snapshot.phase==='lobby')return;active=false;keys.clear();controls.clear();shoot=false;if(document.pointerLockElement)document.exitPointerLock();$('pause').classList.remove('hidden');$('capture').classList.add('hidden');}
-function capture(){if(!snapshot||snapshot.phase==='lobby'||snapshot.phase==='finished'||snapshot.self.spectating||!snapshot.self.alive)return;audio.unlock();active=true;$('pause').classList.add('hidden');$('capture').classList.add('hidden');const result=canvas.requestPointerLock();if(result)void result.catch(()=>{active=true;toast('Mouse capture unavailable. Hold the right mouse button to look.');});}
-$('pause-button').onclick=pause;$('resume').onclick=capture;$('capture').onclick=capture;for(const el of document.querySelectorAll<HTMLButtonElement>('.leave-room'))el.onclick=()=>leave(true);
-function clearArenaActors(){localCharacter?.dispose();localCharacter=null;ownEcho?.dispose();ownEcho=null;for(const obj of remote.values()){obj.character.dispose();obj.label.remove();}remote.clear();effects.clear();combatFX.clear();}
-function leave(notify:boolean){connection.close();active=false;connecting=false;snapshot=null;predicted=null;frames=[];pending=[];currentRound=-1;settingsVersion=-1;keys.clear();controls.clear();shoot=false;if(document.pointerLockElement)document.exitPointerLock();for(const id of ['hud','lobby','pause','scoreboard'])$(id).classList.add('hidden');$('menu').classList.remove('hidden');setBusy(false);clearArenaActors();combatUI.clear();lastLobbyKey='';lastScoreKey='';rosterById.clear();const url=new URL(location.href);url.searchParams.delete('room');history.replaceState(null,'',url.pathname+url.search+url.hash);document.body.classList.remove('hider');if(notify)toast('You left the room.');}
-canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('wheel',e=>{if(active){e.preventDefault();controls.wheel(e.deltaY);}},{passive:false});canvas.addEventListener('mousedown',e=>{if(!active){capture();return;}if(e.button===0)shoot=true;if(e.button===2)dragging=true;});window.addEventListener('mouseup',e=>{if(e.button===0)shoot=false;if(e.button===2)dragging=false;});window.addEventListener('mousemove',e=>{if(!active||(!document.pointerLockElement&&!dragging))return;yaw-=e.movementX*.0021*controls.sensitivity;pitch=clamp(pitch-e.movementY*.0021*controls.sensitivity,-1.2,1.2);});document.addEventListener('pointerlockchange',()=>{if(document.pointerLockElement===canvas){active=true;$('capture').classList.add('hidden');}else if(snapshot&&snapshot.phase!=='lobby'&&snapshot.phase!=='finished'){active=false;keys.clear();controls.clear();shoot=false;$('pause').classList.remove('hidden');}});
-window.addEventListener('keydown',e=>{if((e.target as HTMLElement).matches('input,select,textarea')||document.querySelector('dialog[open]'))return;if(e.code==='Tab'&&snapshot&&snapshot.phase!=='lobby'){e.preventDefault();scoreHeld=true;$('scoreboard').classList.remove('hidden');renderScores();return;}if(e.code==='Escape'){if(snapshot&&snapshot.phase!=='lobby')pause();return;}if(active&&controls.handles(e.code)){e.preventDefault();keys.add(normalizeKey(e.code));}});window.addEventListener('keyup',e=>{keys.delete(normalizeKey(e.code));if(e.code==='Tab'){scoreHeld=false;if(snapshot?.phase!=='finished')$('scoreboard').classList.add('hidden');}});window.addEventListener('blur',()=>{keys.clear();controls.clear();shoot=false;dragging=false;if(active)pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden&&active)pause();});window.addEventListener('resize',resizeRenderer);
-function playable(s:Snapshot){return s.self.alive&&!s.self.spectating&&(s.phase==='playing'||(s.phase==='headstart'&&s.self.role==='hider'));}
-function ensureArena(){
-  if(arena&&ACTIVE_MAP.id===roomSettings.mapId)return;
-  if(arena){clearArenaActors();camera.removeFromParent();arena.dispose();}
-  if(ACTIVE_MAP.id!==roomSettings.mapId)selectMap(roomSettings.mapId);
-  const created=makeArena();arena=created;created.scene.add(camera);frames=[];
-  // Static asset diagnostics only: never expose actors or hidden poses through the DOM.
-  canvas.dataset.worldMap=created.assetStatus.mapId;
-  canvas.dataset.worldAsset=created.assetStatus.state;
-  void renderer.compileAsync(created.scene,camera).catch(()=>{});
-  void created.ready.then(()=>{
-    if(arena!==created)return;
-    canvas.dataset.worldAsset=created.assetStatus.state;
-    canvas.dataset.worldMeshes=String(created.assetStatus.meshCount);
-    void renderer.compileAsync(created.scene,camera).catch(()=>{});
+const $ = createElementLookup(document);
+const rosterPanels = new RosterPanels($);
+const canvas = $<HTMLCanvasElement>('game');
+const renderer = new T.WebGLRenderer({
+  canvas,
+  antialias: true,
+  powerPreference: 'high-performance',
+});
+renderer.outputColorSpace = T.SRGBColorSpace;
+renderer.toneMapping = T.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.13;
+renderer.shadowMap.enabled = localStorage.getItem('echo-shadows') !== 'off';
+renderer.shadowMap.type = T.PCFShadowMap;
+let renderScale = Number(localStorage.getItem('echo-render-scale') ?? 1);
+if (!Number.isFinite(renderScale) || renderScale < 0.6 || renderScale > 1) renderScale = 1;
+function resizeRenderer() {
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75) * renderScale);
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = stageCamera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  stageCamera.updateProjectionMatrix();
+}
+const stage = makeStage(),
+  camera = new T.PerspectiveCamera(72, innerWidth / innerHeight, 0.05, 180),
+  stageCamera = new T.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
+let arena: ReturnType<typeof makeArena> | null = null;
+let foregroundGun = makeWeapon();
+foregroundGun.scale.setScalar(0.47);
+foregroundGun.position.set(0.27, -0.33, -0.49);
+foregroundGun.rotation.y = Math.PI;
+camera.add(foregroundGun);
+resizeRenderer();
+const heroHider = new Character('hider'),
+  heroSeeker = new Character('seeker'),
+  heroGhost = new Character('hider', true);
+heroHider.group.scale.setScalar(1.23);
+heroHider.group.position.set(-0.8, 0, 0.85);
+heroHider.group.rotation.y = 0.22;
+heroSeeker.group.scale.setScalar(1.3);
+heroSeeker.group.position.set(1.45, 0, -0.1);
+heroSeeker.group.rotation.y = -0.68;
+heroGhost.group.scale.setScalar(1.23);
+heroGhost.group.position.set(0.55, 0, -1.5);
+heroGhost.group.rotation.y = 0.3;
+stage.stage.add(heroHider.group, heroSeeker.group, heroGhost.group);
+const audio = new GameAudio();
+let showEcho = localStorage.getItem('echo-show-echo') !== 'off';
+let preference: Preference = (localStorage.getItem('echo-role') as Preference) || 'auto';
+if (!['hider', 'seeker', 'auto'].includes(preference)) preference = 'auto';
+let snapshot: Snapshot | null = null,
+  predicted: Motor | null = null,
+  sequence = 0,
+  currentRound = -1,
+  pending: Input[] = [],
+  active = false,
+  connecting = false,
+  yaw = 0,
+  pitch = 0,
+  shoot = false,
+  dragging = false,
+  localCharacter: Character | null = null,
+  ownEcho: Character | null = null;
+let roomSettings = resolveSettings(DEFAULT_SETTINGS),
+  settingsVersion = -1,
+  renderToken = 0,
+  hidersAlive = 0,
+  ownBaits = 0;
+const rosterById = new Map<string, PublicPlayer>();
+const observations = new SnapshotBuffer();
+const correction = new T.Vector3(),
+  keys = new Set<string>(),
+  seenEvents = new Set<number>();
+interface RemoteActor {
+  character: Character;
+  label: HTMLDivElement;
+  seen: number;
+  text: string;
+  visible: boolean;
+  past: boolean;
+}
+const remote = new Map<string, RemoteActor>(),
+  plateLayer = document.createElement('div');
+plateLayer.id = 'nameplates';
+$('hud').append(plateLayer);
+let toastTimer: ReturnType<typeof setTimeout>,
+  uiAccumulator = 0,
+  accumulator = 0,
+  lastTime = performance.now(),
+  gunKick = 0,
+  scoreHeld = false,
+  lastToastAt = 0,
+  menuRenderedAt = 0;
+const connection = new Connection(
+    onSnapshot,
+    (reason) => {
+      leave(false);
+      toast(reason, 7000);
+    },
+    (reason) => toast(reason, 5000),
+  ),
+  roomControls = new RoomControls((message) => connection.send(message), toast),
+  controls = new PlayerControls(toast),
+  combatUI = new CombatUI((message) => connection.send(message)),
+  combatFX = new CombatFX(),
+  effects = new CombatEffectPool(() => arena?.scene ?? stage.scene);
+const movementReadout = document.createElement('div');
+movementReadout.id = 'movement-readout';
+movementReadout.innerHTML = '<span id=movement-speed></span><span id=mirror-hint></span>';
+$('hud').append(movementReadout);
+const resolutionLabel = document.createElement('label');
+resolutionLabel.className = 'skin-choice';
+resolutionLabel.textContent = 'Render resolution';
+const resolutionSelect = document.createElement('select');
+resolutionSelect.setAttribute('aria-label', 'Render resolution');
+for (const [label, value] of [
+  ['Performance', '0.65'],
+  ['Balanced', '0.85'],
+  ['Native', '1'],
+]) {
+  const option = document.createElement('option');
+  option.value = value;
+  option.textContent = label;
+  resolutionSelect.append(option);
+}
+resolutionSelect.value = String(renderScale);
+resolutionSelect.onchange = () => {
+  renderScale = Number(resolutionSelect.value);
+  localStorage.setItem('echo-render-scale', String(renderScale));
+  resizeRenderer();
+};
+resolutionLabel.append(resolutionSelect);
+$('modal-settings').append(resolutionLabel);
+const perfEnabled = new URL(location.href).searchParams.get('perf') === '1',
+  perfPanel = perfEnabled ? document.createElement('pre') : null;
+if (perfPanel) {
+  perfPanel.style.cssText =
+    'position:fixed;right:8px;top:8px;z-index:9999;margin:0;padding:6px 8px;background:#000a;color:#9ff;font:11px monospace;pointer-events:none';
+  document.body.append(perfPanel);
+}
+let perfFrames = 0,
+  perfAt = performance.now();
+const ammoSuffix = document.querySelector<HTMLElement>('.ammo > span')!,
+  ammoKey = document.querySelector<HTMLElement>('.ammo kbd')!,
+  healthHearts = [...$('health').querySelectorAll<HTMLElement>('i')],
+  healthText = $('health').querySelector<HTMLElement>('span')!;
+function toast(text: string, ms = 2700) {
+  clearTimeout(toastTimer);
+  setText($('toast'), text);
+  $('toast').classList.add('show');
+  toastTimer = setTimeout(() => $('toast').classList.remove('show'), ms);
+}
+function setBusy(value: boolean) {
+  connecting = value;
+  for (const id of ['quick-play', 'practice', 'create-room'])
+    $<HTMLButtonElement>(id).disabled = value;
+}
+function chooseRole(value: Preference) {
+  preference = value;
+  localStorage.setItem('echo-role', value);
+  $<HTMLSelectElement>('lobby-preference').value = value;
+  for (const el of document.querySelectorAll<HTMLButtonElement>('.role-choice')) {
+    const yes = el.dataset.role === value;
+    el.classList.toggle('active', yes);
+    el.setAttribute('aria-pressed', String(yes));
+  }
+}
+chooseRole(preference);
+$<HTMLInputElement>('player-name').value = localStorage.getItem('echo-name') || 'Runner';
+for (const el of document.querySelectorAll<HTMLButtonElement>('.role-choice'))
+  el.onclick = () => chooseRole(el.dataset.role as Preference);
+function join(mode: 'create' | 'join' | 'quick' | 'practice', room?: string) {
+  if (connecting) return;
+  audio.unlock();
+  setBusy(true);
+  sequence = 0;
+  currentRound = -1;
+  observations.clear();
+  pending = [];
+  seenEvents.clear();
+  rosterPanels.reset();
+  accumulator = 0;
+  settingsVersion = -1;
+  rosterById.clear();
+  const name = $<HTMLInputElement>('player-name').value.trim().slice(0, 18) || 'Runner';
+  localStorage.setItem('echo-name', name);
+  connection.connect({ type: 'join', mode, room, name, preference, skin: combatUI.skin });
+}
+$('quick-play').onclick = () => join('quick');
+$('practice').onclick = () => join('practice');
+$('create-room').onclick = () => join('create');
+$('start-round').onclick = () => {
+  audio.unlock();
+  connection.send({ type: 'start' });
+};
+$('join-form').onsubmit = (event) => {
+  event.preventDefault();
+  $<HTMLDialogElement>('modal-join').close();
+  join('join', $<HTMLInputElement>('join-code').value.toUpperCase());
+};
+$<HTMLSelectElement>('lobby-preference').onchange = (event) => {
+  const value = (event.target as HTMLSelectElement).value as Preference;
+  chooseRole(value);
+  connection.send({ type: 'preference', value });
+};
+$<HTMLInputElement>('fill-bots').onchange = (event) =>
+  connection.send({ type: 'bots', enabled: (event.target as HTMLInputElement).checked });
+$('nav-play').onclick = () => $<HTMLButtonElement>('quick-play').focus();
+for (const el of document.querySelectorAll<HTMLButtonElement>('[data-modal]'))
+  el.onclick = () => {
+    if (document.pointerLockElement) document.exitPointerLock();
+    active = false;
+    keys.clear();
+    controls.clear();
+    shoot = false;
+    $<HTMLDialogElement>(`modal-${el.dataset.modal}`).showModal();
+  };
+for (const el of document.querySelectorAll<HTMLButtonElement>('.close-modal'))
+  el.onclick = () => el.closest('dialog')?.close();
+for (const dialog of document.querySelectorAll<HTMLDialogElement>('dialog'))
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) {
+      const r = dialog.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom)
+        dialog.close();
+    }
+  });
+function soundButtons() {
+  for (const button of document.querySelectorAll<HTMLButtonElement>('.sound-toggle')) {
+    button.classList.toggle('muted', !audio.enabled);
+    setText(button, audio.enabled ? '♪' : '∅');
+    button.setAttribute('aria-pressed', String(audio.enabled));
+  }
+}
+for (const button of document.querySelectorAll<HTMLButtonElement>('.sound-toggle'))
+  button.onclick = () => {
+    audio.unlock();
+    audio.enabled = !audio.enabled;
+    localStorage.setItem('echo-sound', audio.enabled ? 'on' : 'off');
+    soundButtons();
+  };
+soundButtons();
+$<HTMLInputElement>('volume').value = String(audio.volume);
+$<HTMLInputElement>('shadows').checked = renderer.shadowMap.enabled;
+$<HTMLInputElement>('show-echo').checked = showEcho;
+$<HTMLInputElement>('volume').oninput = (e) => {
+  audio.volume = Number((e.target as HTMLInputElement).value);
+  localStorage.setItem('echo-volume', String(audio.volume));
+  audio.unlock();
+  audio.play('wave');
+};
+$<HTMLInputElement>('shadows').onchange = (e) => {
+  renderer.shadowMap.enabled = (e.target as HTMLInputElement).checked;
+  localStorage.setItem('echo-shadows', renderer.shadowMap.enabled ? 'on' : 'off');
+};
+$<HTMLInputElement>('show-echo').onchange = (e) => {
+  showEcho = (e.target as HTMLInputElement).checked;
+  localStorage.setItem('echo-show-echo', showEcho ? 'on' : 'off');
+};
+async function invite() {
+  if (!snapshot) return;
+  if (snapshot.practice) {
+    toast('Practice is solo. Create a private room to invite friends.');
+    return;
+  }
+  try {
+    const url = await connection.invite(snapshot.room);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast('Invite link copied. Keep the host and UDP endpoint running.');
+    } catch {
+      window.prompt('Copy this invite link:', url);
+    }
+  } catch (error) {
+    toast(error instanceof Error ? error.message : 'Could not create invitation.');
+  }
+}
+for (const id of ['hud-room', 'lobby-code', 'pause-invite']) $(id).onclick = () => void invite();
+function pause() {
+  if (!snapshot || snapshot.phase === 'lobby') return;
+  active = false;
+  keys.clear();
+  controls.clear();
+  shoot = false;
+  if (document.pointerLockElement) document.exitPointerLock();
+  $('pause').classList.remove('hidden');
+  $('capture').classList.add('hidden');
+}
+function capture() {
+  if (
+    !snapshot ||
+    snapshot.phase === 'lobby' ||
+    snapshot.phase === 'finished' ||
+    snapshot.self.spectating ||
+    !snapshot.self.alive
+  )
+    return;
+  audio.unlock();
+  active = true;
+  $('pause').classList.add('hidden');
+  $('capture').classList.add('hidden');
+  void Promise.resolve(canvas.requestPointerLock()).catch(() => {
+    active = true;
+    toast('Mouse capture unavailable. Hold the right mouse button to look.');
   });
 }
-function onSnapshot(s:Snapshot){const previous=snapshot;if(settingsVersion!==s.settingsVersion){roomSettings=resolveSettings(s.settings);settingsVersion=s.settingsVersion;configureMovement(roomSettings);}ensureArena();snapshot=s;setBusy(false);roomControls.update(s);combatUI.receive(s);rosterById.clear();hidersAlive=0;for(const p of s.roster){rosterById.set(p.id,p);if(p.role==='hider'&&p.alive)hidersAlive++;}ownBaits=rosterById.get(s.self.id)?.baits??0;
-  const fresh=currentRound!==s.round||!predicted||previous?.self.role!==s.self.role||previous?.settingsVersion!==s.settingsVersion;if(fresh){currentRound=s.round;predicted={...s.self};pending=[];frames=[];correction.set(0,0,0);yaw=s.self.yaw;pitch=s.self.pitch;sequence=Math.max(sequence,s.self.ack);localCharacter?.dispose();localCharacter=new Character(s.self.role);arena!.scene.add(localCharacter.group);ownEcho?.dispose();ownEcho=s.self.role==='hider'?new Character('hider',true):null;if(ownEcho)arena!.scene.add(ownEcho.group);document.body.classList.toggle('hider',s.self.role==='hider');setText($('role-label'),`YOU ARE THE ${s.self.role.toUpperCase()}`);setText($('role-heading'),s.self.role==='hider'?'STAY AHEAD.':'THINK AHEAD.');setText($('role-hint'),s.self.role==='hider'?'Let them chase a memory.':'You see the past. Shoot the present.');$('ammo-panel').classList.toggle('hidden',s.self.role!=='seeker');$('hider-stats').classList.toggle('hidden',s.self.role!=='hider');$('ability').classList.toggle('hidden',s.self.role!=='hider');setText($('timeline-subject'),s.self.role==='hider'?'YOUR ECHO':'HIDERS');setText($('timeline-note'),s.self.role==='hider'?'The ghost is where they think you are.':'You and allied seekers are live.');}else if(predicted){const ox=predicted.x,oy=predicted.y,oz=predicted.z;pending=pending.filter(i=>i.seq>s.self.ack);if(pending.length>120)pending=[];predicted={...s.self};if(playable(s))for(const input of pending)move(predicted,input,s.self.role);const dx=ox-predicted.x,dy=oy-predicted.y,dz=oz-predicted.z,length=Math.hypot(dx,dy,dz);if(previous?.self.warp===s.self.warp&&length<2){correction.x+=dx;correction.y+=dy;correction.z+=dz;correction.clampLength(0,.8);}else correction.set(0,0,0);}
-  frames.push(s);if(frames.length>12)frames.shift();$('menu').classList.add('hidden');$('lobby').classList.toggle('hidden',s.phase!=='lobby');$('hud').classList.toggle('hidden',s.phase==='lobby');setText($('room-code'),s.room);setText($('lobby-code-value'),s.room);if(s.phase==='lobby'){if(previous?.phase!=='lobby'){active=false;keys.clear();controls.clear();shoot=false;if(document.pointerLockElement)document.exitPointerLock();}$('pause').classList.add('hidden');$('capture').classList.add('hidden');renderLobby();}if(s.phase!=='lobby'&&(!previous||previous.phase==='lobby'||fresh)){$('pause').classList.add('hidden');$('scoreboard').classList.add('hidden');$('capture').classList.toggle('hidden',active||!s.self.alive||s.self.spectating||s.phase==='finished');}if(s.phase==='finished'){if(previous?.phase!=='finished'){active=false;keys.clear();controls.clear();shoot=false;if(document.pointerLockElement)document.exitPointerLock();audio.play('win');}$('capture').classList.add('hidden');$('pause').classList.add('hidden');$('scoreboard').classList.remove('hidden');renderScores();}else if(!scoreHeld)$('scoreboard').classList.add('hidden');if(!s.self.alive||s.self.spectating)$('capture').classList.add('hidden');if(previous&&previous.self.hp>s.self.hp&&!fresh){combatUI.hurt();localCharacter?.hit();document.body.classList.add('hurt');setTimeout(()=>document.body.classList.remove('hurt'),200);}for(const e of s.events)if(!seenEvents.has(e.id)){seenEvents.add(e.id);handleEvent(e);}if(seenEvents.size>1500)for(const id of [...seenEvents].slice(0,500))seenEvents.delete(id);
+$('pause-button').onclick = pause;
+$('resume').onclick = capture;
+$('capture').onclick = capture;
+for (const el of document.querySelectorAll<HTMLButtonElement>('.leave-room'))
+  el.onclick = () => leave(true);
+function clearArenaActors() {
+  localCharacter?.dispose();
+  localCharacter = null;
+  ownEcho?.dispose();
+  ownEcho = null;
+  for (const obj of remote.values()) {
+    obj.character.dispose();
+    obj.label.remove();
+  }
+  remote.clear();
+  effects.clear();
+  combatFX.clear();
 }
-function renderLobby(){const s=snapshot!;const key=JSON.stringify([s.room,s.roster,s.host,s.botsEnabled,s.settingsVersion]);if(lastLobbyKey===key)return;lastLobbyKey=key;const container=$('lobby-players');container.replaceChildren();for(const p of s.roster){const row=document.createElement('div');row.className='lobby-player';const dot=document.createElement('span'),name=document.createElement('span'),badge=document.createElement('small');name.textContent=p.name+(p.id===s.self.id?' (you)':'');badge.textContent=p.bot?'BOT':p.id===s.host?'HOST':'CONNECTED';row.append(dot,name,badge);container.append(row);}$<HTMLInputElement>('fill-bots').checked=s.botsEnabled;$<HTMLInputElement>('fill-bots').disabled=s.self.id!==s.host;$<HTMLButtonElement>('start-round').disabled=s.self.id!==s.host;$('start-round').firstChild!.textContent=s.self.id===s.host?'START ROUND ':'WAITING FOR HOST ';setText($('lobby-note'),s.self.id===s.host?`${roomSettings.seekerCount} seeker slots · ${roomSettings.roundMs/1000}s rounds · ${delayLabel(roomSettings.delayMs)} echo · up to ${CFG.maxPlayers} players`:'The host will start the round. Your role preference is saved.');}
-function renderScores(){if(!snapshot)return;const s=snapshot,key=JSON.stringify([s.roster,s.winner,s.phase]);if(key===lastScoreKey)return;lastScoreKey=key;setText($('score-title'),s.phase==='finished'?s.winner==='hider'?'THE PRESENT WINS.':'THE PAST CAUGHT UP.':'THE FREQUENCY.');const container=$('score-rows');container.replaceChildren();for(const p of [...s.roster].sort((a,b)=>b.tags+b.baits-a.tags-a.baits)){const row=document.createElement('div');row.className='score-row';const name=document.createElement('span');name.textContent=p.name+(p.id===s.self.id?' / YOU':p.bot?' / BOT':'');name.className=p.caught?'caught':p.id===s.self.id?'you':'';const role=document.createElement('span');role.textContent=p.role.toUpperCase();role.className=`role-${p.role}`;const tags=document.createElement('span');tags.textContent=String(p.tags);const baits=document.createElement('span');baits.textContent=String(p.baits);row.append(name,role,tags,baits);container.append(row);}}
-const eventFrom=new T.Vector3(),eventTo=new T.Vector3();function beam(from:T.Vector3,to:T.Vector3,hit:boolean){effects.beam(from,to,hit?CYAN:0xffd182);}
-function handleEvent(e:GameEvent){if(!snapshot)return;const me=e.actor===snapshot.self.id;if(e.kind==='shot'&&e.from&&e.to){eventFrom.set(e.from.x,e.from.y,e.from.z);if(me&&predicted){camera.updateMatrixWorld(true);foregroundGun.getObjectByName('muzzle')?.getWorldPosition(eventFrom);gunKick=1;}eventTo.set(e.to.x,e.to.y,e.to.z);beam(eventFrom,eventTo,!!e.hit);audio.play(me?'shot':'echo');if(me&&e.hit){$('hit-marker').classList.add('show');setTimeout(()=>$('hit-marker').classList.remove('show'),130);audio.play('hit');}if(e.echo&&performance.now()-lastToastAt>1200){if(me){toast('ONLY AN ECHO. Aim ahead.',1000);lastToastAt=performance.now();}else if(e.target===snapshot.self.id){toast('THEY SHOT YOUR ECHO. Keep moving.',1400);lastToastAt=performance.now();}}}else if(e.kind==='hook'&&e.from&&e.to){eventFrom.set(e.from.x,e.from.y,e.from.z);eventTo.set(e.to.x,e.to.y,e.to.z);beam(eventFrom,eventTo,true);if(me)audio.play('dash');}else if(e.kind==='web'&&me){gunKick=.65;audio.play('shot');}else if(e.kind==='catch'){const name=rosterById.get(e.target??'')?.name??'A hider',item=document.createElement('div');item.className='feed-item';item.textContent=`${name} was caught in the present.`;$('feed').append(item);setTimeout(()=>item.remove(),4500);}else if(me&&e.kind==='teleport'){audio.play('dash');toast('MIRROR SHIFT.',1400);}else if(me&&e.kind==='wave')audio.play('wave');else if(me&&e.kind==='dash')audio.play('dash');}
-function inputTick(){if(!snapshot||!predicted||snapshot.phase==='lobby')return;const input=neutralInput(++sequence);input.yaw=yaw;input.pitch=pitch;if(active&&!document.hidden){input.mx=Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));input.mz=Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'));input.sprint=keys.has('ShiftLeft')||keys.has('ShiftRight');input.jump=controls.jump(keys);input.crouch=controls.crouch(keys);input.interact=keys.has('KeyF');combatUI.input(input,keys);input.dash=keys.has('KeyQ');input.wave=keys.has('KeyE');input.reload=keys.has('KeyR');input.shoot=shoot;}if(!connection.send({type:'input',input})||!snapshot||!predicted)return;pending.push(input);if(pending.length>120)pending.shift();if(playable(snapshot))move(predicted,input,snapshot.self.role);else{predicted.yaw=input.yaw;predicted.pitch=input.pitch;}}
-function indexPlayers(frame:Snapshot):ReadonlyMap<string,Pose>{let index=frameIndexes.get(frame);if(!index){const created=new Map<string,Pose>();for(const player of frame.players)created.set(player.id,player);frameIndexes.set(frame,created);index=created;}return index;}
-function interpolatePose(a:Pose,b:Pose,t:number):Pose{if(a.alive!==b.alive||a.role!==b.role||(a.warp??0)!==(b.warp??0))return a;let out=interpolatedById.get(a.id);if(!out){out={...a};interpolatedById.set(a.id,out);}Object.assign(out,a);out.x=T.MathUtils.lerp(a.x,b.x,t);out.y=T.MathUtils.lerp(a.y,b.y,t);out.z=T.MathUtils.lerp(a.z,b.z,t);out.yaw=angleLerp(a.yaw,b.yaw,t);out.pitch=T.MathUtils.lerp(a.pitch,b.pitch,t);out.moving=T.MathUtils.lerp(a.moving,b.moving,t);return out;}
-function viewFrame():{players:Pose[];echo:Pose|null;sampledAt:number}{if(!snapshot||frames.length<2)return{players:snapshot?.players??[],echo:snapshot?.echo??null,sampledAt:snapshot?.viewTime??connection.now};const at=connection.now-100;let a=frames[0],b=a;for(let i=0;i<frames.length-1;i++)if(frames[i].now<=at){a=frames[i];b=frames[i+1];}if(at>=frames[frames.length-1].now){const last=frames[frames.length-1];return{players:last.players,echo:last.echo,sampledAt:last.viewTime};}const t=clamp((at-a.now)/Math.max(1,b.now-a.now),0,1),next=indexPlayers(b);interpolatedPlayers.length=0;for(const pose of a.players){const other=next.get(pose.id);interpolatedPlayers.push(other?interpolatePose(pose,other,t):pose);}return{sampledAt:a.viewTime,players:interpolatedPlayers,echo:a.echo&&b.echo?interpolatePose(a.echo,b.echo,t):a.echo};}
-const localPos=new T.Vector3(),aim=new T.Vector3(),cameraGoal=new T.Vector3(),cameraBase=new T.Vector3(),cameraLook=new T.Vector3(),hiderAim=new T.Vector3(),cameraOffset=new T.Vector3(),labelWorld=new T.Vector3(),labelProjected=new T.Vector3(),labelDir=new T.Vector3(),mirrorDelta=new T.Vector3();
-function setLabelVisible(obj:RemoteActor,visible:boolean){if(obj.visible===visible)return;obj.visible=visible;obj.label.style.display=visible?'block':'none';}
-function updateGame(dt:number,time:number){if(!snapshot||!predicted||!localCharacter||!arena)return;correction.multiplyScalar(Math.exp(-16*dt));localPos.set(predicted.x,predicted.y,predicted.z).add(correction);const seeker=snapshot.self.role==='seeker',delayMs=roomSettings.delayMs,now=connection.now;localCharacter.group.visible=!seeker&&snapshot.self.alive&&!snapshot.self.spectating;localCharacter.group.position.copy(localPos);localCharacter.group.rotation.y=yaw+Math.PI;localCharacter.body.scale.y=bodyHeight(predicted.crouched)/CFG.height;localCharacter.animate({moving:Math.hypot(predicted.vx,predicted.vz),grounded:predicted.grounded,waving:snapshot.self.waving||(active&&keys.has('KeyE')),dashing:predicted.dashTime>0,sliding:(predicted.slideTime??0)>0,controlled:(predicted.controlLeft??0)>0,shielded:(snapshot.self.abilities?.shieldLeft??0)>Math.max(0,now-snapshot.now),crouched:predicted.crouched,skin:snapshot.self.skin},dt,now/1000);const direction=aimDirection(yaw,pitch);aim.set(direction.x,direction.y,direction.z);
-  if(seeker){camera.position.copy(localPos);camera.position.y+=eyeHeight(predicted.crouched);cameraLook.copy(camera.position).add(aim);camera.lookAt(cameraLook);}else{cameraBase.copy(localPos);cameraBase.y+=predicted.crouched?.8:1.35;const adjusted=pitch-.18;hiderAim.set(-Math.sin(yaw)*Math.cos(adjusted),Math.sin(adjusted),-Math.cos(yaw)*Math.cos(adjusted));cameraGoal.copy(cameraBase).addScaledVector(hiderAim,-5.2);cameraGoal.y+=1;cameraOffset.copy(cameraGoal).sub(cameraBase);const distance=cameraOffset.length();cameraOffset.normalize();const collision=arenaRay(cameraBase,cameraOffset,distance);camera.position.copy(cameraBase).addScaledVector(cameraOffset,Math.max(.3,Math.min(distance,collision-.18)));cameraLook.copy(cameraBase).addScaledVector(hiderAim,3);camera.lookAt(cameraLook);}if(snapshot.self.spectating||!snapshot.self.alive){camera.position.set(0,17,19);camera.lookAt(0,0,0);}camera.updateMatrixWorld();const weapon=snapshot.self.weapon??'blaster';if(foregroundGun.userData.weapon!==weapon){foregroundGun.removeFromParent();foregroundGun=makeWeapon(weapon);foregroundGun.scale.setScalar(.47);foregroundGun.rotation.y=Math.PI;camera.add(foregroundGun);}foregroundGun.visible=seeker&&snapshot.self.alive&&!snapshot.self.spectating;gunKick*=Math.exp(-18*dt);foregroundGun.position.set(.27+Math.sin(time*9)*Math.min(.008,Math.hypot(predicted.vx,predicted.vz)*.001),-.33-(snapshot.self.reloadLeft>0?.16:0),-.49+gunKick*.10);foregroundGun.rotation.x=-gunKick*.09+(snapshot.self.reloadLeft>0?-.4:0);
-  const view=viewFrame(),token=++renderToken;for(const p of view.players){let obj=remote.get(p.id);if(obj&&obj.character.role!==p.role){obj.character.dispose();obj.label.remove();remote.delete(p.id);obj=undefined;}if(!obj){const character=new Character(p.role);arena.scene.add(character.group);const label=document.createElement('div');label.className='nameplate';plateLayer.append(label);obj={character,label,seen:token,text:'',visible:false,past:false};remote.set(p.id,obj);}obj.seen=token;obj.character.group.visible=p.alive;obj.character.group.position.set(p.x,p.y,p.z);obj.character.group.rotation.y=p.yaw+Math.PI;obj.character.body.scale.y=bodyHeight(p.crouched)/CFG.height;const delayed=seeker&&p.role==='hider';obj.character.animate(p,dt,(delayed?view.sampledAt:now)/1000);const text=(rosterById.get(p.id)?.name??'Runner')+(delayed?` / −${delayLabel(delayMs)}`:'');if(obj.text!==text){obj.text=text;obj.label.textContent=text;}if(obj.past!==delayed){obj.past=delayed;obj.label.classList.toggle('past',delayed);}if(!p.alive){setLabelVisible(obj,false);continue;}labelWorld.set(p.x,p.y+bodyHeight(p.crouched)+.39,p.z);labelProjected.copy(labelWorld).project(camera);const inView=labelProjected.z>=-1&&labelProjected.z<=1&&Math.abs(labelProjected.x)<=1.1&&Math.abs(labelProjected.y)<=1.1;if(!inView){setLabelVisible(obj,false);continue;}labelDir.copy(labelWorld).sub(camera.position);const distance=labelDir.length();labelDir.normalize();const occluded=arenaOccluded(camera.position,labelDir,Math.max(0,distance-.6));if(occluded){setLabelVisible(obj,false);continue;}setLabelVisible(obj,true);obj.label.style.left=`${(labelProjected.x*.5+.5)*innerWidth}px`;obj.label.style.top=`${(-labelProjected.y*.5+.5)*innerHeight}px`;}
-  for(const [id,obj] of remote)if(obj.seen!==token){obj.character.dispose();obj.label.remove();remote.delete(id);}if(ownEcho){ownEcho.group.visible=showEcho&&!!view.echo?.alive&&snapshot.self.alive;if(view.echo){const e=view.echo;ownEcho.group.position.set(e.x,e.y,e.z);ownEcho.group.rotation.y=e.yaw+Math.PI;ownEcho.body.scale.y=bodyHeight(e.crouched)/CFG.height;ownEcho.animate(e,dt,view.sampledAt/1000);}}effects.update(dt);combatFX.update(arena.scene,snapshot,view.players,view.sampledAt,now);arena.animate(time);renderer.render(arena.scene,camera);
+function leave(notify: boolean) {
+  connection.close();
+  active = false;
+  connecting = false;
+  snapshot = null;
+  predicted = null;
+  observations.clear();
+  pending = [];
+  currentRound = -1;
+  settingsVersion = -1;
+  keys.clear();
+  controls.clear();
+  shoot = false;
+  if (document.pointerLockElement) document.exitPointerLock();
+  for (const id of ['hud', 'lobby', 'pause', 'scoreboard']) $(id).classList.add('hidden');
+  $('menu').classList.remove('hidden');
+  setBusy(false);
+  clearArenaActors();
+  combatUI.clear();
+  rosterPanels.reset();
+  rosterById.clear();
+  const url = new URL(location.href);
+  url.searchParams.delete('room');
+  history.replaceState(null, '', url.pathname + url.search + url.hash);
+  document.body.classList.remove('hider');
+  if (notify) toast('You left the room.');
 }
-function updateHUD(){if(!snapshot||!predicted)return;const s=snapshot,now=connection.now,left=Math.max(0,s.endsAt-now),seconds=Math.ceil(left/1000);setText($('clock'),`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`);setText($('phase-label'),s.phase==='headstart'?'HEAD START':s.phase==='finished'?'LOBBY IN':`ROUND ${String(s.round).padStart(2,'0')}`);setText($('hiders-left'),`${hidersAlive} HIDERS LEFT`);setText($('ping'),String(Math.round(connection.ping)));const stamina=`${predicted.stamina}%`;if($('stamina-fill').style.width!==stamina)$('stamina-fill').style.width=stamina;setText($('dash-cooldown'),predicted.dashCooldown>0?`${predicted.dashCooldown.toFixed(1)}s`:'READY');healthHearts.forEach((heart,i)=>heart.classList.toggle('empty',i>=s.self.hp));setText(healthText,`${s.self.hp} / 2`);const weapon=s.self.weapon??'blaster',spec=roomSettings.balance.weapons[weapon],reload=roomSettings.reloadMs===0?0:spec.reloadMs||roomSettings.reloadMs;setText($('ammo'),reload===0?'∞':String(s.self.ammo).padStart(2,'0'));const reloadWidth=reload>0&&s.self.reloadLeft>0?`${clamp(100-s.self.reloadLeft/reload*100,0,100)}%`:'0%';if($('reload-fill').style.width!==reloadWidth)$('reload-fill').style.width=reloadWidth;setText(ammoSuffix,reload===0?'NO RELOAD':`/ ${spec.magazine}`);ammoKey.hidden=reload===0;setText($('movement-speed'),`${ACTIVE_MAP.name} · ${Math.hypot(predicted.vx,predicted.vz).toFixed(1)} m/s · ${(predicted.slideTime??0)>0?'SLIDING':predicted.crouched?'CROUCHED':'HOP: '+roomSettings.bunnyHop.toUpperCase()}`);const mirrorLeft=Math.max(0,(s.self.mirrorLeft??0)-Math.max(0,now-s.now)),nearby=ACTIVE_MAP.mirrors.find(m=>{if(Math.hypot(m.x-predicted!.x,m.z-predicted!.z)>M.mirrorRadius||Math.abs(m.y-predicted!.y)>=1.3)return false;mirrorDelta.set(m.x-predicted!.x,m.y+1-(predicted!.y+eyeHeight(predicted!.crouched)),m.z-predicted!.z);const d=mirrorDelta.length();return d<.001||arenaRay({x:predicted!.x,y:predicted!.y+eyeHeight(predicted!.crouched),z:predicted!.z},mirrorDelta.normalize())>=d-.1;});setText($('mirror-hint'),!playable(s)?'':mirrorLeft>0?`MIRROR RECHARGING · ${Math.ceil(mirrorLeft/1000)}s`:nearby?`F · ${nearby.label} MIRROR · TELEPORT`:'MIRROR READY · F NEAR A MIRROR');combatUI.update(s,predicted,now);setText($('baits'),String(ownBaits).padStart(2,'0'));const banner=$('round-banner'),opacity=s.phase==='headstart'||s.self.spectating||!s.self.alive?'1':'0';if(banner.style.opacity!==opacity)banner.style.opacity=opacity;if(s.self.spectating){setText($('banner-kicker'),'ROUND IN PROGRESS');setText($('banner-title'),'YOU’RE UP NEXT.');setText($('banner-subtitle'),'You’ll join when the host starts the next round.');}else if(!s.self.alive){setText($('banner-kicker'),'CAUGHT IN THE PRESENT');setText($('banner-title'),'BAD TIMING.');setText($('banner-subtitle'),'Stay for the next round. Your team can still win.');}else if(s.phase==='headstart'){setText($('banner-kicker'),s.self.role==='hider'?'THEY’RE LIVING IN THE PAST':'BUFFERING THE PAST');setText($('banner-title'),`${s.self.role==='hider'?'GET MOVING':'HUNT STARTS IN'} ${String(seconds).padStart(2,'0')}`);setText($('banner-subtitle'),s.self.role==='hider'?'Leave your first bad memory before the hunt starts.':'Hiders are moving. You can look, but not move or fire yet.');}if(scoreHeld||s.phase==='finished'){renderScores();setText($('score-note'),s.phase==='finished'?`Back to lobby in ${seconds}s · Host can change settings before the next round`:'Hold Tab to view · Shots hit current positions');}}
-function updatePerf(at:number){if(!perfPanel)return;perfFrames++;if(at-perfAt<1000)return;const fps=Math.round(perfFrames*1000/(at-perfAt)),info=renderer.info;perfPanel.textContent=`${fps} fps\n${info.render.calls} calls\n${info.render.triangles} tris\n${info.memory.geometries} geo / ${info.memory.textures} tex`;perfFrames=0;perfAt=at;}
-function frame(at:number){const dt=Math.min((at-lastTime)/1000,.1);lastTime=at;accumulator+=dt;uiAccumulator+=dt;while(accumulator>=CFG.dt){inputTick();accumulator-=CFG.dt;}const time=at/1000;if(snapshot&&snapshot.phase!=='lobby')updateGame(dt,time);else if(at-menuRenderedAt>=1000/30){const menuDt=Math.min((at-menuRenderedAt)/1000,.1);menuRenderedAt=at;heroHider.animate({skin:combatUI.skin,moving:0,grounded:true,waving:true,dashing:false},menuDt,time);heroSeeker.animate({skin:combatUI.skin,moving:0,grounded:true,waving:false,dashing:false},menuDt,time);heroGhost.animate({moving:1.5,grounded:true,waving:true,dashing:false},menuDt,time-CFG.delayMs/1000);const orbit=Math.sin(time*.13)*.18;stageCamera.position.set(7.8+orbit,4.6,12.4);stageCamera.lookAt(-3.8,1.18,0);renderer.render(stage.scene,stageCamera);}if(uiAccumulator>=.1){updateHUD();uiAccumulator=0;}updatePerf(at);requestAnimationFrame(frame);}
-$('loading').classList.add('hidden');requestAnimationFrame(frame);const invitation=new URL(location.href).searchParams.get('room');if(invitation){$<HTMLInputElement>('join-code').value=invitation.toUpperCase().slice(0,6);$<HTMLDialogElement>('modal-join').showModal();}
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+canvas.addEventListener(
+  'wheel',
+  (e) => {
+    if (active) {
+      e.preventDefault();
+      controls.wheel(e.deltaY);
+    }
+  },
+  { passive: false },
+);
+canvas.addEventListener('mousedown', (e) => {
+  if (!active) {
+    capture();
+    return;
+  }
+  if (e.button === 0) shoot = true;
+  if (e.button === 2) dragging = true;
+});
+window.addEventListener('mouseup', (e) => {
+  if (e.button === 0) shoot = false;
+  if (e.button === 2) dragging = false;
+});
+window.addEventListener('mousemove', (e) => {
+  if (!active || (!document.pointerLockElement && !dragging)) return;
+  yaw -= e.movementX * 0.0021 * controls.sensitivity;
+  pitch = clamp(pitch - e.movementY * 0.0021 * controls.sensitivity, -1.2, 1.2);
+});
+document.addEventListener('pointerlockchange', () => {
+  if (document.pointerLockElement === canvas) {
+    active = true;
+    $('capture').classList.add('hidden');
+  } else if (snapshot && snapshot.phase !== 'lobby' && snapshot.phase !== 'finished') {
+    active = false;
+    keys.clear();
+    controls.clear();
+    shoot = false;
+    $('pause').classList.remove('hidden');
+  }
+});
+window.addEventListener('keydown', (e) => {
+  if (
+    (e.target as HTMLElement).matches('input,select,textarea') ||
+    document.querySelector('dialog[open]')
+  )
+    return;
+  if (e.code === 'Tab' && snapshot && snapshot.phase !== 'lobby') {
+    e.preventDefault();
+    scoreHeld = true;
+    $('scoreboard').classList.remove('hidden');
+    renderScores();
+    return;
+  }
+  if (e.code === 'Escape') {
+    if (snapshot && snapshot.phase !== 'lobby') pause();
+    return;
+  }
+  if (active && controls.handles(e.code)) {
+    e.preventDefault();
+    keys.add(normalizeKey(e.code));
+  }
+});
+window.addEventListener('keyup', (e) => {
+  keys.delete(normalizeKey(e.code));
+  if (e.code === 'Tab') {
+    scoreHeld = false;
+    if (snapshot?.phase !== 'finished') $('scoreboard').classList.add('hidden');
+  }
+});
+window.addEventListener('blur', () => {
+  keys.clear();
+  controls.clear();
+  shoot = false;
+  dragging = false;
+  if (active) pause();
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && active) pause();
+});
+window.addEventListener('resize', resizeRenderer);
+function playable(s: Snapshot) {
+  return (
+    s.self.alive &&
+    !s.self.spectating &&
+    (s.phase === 'playing' || (s.phase === 'headstart' && s.self.role === 'hider'))
+  );
+}
+function ensureArena() {
+  if (arena && ACTIVE_MAP.id === roomSettings.mapId) return;
+  if (arena) {
+    clearArenaActors();
+    camera.removeFromParent();
+    arena.dispose();
+  }
+  if (ACTIVE_MAP.id !== roomSettings.mapId) selectMap(roomSettings.mapId);
+  const created = makeArena();
+  arena = created;
+  created.scene.add(camera);
+  observations.clear();
+  // Static asset diagnostics only: never expose actors or hidden poses through the DOM.
+  canvas.dataset.worldMap = created.assetStatus.mapId;
+  canvas.dataset.worldAsset = created.assetStatus.state;
+  void renderer.compileAsync(created.scene, camera).catch(() => {});
+  void created.ready.then(() => {
+    if (arena !== created) return;
+    canvas.dataset.worldAsset = created.assetStatus.state;
+    canvas.dataset.worldMeshes = String(created.assetStatus.meshCount);
+    void renderer.compileAsync(created.scene, camera).catch(() => {});
+  });
+}
+function onSnapshot(s: Snapshot) {
+  const previous = snapshot;
+  if (settingsVersion !== s.settingsVersion) {
+    roomSettings = resolveSettings(s.settings);
+    settingsVersion = s.settingsVersion;
+    configureMovement(roomSettings);
+  }
+  ensureArena();
+  snapshot = s;
+  setBusy(false);
+  roomControls.update(s);
+  combatUI.receive(s);
+  rosterById.clear();
+  hidersAlive = 0;
+  for (const p of s.roster) {
+    rosterById.set(p.id, p);
+    if (p.role === 'hider' && p.alive) hidersAlive++;
+  }
+  ownBaits = rosterById.get(s.self.id)?.baits ?? 0;
+  const fresh =
+    currentRound !== s.round ||
+    !predicted ||
+    previous?.self.role !== s.self.role ||
+    previous?.settingsVersion !== s.settingsVersion;
+  if (fresh) {
+    currentRound = s.round;
+    predicted = { ...s.self };
+    pending = [];
+    observations.clear();
+    correction.set(0, 0, 0);
+    yaw = s.self.yaw;
+    pitch = s.self.pitch;
+    sequence = Math.max(sequence, s.self.ack);
+    localCharacter?.dispose();
+    localCharacter = new Character(s.self.role);
+    arena!.scene.add(localCharacter.group);
+    ownEcho?.dispose();
+    ownEcho = s.self.role === 'hider' ? new Character('hider', true) : null;
+    if (ownEcho) arena!.scene.add(ownEcho.group);
+    document.body.classList.toggle('hider', s.self.role === 'hider');
+    setText($('role-label'), `YOU ARE THE ${s.self.role.toUpperCase()}`);
+    setText($('role-heading'), s.self.role === 'hider' ? 'STAY AHEAD.' : 'THINK AHEAD.');
+    setText(
+      $('role-hint'),
+      s.self.role === 'hider' ? 'Let them chase a memory.' : 'You see the past. Shoot the present.',
+    );
+    $('ammo-panel').classList.toggle('hidden', s.self.role !== 'seeker');
+    $('hider-stats').classList.toggle('hidden', s.self.role !== 'hider');
+    $('ability').classList.toggle('hidden', s.self.role !== 'hider');
+    setText($('timeline-subject'), s.self.role === 'hider' ? 'YOUR ECHO' : 'HIDERS');
+    setText(
+      $('timeline-note'),
+      s.self.role === 'hider'
+        ? 'The ghost is where they think you are.'
+        : 'You and allied seekers are live.',
+    );
+  } else if (predicted) {
+    const ox = predicted.x,
+      oy = predicted.y,
+      oz = predicted.z;
+    pending = pending.filter((i) => i.seq > s.self.ack);
+    if (pending.length > 120) pending = [];
+    predicted = { ...s.self };
+    if (playable(s)) for (const input of pending) move(predicted, input, s.self.role);
+    const dx = ox - predicted.x,
+      dy = oy - predicted.y,
+      dz = oz - predicted.z,
+      length = Math.hypot(dx, dy, dz);
+    if (previous?.self.warp === s.self.warp && length < 2) {
+      correction.x += dx;
+      correction.y += dy;
+      correction.z += dz;
+      correction.clampLength(0, 0.8);
+    } else correction.set(0, 0, 0);
+  }
+  observations.push(s);
+  $('menu').classList.add('hidden');
+  $('lobby').classList.toggle('hidden', s.phase !== 'lobby');
+  $('hud').classList.toggle('hidden', s.phase === 'lobby');
+  setText($('room-code'), s.room);
+  setText($('lobby-code-value'), s.room);
+  if (s.phase === 'lobby') {
+    if (previous?.phase !== 'lobby') {
+      active = false;
+      keys.clear();
+      controls.clear();
+      shoot = false;
+      if (document.pointerLockElement) document.exitPointerLock();
+    }
+    $('pause').classList.add('hidden');
+    $('capture').classList.add('hidden');
+    renderLobby();
+  }
+  if (s.phase !== 'lobby' && (!previous || previous.phase === 'lobby' || fresh)) {
+    $('pause').classList.add('hidden');
+    $('scoreboard').classList.add('hidden');
+    $('capture').classList.toggle(
+      'hidden',
+      active || !s.self.alive || s.self.spectating || s.phase === 'finished',
+    );
+  }
+  if (s.phase === 'finished') {
+    if (previous?.phase !== 'finished') {
+      active = false;
+      keys.clear();
+      controls.clear();
+      shoot = false;
+      if (document.pointerLockElement) document.exitPointerLock();
+      audio.play('win');
+    }
+    $('capture').classList.add('hidden');
+    $('pause').classList.add('hidden');
+    $('scoreboard').classList.remove('hidden');
+    renderScores();
+  } else if (!scoreHeld) $('scoreboard').classList.add('hidden');
+  if (!s.self.alive || s.self.spectating) $('capture').classList.add('hidden');
+  if (previous && previous.self.hp > s.self.hp && !fresh) {
+    combatUI.hurt();
+    localCharacter?.hit();
+    document.body.classList.add('hurt');
+    setTimeout(() => document.body.classList.remove('hurt'), 200);
+  }
+  for (const e of s.events)
+    if (!seenEvents.has(e.id)) {
+      seenEvents.add(e.id);
+      handleEvent(e);
+    }
+  if (seenEvents.size > 1500) for (const id of [...seenEvents].slice(0, 500)) seenEvents.delete(id);
+}
+function renderLobby(): void {
+  if (snapshot) rosterPanels.lobby(snapshot, roomSettings);
+}
+function renderScores(): void {
+  if (snapshot) rosterPanels.scores(snapshot);
+}
+const eventFrom = new T.Vector3(),
+  eventTo = new T.Vector3();
+function beam(from: T.Vector3, to: T.Vector3, hit: boolean) {
+  effects.beam(from, to, hit ? CYAN : 0xffd182);
+}
+function handleEvent(e: GameEvent) {
+  if (!snapshot) return;
+  const me = e.actor === snapshot.self.id;
+  if (e.kind === 'shot' && e.from && e.to) {
+    eventFrom.set(e.from.x, e.from.y, e.from.z);
+    if (me && predicted) {
+      camera.updateMatrixWorld(true);
+      foregroundGun.getObjectByName('muzzle')?.getWorldPosition(eventFrom);
+      gunKick = 1;
+    }
+    eventTo.set(e.to.x, e.to.y, e.to.z);
+    beam(eventFrom, eventTo, !!e.hit);
+    audio.play(me ? 'shot' : 'echo');
+    if (me && e.hit) {
+      $('hit-marker').classList.add('show');
+      setTimeout(() => $('hit-marker').classList.remove('show'), 130);
+      audio.play('hit');
+    }
+    if (e.echo && performance.now() - lastToastAt > 1200) {
+      if (me) {
+        toast('ONLY AN ECHO. Aim ahead.', 1000);
+        lastToastAt = performance.now();
+      } else if (e.target === snapshot.self.id) {
+        toast('THEY SHOT YOUR ECHO. Keep moving.', 1400);
+        lastToastAt = performance.now();
+      }
+    }
+  } else if (e.kind === 'hook' && e.from && e.to) {
+    eventFrom.set(e.from.x, e.from.y, e.from.z);
+    eventTo.set(e.to.x, e.to.y, e.to.z);
+    beam(eventFrom, eventTo, true);
+    if (me) audio.play('dash');
+  } else if (e.kind === 'web' && me) {
+    gunKick = 0.65;
+    audio.play('shot');
+  } else if (e.kind === 'catch') {
+    const name = rosterById.get(e.target ?? '')?.name ?? 'A hider',
+      item = document.createElement('div');
+    item.className = 'feed-item';
+    item.textContent = `${name} was caught in the present.`;
+    $('feed').append(item);
+    setTimeout(() => item.remove(), 4500);
+  } else if (me && e.kind === 'teleport') {
+    audio.play('dash');
+    toast('MIRROR SHIFT.', 1400);
+  } else if (me && e.kind === 'wave') audio.play('wave');
+  else if (me && e.kind === 'dash') audio.play('dash');
+}
+function inputTick() {
+  if (!snapshot || !predicted || snapshot.phase === 'lobby') return;
+  const input = neutralInput(++sequence);
+  input.yaw = yaw;
+  input.pitch = pitch;
+  if (active && !document.hidden) {
+    input.mx =
+      Number(keys.has('KeyD') || keys.has('ArrowRight')) -
+      Number(keys.has('KeyA') || keys.has('ArrowLeft'));
+    input.mz =
+      Number(keys.has('KeyW') || keys.has('ArrowUp')) -
+      Number(keys.has('KeyS') || keys.has('ArrowDown'));
+    input.sprint = keys.has('ShiftLeft') || keys.has('ShiftRight');
+    input.jump = controls.jump(keys);
+    input.crouch = controls.crouch(keys);
+    input.interact = keys.has('KeyF');
+    combatUI.input(input, keys);
+    input.dash = keys.has('KeyQ');
+    input.wave = keys.has('KeyE');
+    input.reload = keys.has('KeyR');
+    input.shoot = shoot;
+  }
+  if (!connection.send({ type: 'input', input }) || !snapshot || !predicted) return;
+  pending.push(input);
+  if (pending.length > 120) pending.shift();
+  if (playable(snapshot)) move(predicted, input, snapshot.self.role);
+  else {
+    predicted.yaw = input.yaw;
+    predicted.pitch = input.pitch;
+  }
+}
+const localPos = new T.Vector3(),
+  aim = new T.Vector3(),
+  cameraGoal = new T.Vector3(),
+  cameraBase = new T.Vector3(),
+  cameraLook = new T.Vector3(),
+  hiderAim = new T.Vector3(),
+  cameraOffset = new T.Vector3(),
+  labelWorld = new T.Vector3(),
+  labelProjected = new T.Vector3(),
+  labelDir = new T.Vector3(),
+  mirrorDelta = new T.Vector3();
+function setLabelVisible(obj: RemoteActor, visible: boolean) {
+  if (obj.visible === visible) return;
+  obj.visible = visible;
+  obj.label.style.display = visible ? 'block' : 'none';
+}
+function updateGame(dt: number, time: number) {
+  if (!snapshot || !predicted || !localCharacter || !arena) return;
+  correction.multiplyScalar(Math.exp(-16 * dt));
+  localPos.set(predicted.x, predicted.y, predicted.z).add(correction);
+  const seeker = snapshot.self.role === 'seeker',
+    delayMs = roomSettings.delayMs,
+    now = connection.now;
+  localCharacter.group.visible = !seeker && snapshot.self.alive && !snapshot.self.spectating;
+  localCharacter.group.position.copy(localPos);
+  localCharacter.group.rotation.y = yaw + Math.PI;
+  localCharacter.body.scale.y = bodyHeight(predicted.crouched) / CFG.height;
+  localCharacter.animate(
+    {
+      moving: Math.hypot(predicted.vx, predicted.vz),
+      grounded: predicted.grounded,
+      waving: snapshot.self.waving || (active && keys.has('KeyE')),
+      dashing: predicted.dashTime > 0,
+      sliding: (predicted.slideTime ?? 0) > 0,
+      controlled: (predicted.controlLeft ?? 0) > 0,
+      shielded: (snapshot.self.abilities?.shieldLeft ?? 0) > Math.max(0, now - snapshot.now),
+      crouched: predicted.crouched,
+      skin: snapshot.self.skin,
+    },
+    dt,
+    now / 1000,
+  );
+  const direction = aimDirection(yaw, pitch);
+  aim.set(direction.x, direction.y, direction.z);
+  if (seeker) {
+    camera.position.copy(localPos);
+    camera.position.y += eyeHeight(predicted.crouched);
+    cameraLook.copy(camera.position).add(aim);
+    camera.lookAt(cameraLook);
+  } else {
+    cameraBase.copy(localPos);
+    cameraBase.y += predicted.crouched ? 0.8 : 1.35;
+    const adjusted = pitch - 0.18;
+    hiderAim.set(
+      -Math.sin(yaw) * Math.cos(adjusted),
+      Math.sin(adjusted),
+      -Math.cos(yaw) * Math.cos(adjusted),
+    );
+    cameraGoal.copy(cameraBase).addScaledVector(hiderAim, -5.2);
+    cameraGoal.y += 1;
+    cameraOffset.copy(cameraGoal).sub(cameraBase);
+    const distance = cameraOffset.length();
+    cameraOffset.normalize();
+    const collision = arenaRay(cameraBase, cameraOffset, distance);
+    camera.position
+      .copy(cameraBase)
+      .addScaledVector(cameraOffset, Math.max(0.3, Math.min(distance, collision - 0.18)));
+    cameraLook.copy(cameraBase).addScaledVector(hiderAim, 3);
+    camera.lookAt(cameraLook);
+  }
+  if (snapshot.self.spectating || !snapshot.self.alive) {
+    camera.position.set(0, 17, 19);
+    camera.lookAt(0, 0, 0);
+  }
+  camera.updateMatrixWorld();
+  const weapon = snapshot.self.weapon ?? 'blaster';
+  if (foregroundGun.userData.weapon !== weapon) {
+    foregroundGun.removeFromParent();
+    foregroundGun = makeWeapon(weapon);
+    foregroundGun.scale.setScalar(0.47);
+    foregroundGun.rotation.y = Math.PI;
+    camera.add(foregroundGun);
+  }
+  foregroundGun.visible = seeker && snapshot.self.alive && !snapshot.self.spectating;
+  gunKick *= Math.exp(-18 * dt);
+  foregroundGun.position.set(
+    0.27 + Math.sin(time * 9) * Math.min(0.008, Math.hypot(predicted.vx, predicted.vz) * 0.001),
+    -0.33 - (snapshot.self.reloadLeft > 0 ? 0.16 : 0),
+    -0.49 + gunKick * 0.1,
+  );
+  foregroundGun.rotation.x = -gunKick * 0.09 + (snapshot.self.reloadLeft > 0 ? -0.4 : 0);
+  const view = observations.sample(connection.now),
+    token = ++renderToken;
+  for (const p of view.players) {
+    let obj = remote.get(p.id);
+    if (obj && obj.character.role !== p.role) {
+      obj.character.dispose();
+      obj.label.remove();
+      remote.delete(p.id);
+      obj = undefined;
+    }
+    if (!obj) {
+      const character = new Character(p.role);
+      arena.scene.add(character.group);
+      const label = document.createElement('div');
+      label.className = 'nameplate';
+      plateLayer.append(label);
+      obj = { character, label, seen: token, text: '', visible: false, past: false };
+      remote.set(p.id, obj);
+    }
+    obj.seen = token;
+    obj.character.group.visible = p.alive;
+    obj.character.group.position.set(p.x, p.y, p.z);
+    obj.character.group.rotation.y = p.yaw + Math.PI;
+    obj.character.body.scale.y = bodyHeight(p.crouched) / CFG.height;
+    const delayed = seeker && p.role === 'hider';
+    obj.character.animate(p, dt, (delayed ? view.sampledAt : now) / 1000);
+    const text =
+      (rosterById.get(p.id)?.name ?? 'Runner') + (delayed ? ` / −${delayLabel(delayMs)}` : '');
+    if (obj.text !== text) {
+      obj.text = text;
+      obj.label.textContent = text;
+    }
+    if (obj.past !== delayed) {
+      obj.past = delayed;
+      obj.label.classList.toggle('past', delayed);
+    }
+    if (!p.alive) {
+      setLabelVisible(obj, false);
+      continue;
+    }
+    labelWorld.set(p.x, p.y + bodyHeight(p.crouched) + 0.39, p.z);
+    labelProjected.copy(labelWorld).project(camera);
+    const inView =
+      labelProjected.z >= -1 &&
+      labelProjected.z <= 1 &&
+      Math.abs(labelProjected.x) <= 1.1 &&
+      Math.abs(labelProjected.y) <= 1.1;
+    if (!inView) {
+      setLabelVisible(obj, false);
+      continue;
+    }
+    labelDir.copy(labelWorld).sub(camera.position);
+    const distance = labelDir.length();
+    labelDir.normalize();
+    const occluded = arenaOccluded(camera.position, labelDir, Math.max(0, distance - 0.6));
+    if (occluded) {
+      setLabelVisible(obj, false);
+      continue;
+    }
+    setLabelVisible(obj, true);
+    obj.label.style.left = `${(labelProjected.x * 0.5 + 0.5) * innerWidth}px`;
+    obj.label.style.top = `${(-labelProjected.y * 0.5 + 0.5) * innerHeight}px`;
+  }
+  for (const [id, obj] of remote)
+    if (obj.seen !== token) {
+      obj.character.dispose();
+      obj.label.remove();
+      remote.delete(id);
+    }
+  if (ownEcho) {
+    ownEcho.group.visible = showEcho && !!view.echo?.alive && snapshot.self.alive;
+    if (view.echo) {
+      const e = view.echo;
+      ownEcho.group.position.set(e.x, e.y, e.z);
+      ownEcho.group.rotation.y = e.yaw + Math.PI;
+      ownEcho.body.scale.y = bodyHeight(e.crouched) / CFG.height;
+      ownEcho.animate(e, dt, view.sampledAt / 1000);
+    }
+  }
+  effects.update(dt);
+  combatFX.update(arena.scene, snapshot, view.players, view.sampledAt, now);
+  arena.animate(time);
+  renderer.render(arena.scene, camera);
+}
+function updateHUD() {
+  if (!snapshot || !predicted) return;
+  const s = snapshot,
+    now = connection.now,
+    left = Math.max(0, s.endsAt - now),
+    seconds = Math.ceil(left / 1000);
+  setText(
+    $('clock'),
+    `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`,
+  );
+  setText(
+    $('phase-label'),
+    s.phase === 'headstart'
+      ? 'HEAD START'
+      : s.phase === 'finished'
+        ? 'LOBBY IN'
+        : `ROUND ${String(s.round).padStart(2, '0')}`,
+  );
+  setText($('hiders-left'), `${hidersAlive} HIDERS LEFT`);
+  setText($('ping'), String(Math.round(connection.ping)));
+  const stamina = `${predicted.stamina}%`;
+  if ($('stamina-fill').style.width !== stamina) $('stamina-fill').style.width = stamina;
+  setText(
+    $('dash-cooldown'),
+    predicted.dashCooldown > 0 ? `${predicted.dashCooldown.toFixed(1)}s` : 'READY',
+  );
+  healthHearts.forEach((heart, i) => heart.classList.toggle('empty', i >= s.self.hp));
+  setText(healthText, `${s.self.hp} / 2`);
+  const weapon = s.self.weapon ?? 'blaster',
+    spec = roomSettings.balance.weapons[weapon],
+    reload = roomSettings.reloadMs === 0 ? 0 : spec.reloadMs || roomSettings.reloadMs;
+  setText($('ammo'), reload === 0 ? '∞' : String(s.self.ammo).padStart(2, '0'));
+  const reloadWidth =
+    reload > 0 && s.self.reloadLeft > 0
+      ? `${clamp(100 - (s.self.reloadLeft / reload) * 100, 0, 100)}%`
+      : '0%';
+  if ($('reload-fill').style.width !== reloadWidth) $('reload-fill').style.width = reloadWidth;
+  setText(ammoSuffix, reload === 0 ? 'NO RELOAD' : `/ ${spec.magazine}`);
+  ammoKey.hidden = reload === 0;
+  setText(
+    $('movement-speed'),
+    `${ACTIVE_MAP.name} · ${Math.hypot(predicted.vx, predicted.vz).toFixed(1)} m/s · ${(predicted.slideTime ?? 0) > 0 ? 'SLIDING' : predicted.crouched ? 'CROUCHED' : 'HOP: ' + roomSettings.bunnyHop.toUpperCase()}`,
+  );
+  const mirrorLeft = Math.max(0, (s.self.mirrorLeft ?? 0) - Math.max(0, now - s.now)),
+    nearby = ACTIVE_MAP.mirrors.find((m) => {
+      if (
+        Math.hypot(m.x - predicted!.x, m.z - predicted!.z) > M.mirrorRadius ||
+        Math.abs(m.y - predicted!.y) >= 1.3
+      )
+        return false;
+      mirrorDelta.set(
+        m.x - predicted!.x,
+        m.y + 1 - (predicted!.y + eyeHeight(predicted!.crouched)),
+        m.z - predicted!.z,
+      );
+      const d = mirrorDelta.length();
+      return (
+        d < 0.001 ||
+        arenaRay(
+          { x: predicted!.x, y: predicted!.y + eyeHeight(predicted!.crouched), z: predicted!.z },
+          mirrorDelta.normalize(),
+        ) >=
+          d - 0.1
+      );
+    });
+  setText(
+    $('mirror-hint'),
+    !playable(s)
+      ? ''
+      : mirrorLeft > 0
+        ? `MIRROR RECHARGING · ${Math.ceil(mirrorLeft / 1000)}s`
+        : nearby
+          ? `F · ${nearby.label} MIRROR · TELEPORT`
+          : 'MIRROR READY · F NEAR A MIRROR',
+  );
+  combatUI.update(s, predicted, now);
+  setText($('baits'), String(ownBaits).padStart(2, '0'));
+  const banner = $('round-banner'),
+    opacity = s.phase === 'headstart' || s.self.spectating || !s.self.alive ? '1' : '0';
+  if (banner.style.opacity !== opacity) banner.style.opacity = opacity;
+  if (s.self.spectating) {
+    setText($('banner-kicker'), 'ROUND IN PROGRESS');
+    setText($('banner-title'), 'YOU’RE UP NEXT.');
+    setText($('banner-subtitle'), 'You’ll join when the host starts the next round.');
+  } else if (!s.self.alive) {
+    setText($('banner-kicker'), 'CAUGHT IN THE PRESENT');
+    setText($('banner-title'), 'BAD TIMING.');
+    setText($('banner-subtitle'), 'Stay for the next round. Your team can still win.');
+  } else if (s.phase === 'headstart') {
+    setText(
+      $('banner-kicker'),
+      s.self.role === 'hider' ? 'THEY’RE LIVING IN THE PAST' : 'BUFFERING THE PAST',
+    );
+    setText(
+      $('banner-title'),
+      `${s.self.role === 'hider' ? 'GET MOVING' : 'HUNT STARTS IN'} ${String(seconds).padStart(2, '0')}`,
+    );
+    setText(
+      $('banner-subtitle'),
+      s.self.role === 'hider'
+        ? 'Leave your first bad memory before the hunt starts.'
+        : 'Hiders are moving. You can look, but not move or fire yet.',
+    );
+  }
+  if (scoreHeld || s.phase === 'finished') {
+    renderScores();
+    setText(
+      $('score-note'),
+      s.phase === 'finished'
+        ? `Back to lobby in ${seconds}s · Host can change settings before the next round`
+        : 'Hold Tab to view · Shots hit current positions',
+    );
+  }
+}
+function updatePerf(at: number) {
+  if (!perfPanel) return;
+  perfFrames++;
+  if (at - perfAt < 1000) return;
+  const fps = Math.round((perfFrames * 1000) / (at - perfAt)),
+    info = renderer.info;
+  perfPanel.textContent = `${fps} fps\n${info.render.calls} calls\n${info.render.triangles} tris\n${info.memory.geometries} geo / ${info.memory.textures} tex`;
+  perfFrames = 0;
+  perfAt = at;
+}
+function frame(at: number) {
+  const dt = Math.min((at - lastTime) / 1000, 0.1);
+  lastTime = at;
+  accumulator += dt;
+  uiAccumulator += dt;
+  while (accumulator >= CFG.dt) {
+    inputTick();
+    accumulator -= CFG.dt;
+  }
+  const time = at / 1000;
+  if (snapshot && snapshot.phase !== 'lobby') updateGame(dt, time);
+  else if (at - menuRenderedAt >= 1000 / 30) {
+    const menuDt = Math.min((at - menuRenderedAt) / 1000, 0.1);
+    menuRenderedAt = at;
+    heroHider.animate(
+      { skin: combatUI.skin, moving: 0, grounded: true, waving: true, dashing: false },
+      menuDt,
+      time,
+    );
+    heroSeeker.animate(
+      { skin: combatUI.skin, moving: 0, grounded: true, waving: false, dashing: false },
+      menuDt,
+      time,
+    );
+    heroGhost.animate(
+      { moving: 1.5, grounded: true, waving: true, dashing: false },
+      menuDt,
+      time - CFG.delayMs / 1000,
+    );
+    const orbit = Math.sin(time * 0.13) * 0.18;
+    stageCamera.position.set(7.8 + orbit, 4.6, 12.4);
+    stageCamera.lookAt(-3.8, 1.18, 0);
+    renderer.render(stage.scene, stageCamera);
+  }
+  if (uiAccumulator >= 0.1) {
+    updateHUD();
+    uiAccumulator = 0;
+  }
+  updatePerf(at);
+  requestAnimationFrame(frame);
+}
+$('loading').classList.add('hidden');
+requestAnimationFrame(frame);
+const invitation = new URL(location.href).searchParams.get('room');
+if (invitation) {
+  $<HTMLInputElement>('join-code').value = invitation.toUpperCase().slice(0, 6);
+  $<HTMLDialogElement>('modal-join').showModal();
+}

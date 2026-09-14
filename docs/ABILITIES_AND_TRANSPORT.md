@@ -19,16 +19,16 @@ and its CSS animation respects reduced-motion preferences.
 
 ## Initial balance (playtest values, not a claim of competitive balance)
 
-| Mechanic | Defaults | Counterplay / restriction |
-|---|---|---|
-| Slide | 0.8 s active; 1.8 s cooldown; 12 stamina | Requires earned momentum; low steering; no speed boost; ends on release/jump/control. Solid walls still stop it. |
-| Shield | 2 s active; 16 s cooldown; 25 stamina | Blocks damage and new control. Cannot break an existing stun/root/pull. |
-| Mine | 1.4 s root; 10 s placement cooldown; 0.9 s arming; 45 s lifetime; max 2 | Ground placement, visible marker, proximity and line-of-sight checks, no damage. Jumping over or pre-shielding counters it. |
-| Hook | 20 m range; 0.9 m corridor width; 14 s cooldown; 0.65 s pull at 14 m/s plus 0.8 s stun; max 4 targets | Cover clips its corridor; individual line-of-sight checks; allies can be pulled by default; no damage. |
-| Scan | 3 s active; 18 s cooldown | Outer possibility regions, not a locator. Uses only received delayed observations and public rules. |
-| Seeker mirror | 0.4 s cast; 20 s cooldown | Movement/combat input or control interrupts the cast; use has recovery. Hider mirror cooldown remains the separate room setting (60 s by default). |
-| Control recovery | 1.5 s immunity after the control ends | An active control effect is not extended by subsequent traps/hooks/webs. |
-| Weapon/utility recovery | 0.65 s | Switching keeps per-weapon ammunition and fire timers; switching cannot cancel reloads. |
+| Mechanic                | Defaults                                                                                              | Counterplay / restriction                                                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Slide                   | 0.8 s active; 1.8 s cooldown; 12 stamina                                                              | Requires earned momentum; low steering; no speed boost; ends on release/jump/control. Solid walls still stop it.                                   |
+| Shield                  | 2 s active; 16 s cooldown; 25 stamina                                                                 | Blocks damage and new control. Cannot break an existing stun/root/pull.                                                                            |
+| Mine                    | 1.4 s root; 10 s placement cooldown; 0.9 s arming; 45 s lifetime; max 2                               | Ground placement, visible marker, proximity and line-of-sight checks, no damage. Jumping over or pre-shielding counters it.                        |
+| Hook                    | 20 m range; 0.9 m corridor width; 14 s cooldown; 0.65 s pull at 14 m/s plus 0.8 s stun; max 4 targets | Cover clips its corridor; individual line-of-sight checks; allies can be pulled by default; no damage.                                             |
+| Scan                    | 3 s active; 18 s cooldown                                                                             | Outer possibility regions, not a locator. Uses only received delayed observations and public rules.                                                |
+| Seeker mirror           | 0.4 s cast; 20 s cooldown                                                                             | Movement/combat input or control interrupts the cast; use has recovery. Hider mirror cooldown remains the separate room setting (60 s by default). |
+| Control recovery        | 1.5 s immunity after the control ends                                                                 | An active control effect is not extended by subsequent traps/hooks/webs.                                                                           |
+| Weapon/utility recovery | 0.65 s                                                                                                | Switching keeps per-weapon ammunition and fire timers; switching cannot cancel reloads.                                                            |
 
 All cooldowns are measured from activation, not the end of the effect. The UI
 shows remaining time. Server validation rejects cooldowns no longer than their
@@ -36,12 +36,12 @@ active effects for slide, shield, scan and hook.
 
 ### Weapons
 
-| Weapon | Interval | Range | Magazine | Reload | Behaviour |
-|---|---:|---:|---:|---:|---|
-| Blaster | 450 ms | 55 m | 12 | Inherits room reload | Accurate single ray; one damage. |
-| Scatter | 1,100 ms | 14 m | 4 | 2.2 s | Seven rays in a spread; at most one damage per target per trigger. |
-| Repeater | 280 ms | 20 m | 9 | 2.4 s | Faster fire, short range and spread; one damage. |
-| Web | 2,300 ms | 18 m | 2 | 2.6 s | Travels at 18 m/s; 0.18 m projectile radius; roots for 1.2 s; never damages. |
+| Weapon   | Interval | Range | Magazine |               Reload | Behaviour                                                                    |
+| -------- | -------: | ----: | -------: | -------------------: | ---------------------------------------------------------------------------- |
+| Blaster  |   450 ms |  55 m |       12 | Inherits room reload | Accurate single ray; one damage.                                             |
+| Scatter  | 1,100 ms |  14 m |        4 |                2.2 s | Seven rays in a spread; at most one damage per target per trigger.           |
+| Repeater |   280 ms |  20 m |        9 |                2.4 s | Faster fire, short range and spread; one damage.                             |
+| Web      | 2,300 ms |  18 m |        2 |                2.6 s | Travels at 18 m/s; 0.18 m projectile radius; roots for 1.2 s; never damages. |
 
 The web cannot instantly trap at any distance: it has swept projectile travel and
 collides with cover. Weapon switching recovery plus crowd-control immunity keeps

@@ -4,7 +4,7 @@ Inherit the root engineering contract. This directory is browser code; do not im
 
 ## Design and structure
 
-Keep features cohesive: network policies and session lifecycle live in `network/`; Three.js rendering, player controls, and UI remain separate concerns. Root `network.ts` is an explicit compatibility facade, not a second implementation. Keep `main.ts` as the composition boundary and extract its remaining responsibilities incrementally with regression coverage; do not create a generic `utils` dumping ground or circular barrel imports.
+Keep features cohesive: network policies and session lifecycle live in `network/`; pure authorized-observation sampling lives in `game/`; DOM bindings and roster panels live in `ui/`. Three.js rendering and player controls remain separate concerns. Root `network.ts` is an explicit compatibility facade, not a second implementation. Keep `main.ts` as the composition boundary and extract its remaining responsibilities incrementally with regression coverage; do not create a generic `utils` dumping ground or circular barrel imports.
 
 Apply single responsibility to reasons for change, not arbitrary line counts. Depend on small structural interfaces or callbacks at I/O boundaries. Prefer composition over inheritance. Shared simulation imports point inward to `shared/`, never the reverse.
 
@@ -19,3 +19,5 @@ Every timer, listener, stream, animation loop, and GPU resource needs a document
 The server owns authority; visuals consume authorized snapshots only. Dispose owned geometries/materials/textures when their owner ends, but do not dispose shared cached resources from one consumer. Keep bounded pools/caches and reuse hot-loop scratch values where measured. Do not replace predictable mutation with allocation-heavy immutable copies just for style. UI updates should avoid unchanged DOM writes.
 
 Run affected unit tests, root typecheck/lint, then full verification. Rendering, input, room, transport, and lifecycle changes require actual browser E2E evidence. No current-Hider-position diagnostic backdoors.
+
+Run `pnpm lint:ts` with type-aware ESLint and `pnpm format:check`. Public Three.js constructor generics sometimes widen to `any`: narrow runtime classes and local values explicitly rather than propagating untyped material/geometry state. Scratch pose caches must clear or overwrite absent optional fields, not retain old shield/skin/warp data.

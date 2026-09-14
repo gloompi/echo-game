@@ -7,3 +7,5 @@ Unit tests should use explicit inputs, fake clocks, narrow injected dependencies
 E2E must launch the real Rust server and built app. Do not mock HTTP/game transport, skip WebGL, or introduce current-Hider debug state just to make a test pass. A UI speed assertion tests user-visible movement, not an independent proof of server acknowledgement; protocol tests cover authority separately.
 
 No test-only `.only`, hidden skip, weakened assertion, or inflated timeout as a substitute for fixing a regression. Save diagnostics without secrets. Report exact executed suites and environment limitations.
+
+Register top-level Node tests synchronously (`void test(...)`): the runner owns completion and reports failures. Await child `t.test(...)` calls inside an async parent. Do not await individual top-level registrations around suite-wide after-hooks, which can tear down globals before later tests register. Playwright Test owns tracing via config; fixtures must not also call `context.tracing.start()`.

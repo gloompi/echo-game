@@ -1,7 +1,12 @@
 import type { ClientMessage, ServerMessage, Snapshot } from '../../shared/types.js';
 import { type GameTransport, WebTransportTransport } from '../transport.js';
 import { ServerClock, SnapshotCursor } from './clock.js';
-import { createInviteUrl, fragmentAccessKey, readPublicUrl, type InviteLocation } from './invite.js';
+import {
+  createInviteUrl,
+  fragmentAccessKey,
+  readPublicUrl,
+  type InviteLocation,
+} from './invite.js';
 
 type JoinMessage = Extract<ClientMessage, { type: 'join' }>;
 
@@ -43,10 +48,18 @@ export class Connection {
     this.clock = new ServerClock(environment.now);
   }
 
-  get ping(): number { return this.clock.ping; }
-  get offset(): number { return this.clock.offset; }
-  get synced(): boolean { return this.clock.synced; }
-  get now(): number { return this.clock.now; }
+  get ping(): number {
+    return this.clock.ping;
+  }
+  get offset(): number {
+    return this.clock.offset;
+  }
+  get synced(): boolean {
+    return this.clock.synced;
+  }
+  get now(): number {
+    return this.clock.now;
+  }
 
   connect(join: JoinMessage): void {
     this.close();
@@ -60,17 +73,27 @@ export class Connection {
     try {
       const transport = this.factory();
       this.transport = transport;
-      this.timeout = setTimeout(() => fail(
-        'WebTransport connection timed out. Check the UDP endpoint, certificate, browser support and host connection.',
-      ), CONNECT_TIMEOUT_MS);
+      this.timeout = setTimeout(
+        () =>
+          fail(
+            'WebTransport connection timed out. Check the UDP endpoint, certificate, browser support and host connection.',
+          ),
+        CONNECT_TIMEOUT_MS,
+      );
 
-      void transport.connect(
-        CONFIG_URL,
-        message => this.receive(generation, message),
-        () => fail('Connection lost. Rejoin from the menu. The host PC and UDP endpoint must remain reachable.'),
-      ).then(() => this.beginSession(generation, join)).catch(error => {
-        fail(error instanceof Error ? error.message : 'Connection failed.');
-      });
+      void transport
+        .connect(
+          CONFIG_URL,
+          (message) => this.receive(generation, message),
+          () =>
+            fail(
+              'Connection lost. Rejoin from the menu. The host PC and UDP endpoint must remain reachable.',
+            ),
+        )
+        .then(() => this.beginSession(generation, join))
+        .catch((error) => {
+          fail(error instanceof Error ? error.message : 'Connection failed.');
+        });
     } catch (error) {
       fail(error instanceof Error ? error.message : 'Connection failed.');
     }
@@ -126,9 +149,8 @@ export class Connection {
     const transport = this.transport;
     if (!transport) return false;
     const data = JSON.stringify(message);
-    const sent = message.type === 'input'
-      ? transport.sendLatest(data)
-      : transport.sendReliable(data);
+    const sent =
+      message.type === 'input' ? transport.sendLatest(data) : transport.sendReliable(data);
     if (!sent && this.transport === transport && transport.bufferedAmount > MAX_BUFFERED_BYTES) {
       this.fail(this.generation, 'The connection is too congested. Stop large uploads and rejoin.');
     }
