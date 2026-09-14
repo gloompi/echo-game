@@ -1,17 +1,32 @@
 # Echo engineering contract
 
-## Gameplay authority
+Read this file before changing the repository. Also read the `AGENTS.md` files on the path to every area you will edit; do not assume your agent automatically loads instructions outside its working directory. More specific instructions supplement this contract, not the gameplay/privacy invariants.
 
-- Room delay is host-configurable from 0 to 10000 whole milliseconds, immutable during a hunt. Default 3000. Only Hiders are delayed for Seekers; allied Seekers and self movement are live.
-- The Rust server samples and withholds Hider poses. Never send current hidden Hider transforms through debug fields, roster, scene objects, shadows or spatial events. Missing history must not fall back to current poses.
-- Shots test PRESENT authoritative positions, not historical echoes. Do not add a generic lag-compensation rewind that undoes Echo's mechanic.
-- Keep `shared/rules.json` and `shared/arena.json` authoritative for shared tunings/colliders. Changes to either motor must update/review JS-generated fixtures and pass Rust parity tests. This is currently a TS/Rust port, not one shared WASM motor.
-- Preserve the existing striped blocky Hider, blue armored Seeker, orange blaster and cyan/magenta arena. Renderer/UI changes must not own game authority.
+## Non-negotiable gameplay and privacy
 
-## Workflow and verification
+- Room delay is host-configurable from 0 to 10000 whole milliseconds, default 3000, and immutable during a hunt. Only Hiders are delayed for Seekers. Self movement and allied Seekers are live.
+- The Rust server samples and withholds Hider poses. Missing history must never fall back to current poses. Never expose current hidden transforms in roster fields, diagnostics, scene objects, shadows, spatial events, or browser test hooks.
+- Shots test PRESENT authoritative positions, not historical echoes. Generic lag-compensation rewinds would undo Echo's mechanic.
+- `shared/rules.json`, `shared/arena.json`, and the documented generated map/fixture pipeline define shared gameplay data. Motor changes require TS/Rust fixture parity review and tests. These are separate TS/Rust implementations, not one shared WASM motor.
+- Rendering and UI never own game authority. Preserve the striped blocky Hider, blue armored Seeker, orange blaster, and cyan/magenta art direction unless explicitly asked to change them.
 
-The game runtime is `crates/echo-server`; Node is frontend/build/launcher tooling only. Use the repository's test/build commands and real multi-client browser checks. Verify new crate and npm versions against primary documentation when changing dependencies. Keep real generated lockfiles once a dependency-enabled installation has resolved them; never invent a lockfile or report an unexecuted build/test as successful.
+## Change workflow
 
-Use a feature branch for an unverified migration and do not force-push user work. The authoring environment lacked Rust and registry network access. At that point only 33 JS logic tests, six regenerated fixture scenarios, a mock-service launcher lifecycle test, limited strict typechecking and syntax checks were executable; Rust/live WebSocket/WebGL/Docker/tunnel validation remained pending. Update this status only with observed evidence.
+1. Read `docs/engineering/architecture.md`, the relevant scoped instructions, and `docs/engineering/baseline.md`. Use `.agents/skills/echo-change/SKILL.md` for the repeatable workflow.
+2. Work on a feature branch. Inspect the existing diff before editing. Never reset, stash, force-push, overwrite, or silently include another person's work.
+3. Identify the owning layer and observable behavior. Add a focused regression test before a bug fix. Keep mechanical moves separate from behavior changes where practical.
+4. Prefer cohesive features, small explicit interfaces, composition, and pure policy functions. Apply SOLID pragmatically: no inheritance hierarchy, trait, service container, or abstraction without a concrete need. KISS and YAGNI apply equally to architecture.
+5. Run `pnpm verify:quick` during iteration and `pnpm verify` before declaring completion. Review the final diff after verification, including generated files and lockfiles.
+6. Report the exact checks executed, outcomes, and environment limitations. Missing tools, skipped jobs, compilation errors, and blocked prerequisites are NOT passes. Keep the PR draft while required checks remain unverified or failing. Never disable a check, broaden an exclusion, or add a type/lint suppression just to make a refactor pass.
 
-`npm run play` binds loopback. Only explicit `npm run share` starts a public tunnel, and it publishes the built app port, never Vite or the source tree. Do not commit access keys, `.env`, control tokens or tunnel credentials. Keep the public invite key fragment intact across copy/rejoin flows. A PC-hosted tunnel is for private playtests, not production uptime or a zero-lag guarantee.
+## Quality and dependencies
+
+Node is frontend/build/launcher tooling; the game server is `crates/echo-server`. Use the pinned pnpm version in `package.json`, frozen pnpm lockfile installation, and Cargo `--locked`. Verify dependency changes against primary documentation, generate real lockfiles, and review them. Never invent lockfile contents or checksums.
+
+The root `pnpm verify` command is the common contract for local work, Git hooks, and CI. Hooks are installed per checkout, can be bypassed, and do not replace required GitHub checks. See `docs/engineering/verification.md` for their deliberately strict staging policy and remaining repository-administration setup.
+
+The current JS lint is a small AST-based architecture/safety checker, not a complete typed ESLint configuration. Legacy JS tooling and large client/server entry points still need further migration; see the baseline rather than assuming this branch completed every refactor.
+
+## Local play and secrets
+
+`pnpm play` binds loopback. Only explicit `pnpm share` may start a public tunnel, publishing the built app rather than Vite or the source tree. Tests must never share publicly. Preserve invitation keys in URL fragments across copy/rejoin flows. Do not commit `.env`, access keys, control tokens, TLS private keys, or tunnel credentials, or include them in logs/test artifacts. A PC-hosted tunnel is for private playtests, not production uptime.
