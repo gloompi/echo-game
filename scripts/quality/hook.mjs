@@ -5,9 +5,9 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-/** @param {string} root @param {string[]} args @returns {string} */
-function git(root, args) {
-  const result = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+/** @param {string} root @param {string[]} args @param {NodeJS.ProcessEnv} env @returns {string} */
+function git(root, args, env) {
+  const result = spawnSync('git', args, { cwd: root, encoding: 'utf8', env });
   if (result.error || result.status !== 0) {
     throw new Error(result.error?.message || result.stderr || `git ${args.join(' ')} failed.`);
   }
@@ -15,18 +15,21 @@ function git(root, args) {
 }
 
 /** Ensure tests exercise exactly the commit contents, without stashing user work.
- * @param {string} root @param {'pre-commit' | 'pre-push'} kind @returns {string}
+ * Fixture callers may supply an isolated environment. Real hooks retain Git's
+ * exported repository/index variables by default.
+ * @param {string} root @param {'pre-commit' | 'pre-push'} kind
+ * @param {NodeJS.ProcessEnv} [env] @returns {string}
  */
-export function checkedRevision(root, kind) {
-  git(root, ['diff', '--quiet', '--ignore-submodules=none']);
-  if (git(root, ['ls-files', '--others', '--exclude-standard'])) {
+export function checkedRevision(root, kind, env = process.env) {
+  git(root, ['diff', '--quiet', '--ignore-submodules=none'], env);
+  if (git(root, ['ls-files', '--others', '--exclude-standard'], env)) {
     throw new Error('Untracked files are present. Stage or explicitly ignore them before verification.');
   }
   if (kind === 'pre-push') {
-    git(root, ['diff', '--cached', '--quiet']);
-    return git(root, ['rev-parse', 'HEAD']);
+    git(root, ['diff', '--cached', '--quiet'], env);
+    return git(root, ['rev-parse', 'HEAD'], env);
   }
-  return git(root, ['write-tree']);
+  return git(root, ['write-tree'], env);
 }
 
 /** @param {string} input @param {string} head @returns {void} */

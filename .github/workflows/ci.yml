@@ -32,6 +32,29 @@ jobs:
       - name: Typechecks, lint, logic, tooling, and fixtures
         run: node scripts/quality/verify.mjs --group static
 
+  tooling-platforms:
+    name: tooling (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Typecheck quality tooling
+        run: pnpm run typecheck:tools
+      - name: Test real Git fixtures and verification tools
+        run: pnpm run test:tools
+
   rust:
     name: rust
     runs-on: ubuntu-latest
@@ -83,7 +106,7 @@ jobs:
 
   quality-gate:
     name: quality-gate
-    needs: [static, rust, browser]
+    needs: [static, tooling-platforms, rust, browser]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -91,10 +114,12 @@ jobs:
       - name: Require every verification group to succeed
         env:
           STATIC_RESULT: ${{ needs.static.result }}
+          TOOLING_RESULT: ${{ needs.tooling-platforms.result }}
           RUST_RESULT: ${{ needs.rust.result }}
           BROWSER_RESULT: ${{ needs.browser.result }}
         run: |
-          printf 'static=%s rust=%s browser=%s\n' "$STATIC_RESULT" "$RUST_RESULT" "$BROWSER_RESULT"
+          printf 'static=%s tooling=%s rust=%s browser=%s\n' "$STATIC_RESULT" "$TOOLING_RESULT" "$RUST_RESULT" "$BROWSER_RESULT"
           test "$STATIC_RESULT" = success
+          test "$TOOLING_RESULT" = success
           test "$RUST_RESULT" = success
           test "$BROWSER_RESULT" = success
