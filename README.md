@@ -15,6 +15,8 @@ pnpm run play
 
 Open the local URL printed by the launcher. Use **PRACTICE** for bots or **CREATE A ROOM** for friends.
 
+In a room's **Arena** selector, choose **Mirror Yard** or **Neon Carnival** to play the authored Blender worlds. Editable scenes, GLB exports, concept references and rebuild instructions are documented in [Blender worlds](docs/BLENDER_WORLDS.md).
+
 To publish a temporary invite, install `cloudflared` and arrange a reachable UDP endpoint (router forwarding or a UDP relay), then run:
 
 ```sh

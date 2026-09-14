@@ -12,7 +12,7 @@ export class RoomControls {
     this.panel.id = 'room-settings';
     const timeline = document.querySelector<HTMLElement>('.timeline-label b'); if (timeline) timeline.id = 'configured-delay';
     const pitch = document.querySelector('.hero-description strong'); if (pitch) pitch.textContent = 'the past. You choose how far.';
-    const note = document.querySelector('.matchmaking-note'); if (note) note.textContent = '2–12 players · Three maps · WebTransport';
+    const note = document.querySelector('.matchmaking-note'); if (note) note.textContent = `2–12 players · ${Object.keys(MAPS).length} maps · WebTransport`;
     this.panel.innerHTML = `<legend>HOST SETTINGS</legend>
       <label class="wide">Arena<select id="room-map"></select></label>
       <div class="map-card wide"><canvas id="map-preview" width="240" height="240" role="img" aria-label="Static map layout preview"></canvas><div><strong id="map-size"></strong><p id="map-description"></p><small>Cover, spawns and mirrors only. No live players.</small></div></div>

@@ -1,0 +1,21 @@
+{
+  "id": "neon-carnival",
+  "status": "passed",
+  "checkedAtUtc": "2026-09-14T00:17:58.866762+00:00",
+  "blender": "5.2.0 LTS",
+  "sourceReopened": true,
+  "sourceBytes": 2148227,
+  "sceneUnitSystem": "METRIC",
+  "metresPerBlenderUnit": 1.0,
+  "coordinateTransformVerified": "Blender (x,-z,y) to game (x,y,z)",
+  "sourceMeshCount": 137,
+  "sourceColliderTags": 122,
+  "runtimeColliderTags": 122,
+  "mapColliderCount": 122,
+  "maximumColliderBoundsErrorMetres": 9.16e-07,
+  "runtimeMeshCount": 137,
+  "runtimePrimitiveCount": 137,
+  "runtimeGlbBytes": 4896424,
+  "runtimeGeometryBufferBytes": 4814752,
+  "runtimePresentationRigExcluded": true
+}

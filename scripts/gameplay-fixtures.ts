@@ -10,6 +10,12 @@ const definitions: Definition[] = [
   {name:'glassworks-timed-air-strafe',start:{x:45,y:0,z:40},role:'seeker',settings:{...DEFAULT_SETTINGS,mapId:'glassworks'},segments:[{ticks:40,input:{mz:1}},{ticks:15,input:{jump:true,mz:1}},{ticks:25,input:{mx:1,yaw:.7}},{ticks:4,input:{jump:true,mx:1}},{ticks:45,input:{mz:1}}]},
   {name:'afterhours-custom-dash',start:{x:20,y:0,z:20},role:'hider',settings:{...DEFAULT_SETTINGS,dashCooldownMs:500},segments:[{ticks:1,input:{dash:true,mz:1}},{ticks:32,input:{mz:1}},{ticks:1,input:{dash:true,mx:-1}},{ticks:60,input:{crouch:true,mz:1}}]},
   {name:'legacy-movement-off',start:{x:20,y:0,z:20},role:'hider',settings:{...DEFAULT_SETTINGS,bunnyHop:'off'},segments:[{ticks:60,input:{mz:.5}},{ticks:100,input:{jump:true,mz:1}},{ticks:15,input:{crouch:true}}]},
+  {name:'mirror-yard-crawl-through',start:{x:0,y:0,z:-14},role:'hider',settings:{...DEFAULT_SETTINGS,mapId:'mirror-yard'},segments:[{ticks:40,input:{mz:1}},{ticks:100,input:{mz:1,crouch:true}},{ticks:20,input:{}}]},
+  {name:'mirror-yard-stairs-to-rooftop',start:{x:9,y:0,z:5.9},role:'hider',settings:{...DEFAULT_SETTINGS,mapId:'mirror-yard'},segments:[{ticks:35,input:{mz:-1}},{ticks:35,input:{mz:-1}},{ticks:30,input:{mz:-1}}]},
+  {name:'neon-carnival-arcade-stairs',start:{x:18,y:0,z:-4.8},role:'hider',settings:{...DEFAULT_SETTINGS,mapId:'neon-carnival'},segments:[{ticks:35,input:{mz:1}},{ticks:35,input:{mz:1}},{ticks:30,input:{mz:1}}]},
+  {name:'neon-carnival-tunnel-north-to-south',start:{x:-21,y:0,z:-19},role:'hider',settings:{...DEFAULT_SETTINGS,mapId:'neon-carnival'},segments:[{ticks:30,input:{mz:-1}},{ticks:150,input:{mz:-1,crouch:true}},{ticks:150,input:{mz:-1,crouch:true}},{ticks:20,input:{}}]},
+  {name:'neon-carnival-tunnel-south-to-north',start:{x:-21,y:0,z:-4},role:'hider',settings:{...DEFAULT_SETTINGS,mapId:'neon-carnival'},segments:[{ticks:30,input:{mz:1}},{ticks:150,input:{mz:1,crouch:true}},{ticks:150,input:{mz:1,crouch:true}},{ticks:20,input:{}}]},
+  {name:'neon-carnival-side-stairs-and-roof-connection',start:{x:-17,y:0,z:1.2},role:'hider',settings:{...DEFAULT_SETTINGS,mapId:'neon-carnival'},segments:[{ticks:41,input:{mz:1}},{ticks:41,input:{mz:1}},{ticks:36,input:{mx:-1}}]},
 ];
 const cases = definitions.map(d => {
   const motor=makeMotor(d.start),layout=MAPS[d.settings.mapId ?? 'afterhours'];

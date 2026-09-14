@@ -1,6 +1,6 @@
 import { CFG } from './config.js';
 import { freshBalance, validBalance, type Balance } from './balance.js';
-export const MAP_IDS = ['afterhours', 'switchyard', 'glassworks'] as const;
+export const MAP_IDS = ['afterhours', 'switchyard', 'glassworks', 'mirror-yard', 'neon-carnival'] as const;
 export type MapId = typeof MAP_IDS[number];
 export type BunnyHop = 'off' | 'timed' | 'auto';
 export interface RoomSettings {

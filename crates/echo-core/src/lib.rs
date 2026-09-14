@@ -51,8 +51,15 @@ pub fn arena() -> &'static Arena {
 }
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all="lowercase")]
-pub enum MapId { #[default] Afterhours, Switchyard, Glassworks }
-impl MapId { pub fn as_str(self) -> &'static str { match self { Self::Afterhours=>"afterhours", Self::Switchyard=>"switchyard", Self::Glassworks=>"glassworks" } } }
+pub enum MapId {
+    #[default] Afterhours, Switchyard, Glassworks,
+    #[serde(rename="mirror-yard")] MirrorYard,
+    #[serde(rename="neon-carnival")] NeonCarnival,
+}
+impl MapId { pub fn as_str(self) -> &'static str { match self {
+    Self::Afterhours=>"afterhours", Self::Switchyard=>"switchyard", Self::Glassworks=>"glassworks",
+    Self::MirrorYard=>"mirror-yard", Self::NeonCarnival=>"neon-carnival",
+} } }
 pub fn map(id: MapId) -> &'static Arena {
     static MAPS: OnceLock<HashMap<String,Arena>> = OnceLock::new();
     let maps=MAPS.get_or_init(|| {

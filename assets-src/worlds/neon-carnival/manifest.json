@@ -1,0 +1,13 @@
+{
+  "name": "Neon Carnival",
+  "id": "neon-carnival",
+  "generator": "scripts/worlds/neon_carnival.py",
+  "sourceReference": "e7b92f37-2831-4988-a077-5e5aa945c25f.png",
+  "blender": "5.2.0 LTS",
+  "units": "metres",
+  "runtimeUp": "+Y",
+  "collisionCount": 122,
+  "meshes": 137,
+  "triangles": 141472,
+  "glbBytes": 4896424
+}

@@ -1,0 +1,21 @@
+{
+  "id": "mirror-yard",
+  "status": "passed",
+  "checkedAtUtc": "2026-09-14T00:17:58.825635+00:00",
+  "blender": "5.2.0 LTS",
+  "sourceReopened": true,
+  "sourceBytes": 522097,
+  "sceneUnitSystem": "METRIC",
+  "metresPerBlenderUnit": 1.0,
+  "coordinateTransformVerified": "Blender (x,-z,y) to game (x,y,z)",
+  "sourceMeshCount": 235,
+  "sourceColliderTags": 222,
+  "runtimeColliderTags": 222,
+  "mapColliderCount": 222,
+  "maximumColliderBoundsErrorMetres": 4.6089e-05,
+  "runtimeMeshCount": 234,
+  "runtimePrimitiveCount": 234,
+  "runtimeGlbBytes": 4726780,
+  "runtimeGeometryBufferBytes": 4571352,
+  "runtimePresentationRigExcluded": true
+}

@@ -1,0 +1,36 @@
+{
+  "id": "mirror-yard",
+  "name": "Mirror Yard",
+  "generator": "scripts/worlds/mirror_yard.py",
+  "blender": "5.2.0 LTS",
+  "seed": 7219,
+  "reference": "echo-character-assets/assets/d740b259-4d28-4d6b-9f46-a7610bfe7776.png",
+  "createdFrom": "Original meshes authored in Blender from user-supplied concept art; no downloaded models or textures.",
+  "coordinates": "map: x/y-up/z metres; Blender: x/-z/y; glTF exporter converts back to y-up",
+  "collisionBoxes": 222,
+  "meshObjects": 234,
+  "triangles": 76832,
+  "glbBytes": 4726780,
+  "materials": 13,
+  "stairRoutes": 4,
+  "stairRise": 0.3,
+  "stairTread": 0.6,
+  "stairWidth": 3,
+  "catwalkTop": 3.6,
+  "crawlClearance": 1.36,
+  "standingClearanceUnderCatwalk": 3.2,
+  "groundSpawns": 12,
+  "mirrors": 2,
+  "validation": [
+    "All 12 ground spawns and both mirror exits clear for radius .36 and height 2.16.",
+    "All physical meshes carry collisionId and are generated from exact map AABBs.",
+    "Every catwalk connects to 4 physical stair runs of twelve 0.3m rises.",
+    "Runtime GLB excludes presentation rig, backdrop and interactable mirror meshes."
+  ],
+  "notes": [
+    "Foliage is soft cosmetic material inside planters; non-solid leaf clusters have no collider.",
+    "Small bevels, seams, light ribbons and paved surface details are cosmetic.",
+    "Guard rail panels are solid metal with emissive ribbon, matching their collision boxes.",
+    "No game motor or authoritative rules changed."
+  ]
+}

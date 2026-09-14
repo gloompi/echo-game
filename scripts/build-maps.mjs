@@ -77,6 +77,13 @@ for(const s of [-1,1]) {
 }
 mirrors(glass,'orchid',-49,-46,49,46); mirrors(glass,'azure',49,-46,-49,46);
 mirrors(glass,'amber',-49,0,49,0);
+// Blender authoring emits both the visual GLB and its authoritative AABB descriptor.
+// Keep these required: a missing export must fail generation instead of dropping a selectable map.
+for(const id of ['mirror-yard','neon-carnival']) {
+  const layout=JSON.parse(readFileSync(new URL(`../assets-src/worlds/${id}/map.json`,import.meta.url),'utf8'));
+  if(layout.id!==id) throw new Error(`World descriptor id does not match ${id}`);
+  maps[id]=layout;
+}
 const text=JSON.stringify(maps)+'\n';
 const file=new URL('../shared/maps.json',import.meta.url);
 if(process.argv.includes('--check')) {if(readFileSync(file,'utf8')!==text) throw new Error('Run node scripts/build-maps.mjs and commit shared/maps.json');}

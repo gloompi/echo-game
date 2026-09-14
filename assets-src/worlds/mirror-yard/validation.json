@@ -1,0 +1,10 @@
+{
+  "glbColliderBoundChecks": 222,
+  "maximumToleranceMetres": 0.0001,
+  "cameraCount": 0,
+  "lightCount": 0,
+  "glbBytes": 4726780,
+  "primitiveDraws": 234,
+  "triangles": 76832,
+  "result": "passed"
+}

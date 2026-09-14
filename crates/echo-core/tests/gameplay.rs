@@ -114,13 +114,26 @@ fn map_change_is_host_only_between_rounds_and_clears_old_history() {
 }
 #[test]
 fn map_data_has_clear_spawns_and_reciprocal_mirrors() {
-    for id in [MapId::Afterhours,MapId::Switchyard,MapId::Glassworks]{let layout=map(id);
+    for id in [MapId::Afterhours,MapId::Switchyard,MapId::Glassworks,MapId::MirrorYard,MapId::NeonCarnival]{let layout=map(id);
+        assert_eq!(serde_json::from_str::<MapId>(&format!("\"{}\"",id.as_str())).unwrap(),id);
+        assert_eq!(serde_json::to_string(&id).unwrap(),format!("\"{}\"",id.as_str()));
+        assert!(layout.half.is_finite()&&layout.half>0.0);
+        for b in &layout.boxes {
+            assert!([b.x,b.y,b.z,b.w,b.h,b.d].iter().all(|v|v.is_finite()));
+            assert!(b.w>0.0&&b.h>0.0&&b.d>0.0);
+            assert!(b.x.abs()+b.w/2.0<=layout.half+1e-8&&b.z.abs()+b.d/2.0<=layout.half+1e-8);
+        }
         assert_eq!(layout.spawns.len(),12);
         for p in layout.spawns.iter().chain(layout.mirrors.iter().map(|m|&m.exit)) {
             assert!(physics::can_occupy(*p,rules().height,&layout.boxes));
             assert!(p.x.abs()+rules().radius<layout.half&&p.z.abs()+rules().radius<layout.half);
         }
-        for m in &layout.mirrors{assert_eq!(layout.mirrors.iter().find(|q|q.id==m.target).unwrap().target,m.id);}
+        let mut mirror_ids=std::collections::HashSet::new();
+        for m in &layout.mirrors{
+            assert!(mirror_ids.insert(&m.id));assert_ne!(m.id,m.target);
+            assert!([m.x,m.y,m.z,m.yaw].iter().all(|v|v.is_finite()));
+            assert_eq!(layout.mirrors.iter().find(|q|q.id==m.target).unwrap().target,m.id);
+        }
     }
 }
 #[test]

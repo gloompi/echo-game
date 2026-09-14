@@ -1,6 +1,7 @@
 import * as T from 'three';
 import { ACTIVE_MAP, type GameMap } from '../shared/map.js';
 import { makeArena as makeClassicArena } from './world.js';
+import { mountWorldAsset, type WorldAssetStatus } from './world-assets.js';
 
 type Bag={geometries:Set<T.BufferGeometry>;materials:Set<T.Material>;textures:Set<T.Texture>;instances:Set<T.InstancedMesh>};
 const bag=():Bag=>({geometries:new Set(),materials:new Set(),textures:new Set(),instances:new Set()});
@@ -36,7 +37,13 @@ function decorateMirrors(scene:T.Scene,layout:GameMap):{animate(time:number):voi
   return{animate(time){for(const item of animated){item.texture.rotation=time*.12+item.phase;item.plane.scale.setScalar(1+Math.sin(time*2+item.phase)*.015);}},dispose(){disposeBag(owned);}};
 }
 const matrix=new T.Matrix4();
-export function makeArena():{scene:T.Scene;animate(time:number):void;dispose():void}{
-  const layout=ACTIVE_MAP,base=layout.id==='afterhours'?makeClassicArena():buildMap(layout),mirrors=decorateMirrors(base.scene,layout);
-  return{scene:base.scene,animate(time){base.animate(time);mirrors.animate(time);},dispose(){mirrors.dispose();base.dispose();}};
+export function makeArena():{scene:T.Scene;ready:Promise<void>;assetStatus:WorldAssetStatus;animate(time:number):void;dispose():void}{
+  const layout=ACTIVE_MAP,base=layout.id==='afterhours'?makeClassicArena():buildMap(layout),fallback=new T.Group();
+  fallback.name=`world-fallback:${layout.id}`;
+  // Keep lights, mirrors and subsequently added actors outside the replaceable art group.
+  for(const object of [...base.scene.children])if(!(object instanceof T.Light))fallback.add(object);
+  base.scene.add(fallback);
+  const mirrors=decorateMirrors(base.scene,layout),asset=mountWorldAsset(base.scene,layout.id,fallback);
+  let disposed=false;
+  return{scene:base.scene,ready:asset.ready,assetStatus:asset.status,animate(time){if(disposed)return;if(asset.status.state!=='loaded')base.animate(time);mirrors.animate(time);},dispose(){if(disposed)return;disposed=true;asset.dispose();mirrors.dispose();base.dispose();fallback.clear();}};
 }
