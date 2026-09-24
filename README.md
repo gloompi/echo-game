@@ -91,7 +91,7 @@ scripts/play.mjs             Local/public playtest launcher
 scripts/movement-fixtures.ts Cross-language movement fixture generator
 ```
 
-[Architecture and timing contract](docs/ARCHITECTURE.md) · [Playtest checklist](docs/PLAYTEST.md) · [Asset portability](assets-src/README.md)
+[Architecture and timing contract](docs/ARCHITECTURE.md) · [Playtest checklist](docs/PLAYTEST.md) · [Asset portability](assets-src/README.md) · [3D asset pipeline](docs/3D_ASSET_PIPELINE.md)
 
 ## Scope and validation status
 

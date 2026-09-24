@@ -12,7 +12,7 @@ Read this file before changing the repository. Also read the `AGENTS.md` files o
 
 ## Change workflow
 
-1. Read `docs/engineering/architecture.md`, the relevant scoped instructions, and `docs/engineering/baseline.md`. Use `.agents/skills/echo-change/SKILL.md` for the repeatable workflow.
+1. Read `docs/engineering/architecture.md`, the relevant scoped instructions, and `docs/engineering/baseline.md`. Use `.agents/skills/echo-change/SKILL.md` for the repeatable workflow, plus `.agents/skills/echo-3d-assets/SKILL.md` for new or remade characters, props and maps.
 2. Work on a feature branch. Inspect the existing diff before editing. Never reset, stash, force-push, overwrite, or silently include another person's work.
 3. Identify the owning layer and observable behavior. Add a focused regression test before a bug fix. Keep mechanical moves separate from behavior changes where practical.
 4. Prefer cohesive features, small explicit interfaces, composition, and pure policy functions. Apply SOLID pragmatically: no inheritance hierarchy, trait, service container, or abstraction without a concrete need. KISS and YAGNI apply equally to architecture.

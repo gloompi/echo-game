@@ -47,6 +47,8 @@ scripts/quality/                verification, lint, hooks, E2E process ownership
 tests/quality/                  regressions for the verification infrastructure
 tests/e2e/                     real multiplayer journey and player fixtures
 .agents/skills/echo-change/      repeatable agent workflow
+.agents/skills/echo-3d-assets/   3D character/prop/map production workflow
+scripts/blender/                Blender review renders and GLB validation (run inside Blender)
 ```
 
 Keep explicit facades while migrating consumers instead of making unrelated path changes throughout the repository. Add a feature directory when it has multiple cohesive responsibilities, not a folder for every function.

@@ -54,4 +54,6 @@ The map tests check finite positive geometry, map bounds, unique IDs, clear spaw
 
 The third requested concept was unavailable. This delivery includes the two identified worlds only. The visual designs are playable adaptations; the carnival skyline rides are static scenery. Public hosting and external-network multiplayer were not exercised in this task.
 
+New and remade maps follow the [3D asset pipeline](3D_ASSET_PIPELINE.md); these two worlds remain the technical pattern, not the quality target.
+
 Export/loading references: [Blender glTF manual](https://docs.blender.org/manual/en/latest/addons/scene_gltf2.html) and [Three.js GLTFLoader](https://threejs.org/docs/pages/GLTFLoader.html).
