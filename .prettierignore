@@ -1,0 +1,14 @@
+# Dependency locks and build outputs have their own writers.
+pnpm-lock.yaml
+Cargo.lock
+node_modules/
+dist/
+target/
+test-results/
+playwright-report/
+# Generated simulation data must retain the byte-for-byte generator format.
+shared/maps.json
+tests/fixtures/*.json
+# Binary authoring sources and exported assets are checked by the asset pipeline.
+assets-src/
+public/worlds/

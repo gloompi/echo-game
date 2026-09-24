@@ -1,3 +1,5 @@
+> Historical transport-migration record below. For the current refactor and native verification results, read [the engineering verification record](engineering/baseline.md).
+
 # WebTransport and abilities validation — 12 September 2026
 
 ## Source and integration
@@ -20,21 +22,21 @@ Browser tests start this checkout on dedicated ports and never reuse an unknown 
 Validated with Node 24.11.1, pnpm 10.23.0, Cargo 1.98.1 and Playwright Chromium 153
 on Windows. Docker also built and exercised the Linux image.
 
-| Check | Result |
-| --- | --- |
-| `pnpm install --frozen-lockfile` | Pass; actual generated lockfile retained |
-| `pnpm run build:client` | Full strict TypeScript check and Vite production build pass |
-| `pnpm run test:ts` | 80 pass, 0 fail, 0 skipped |
-| `pnpm run fixtures:check` | Maps and both generated fixture files match |
-| `cargo test --workspace --no-fail-fast` | 66 pass, including 13 new ability tests and both TS/Rust motor-parity suites |
-| `cargo build --release --locked -p echo-server` | Windows release build passes |
-| `pnpm run test:network` | Real Chromium-to-Rust WebTransport integration passes; no mocked TLS/QUIC |
-| Browser tests | 7 pass: the existing 5-test suite plus 2 new ability UI tests |
-| `pnpm run test:launcher` on Windows | Configuration guard passes; POSIX mock lifecycle test skips Windows |
-| Launcher tests in Linux web-build container | Both pass, including keyed invite registration and child-process shutdown |
-| `docker compose config --quiet` | Pass |
-| `docker build` | Linux frontend and Rust release image build passes |
-| Linux container runtime | Read-only, unprivileged container serves HTTP and completes native browser QUIC join/snapshots through published UDP |
+| Check                                           | Result                                                                                                               |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install --frozen-lockfile`                | Pass; actual generated lockfile retained                                                                             |
+| `pnpm run build:client`                         | Full strict TypeScript check and Vite production build pass                                                          |
+| `pnpm run test:ts`                              | 80 pass, 0 fail, 0 skipped                                                                                           |
+| `pnpm run fixtures:check`                       | Maps and both generated fixture files match                                                                          |
+| `cargo test --workspace --no-fail-fast`         | 66 pass, including 13 new ability tests and both TS/Rust motor-parity suites                                         |
+| `cargo build --release --locked -p echo-server` | Windows release build passes                                                                                         |
+| `pnpm run test:network`                         | Real Chromium-to-Rust WebTransport integration passes; no mocked TLS/QUIC                                            |
+| Browser tests                                   | 7 pass: the existing 5-test suite plus 2 new ability UI tests                                                        |
+| `pnpm run test:launcher` on Windows             | Configuration guard passes; POSIX mock lifecycle test skips Windows                                                  |
+| Launcher tests in Linux web-build container     | Both pass, including keyed invite registration and child-process shutdown                                            |
+| `docker compose config --quiet`                 | Pass                                                                                                                 |
+| `docker build`                                  | Linux frontend and Rust release image build passes                                                                   |
+| Linux container runtime                         | Read-only, unprivileged container serves HTTP and completes native browser QUIC join/snapshots through published UDP |
 
 The real network check covers invitation-key rejection, settings authority and
 round immutability, delayed hider poses and nonspatial roster, zero delay, movement

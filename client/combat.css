@@ -1,18 +1,136 @@
-.balance-editor { padding: 12px; border: 1px solid #435365; border-radius: 8px; }
-.balance-editor summary { cursor: pointer; font-size: 12px; letter-spacing: .08em; }
-.balance-editor p { font-size: 12px; line-height: 1.6; color: #b3bec9; }
-.balance-editor fieldset { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin: 14px 0; padding: 12px; border: 1px solid #364459; }
-.balance-editor legend { color: #72e8be; font-size: 12px; padding: 0 5px; }
-.balance-editor input[type=checkbox] { width: 20px; height: 20px; }
-.balance-editor input[type=number] { width: 100%; min-width: 0; }
-.skin-choice { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:12px 0; font-size:12px; }
-.skin-choice select { padding:8px; color:#eef7ff; background:#152234; border:1px solid #526175; border-radius:4px; }
-#combat-hud { position:absolute; right:28px; bottom:140px; white-space:pre-line; text-align:right; font:600 11px/1.8 ui-monospace,monospace; color:#cbebe8; text-shadow:0 1px 5px #000; pointer-events:none; max-width:310px; padding:10px 12px; border-right:2px solid #59cbbd; background:linear-gradient(90deg,transparent,#0a182dc9); }
-#combat-hud:empty { display:none; }
-#damage-blood { position:fixed; inset:0; z-index:70; pointer-events:none; opacity:0; box-shadow:inset 0 0 80px 8px #a41f35; }
-#damage-blood i { position:absolute; width:18px; height:30px; border-radius:43% 55% 50% 39%; background:#a3132cb3; transform:rotate(23deg); }
-#damage-blood i:nth-child(1){left:5%;top:20%}#damage-blood i:nth-child(2){right:4%;top:57%;width:11px;height:17px}#damage-blood i:nth-child(3){left:12%;bottom:7%;width:8px;height:11px}
-#damage-blood.hit { animation:echo-blood .6s ease-out forwards; }
-@keyframes echo-blood { 0%{opacity:.75}30%{opacity:.4}100%{opacity:0} }
-@media(prefers-reduced-motion:reduce){#damage-blood.hit{animation:echo-blood .15s linear forwards}body.hurt{animation:none}}
-@media(max-width:700px){#combat-hud{right:12px;bottom:145px;font-size:9px;max-width:250px}.balance-editor fieldset{grid-template-columns:1fr}}
+.balance-editor {
+  padding: 12px;
+  border: 1px solid #435365;
+  border-radius: 8px;
+}
+.balance-editor summary {
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.balance-editor p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #b3bec9;
+}
+.balance-editor fieldset {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+  padding: 12px;
+  border: 1px solid #364459;
+}
+.balance-editor legend {
+  color: #72e8be;
+  font-size: 12px;
+  padding: 0 5px;
+}
+.balance-editor input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+}
+.balance-editor input[type='number'] {
+  width: 100%;
+  min-width: 0;
+}
+.skin-choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+  font-size: 12px;
+}
+.skin-choice select {
+  padding: 8px;
+  color: #eef7ff;
+  background: #152234;
+  border: 1px solid #526175;
+  border-radius: 4px;
+}
+#combat-hud {
+  position: absolute;
+  right: 28px;
+  bottom: 140px;
+  white-space: pre-line;
+  text-align: right;
+  font:
+    600 11px/1.8 ui-monospace,
+    monospace;
+  color: #cbebe8;
+  text-shadow: 0 1px 5px #000;
+  pointer-events: none;
+  max-width: 310px;
+  padding: 10px 12px;
+  border-right: 2px solid #59cbbd;
+  background: linear-gradient(90deg, transparent, #0a182dc9);
+}
+#combat-hud:empty {
+  display: none;
+}
+#damage-blood {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: inset 0 0 80px 8px #a41f35;
+}
+#damage-blood i {
+  position: absolute;
+  width: 18px;
+  height: 30px;
+  border-radius: 43% 55% 50% 39%;
+  background: #a3132cb3;
+  transform: rotate(23deg);
+}
+#damage-blood i:nth-child(1) {
+  left: 5%;
+  top: 20%;
+}
+#damage-blood i:nth-child(2) {
+  right: 4%;
+  top: 57%;
+  width: 11px;
+  height: 17px;
+}
+#damage-blood i:nth-child(3) {
+  left: 12%;
+  bottom: 7%;
+  width: 8px;
+  height: 11px;
+}
+#damage-blood.hit {
+  animation: echo-blood 0.6s ease-out forwards;
+}
+@keyframes echo-blood {
+  0% {
+    opacity: 0.75;
+  }
+  30% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #damage-blood.hit {
+    animation: echo-blood 0.15s linear forwards;
+  }
+  body.hurt {
+    animation: none;
+  }
+}
+@media (max-width: 700px) {
+  #combat-hud {
+    right: 12px;
+    bottom: 145px;
+    font-size: 9px;
+    max-width: 250px;
+  }
+  .balance-editor fieldset {
+    grid-template-columns: 1fr;
+  }
+}
