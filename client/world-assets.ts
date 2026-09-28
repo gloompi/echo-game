@@ -8,6 +8,7 @@ export interface WorldAssetDefinition {
 export const WORLD_ASSETS: Readonly<Record<string, WorldAssetDefinition>> = {
   'mirror-yard': { url: '/assets/worlds/mirror-yard.glb' },
   'neon-carnival': { url: '/assets/worlds/neon-carnival.glb' },
+  'rooftop-market': { url: '/assets/worlds/rooftop-market.glb' },
 };
 
 export interface WorldAssetStatus {

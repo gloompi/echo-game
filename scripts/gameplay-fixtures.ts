@@ -137,6 +137,63 @@ const definitions: Definition[] = [
       { ticks: 36, input: { mx: -1 } },
     ],
   },
+  {
+    name: 'rooftop-market-signal-stairs-to-roof',
+    start: { x: -25, y: 0, z: 6 },
+    role: 'hider',
+    settings: { ...DEFAULT_SETTINGS, mapId: 'rooftop-market' },
+    segments: [
+      { ticks: 60, input: { mz: 1 } },
+      { ticks: 30, input: { mx: 1 } },
+    ],
+  },
+  {
+    name: 'rooftop-market-lane-stairs-to-roof',
+    start: { x: 21.5, y: 0, z: -18 },
+    role: 'seeker',
+    settings: { ...DEFAULT_SETTINGS, mapId: 'rooftop-market' },
+    segments: [
+      { ticks: 60, input: { mz: 1, mx: 1 } },
+      { ticks: 30, input: { mz: 1 } },
+    ],
+  },
+  {
+    name: 'rooftop-market-tunnel-north-to-south',
+    start: { x: 19, y: 0, z: -7 },
+    role: 'hider',
+    settings: { ...DEFAULT_SETTINGS, mapId: 'rooftop-market' },
+    segments: [
+      { ticks: 30, input: { mz: -1 } },
+      { ticks: 150, input: { mz: -1, crouch: true } },
+      { ticks: 150, input: { mz: -1, crouch: true } },
+      { ticks: 20, input: {} },
+    ],
+  },
+  {
+    name: 'rooftop-market-tunnel-south-to-north',
+    start: { x: 19, y: 0, z: 7 },
+    role: 'hider',
+    settings: { ...DEFAULT_SETTINGS, mapId: 'rooftop-market' },
+    segments: [
+      { ticks: 30, input: { mz: 1 } },
+      { ticks: 150, input: { mz: 1, crouch: true } },
+      { ticks: 150, input: { mz: 1, crouch: true } },
+      { ticks: 20, input: {} },
+    ],
+  },
+  {
+    name: 'rooftop-market-cargo-lift-jumps',
+    start: { x: 7.5, y: 0, z: -29.5 },
+    role: 'hider',
+    settings: { ...DEFAULT_SETTINGS, mapId: 'rooftop-market' },
+    segments: [
+      { ticks: 40, input: { mx: 1 } },
+      { ticks: 20, input: { mx: 1, jump: true } },
+      { ticks: 15, input: { mx: 1 } },
+      { ticks: 20, input: { mx: 1, jump: true } },
+      { ticks: 30, input: { mx: 1 } },
+    ],
+  },
 ];
 const cases = definitions.map((d) => {
   const motor = makeMotor(d.start),

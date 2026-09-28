@@ -1,0 +1,50 @@
+{
+  "glb": "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game\\public\\assets\\worlds\\rooftop-market.glb",
+  "kind": "world",
+  "bytes": 194680,
+  "checkedAtUtc": "2026-09-24T22:18:34.641473+00:00",
+  "blender": "5.2.0 LTS",
+  "importedFromCopiedDirectory": true,
+  "meshObjects": 166,
+  "triangles": 1992,
+  "materials": [
+    "gb arch",
+    "gb building",
+    "gb cargo lift",
+    "gb catwalk",
+    "gb counter",
+    "gb crate",
+    "gb floor",
+    "gb lane strip",
+    "gb noodle stand",
+    "gb post",
+    "gb rail",
+    "gb roof cover",
+    "gb sign",
+    "gb stall",
+    "gb step",
+    "gb water tower"
+  ],
+  "textures": [],
+  "gameBounds": {
+    "min": [
+      -32.0,
+      -0.3,
+      -32.0
+    ],
+    "max": [
+      32.0,
+      9.5,
+      32.0
+    ]
+  },
+  "clips": [],
+  "map": {
+    "mapBoxes": 163,
+    "taggedVisuals": 163,
+    "maxColliderErrorMetres": 0.0
+  },
+  "status": "passed",
+  "failures": [],
+  "warnings": []
+}

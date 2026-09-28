@@ -1,0 +1,35 @@
+[
+  {
+    "file": "00-hero-a.png",
+    "source": "higgsfield",
+    "model": "gpt_image_2_5 (quality high, 2k, 16:9)",
+    "prompt": "Concept A - high three-quarter aerial view of a compact rooftop night market on top of a city block: two long parallel market lanes lined with staggered stall canopies, a central steaming noodle stand with a counter and stools, a raised catwalk loop connecting four corner rooftops over the lanes, a tall wooden-and-steel water tower on one corner roof, an industrial cargo lift cage with a platform, and a glowing neon arch gateway spanning one lane. Surrounding skyscrapers only as dark distant silhouettes. Stylized video game environment concept art for a multiplayer hide-and-seek arena map. Chunky readable low-poly toy-like shapes with bevelled blocks, clean flat colours, no photoreal clutter. Night, rain-slick reflective rooftop surfaces, puddles, light drizzle. Palette: deep navy and slate structures with electric cyan and hot magenta neon signage as the dominant accents, small warm amber lantern highlights. No people, no characters, no text logos of real brands, no watermark.",
+    "inputs": [],
+    "jobId": "08bef05c-9355-4a9a-8466-fbcfac0e84e2",
+    "createdAtUtc": "2026-09-24T22:08:46Z",
+    "approved": null,
+    "note": "Layout read: catwalk loop over stall lanes, water tower, lift cage, arch. Reject its open wet plaza in front of the arch (brief: avoid empty plazas). Awaiting user choice."
+  },
+  {
+    "file": "00-hero-b.png",
+    "source": "higgsfield",
+    "model": "gpt_image_2_5 (quality high, 2k, 16:9)",
+    "prompt": "Concept B - eye-level view standing in a narrow rooftop market lane looking down its length: stall awnings and low counters alternate left and right breaking the long view, a glowing cyan and magenta neon arch spans the lane in the middle distance, steel catwalk bridge overhead crossing the lane, a water tower silhouette on a rooftop behind, strings of paper lanterns, stacked crates, vending machines, wet tiled floor reflecting neon. Strong silhouettes, chunky game-art proportions. Stylized video game environment concept art for a multiplayer hide-and-seek arena map. Chunky readable low-poly toy-like shapes with bevelled blocks, clean flat colours, no photoreal clutter. Night, rain-slick reflective rooftop surfaces, puddles, light drizzle. Palette: deep navy and slate structures with electric cyan and hot magenta neon signage as the dominant accents, small warm amber lantern highlights. No people, no characters, no text logos of real brands, no watermark.",
+    "inputs": [],
+    "jobId": "135f2e8d-a3a0-49b0-8a6b-969008261620",
+    "createdAtUtc": "2026-09-24T22:08:47Z",
+    "approved": null,
+    "note": "Lane mood target: alternating stall pockets, truss bridge overhead, octagonal cyan/magenta arch, chunky crates and vending machines. Awaiting user choice."
+  },
+  {
+    "file": "00-hero-c.png",
+    "source": "higgsfield",
+    "model": "gpt_image_2_5 (quality high, 2k, 16:9)",
+    "prompt": "Concept C - three-quarter view of the heart of a rooftop night market: a boxy noodle stand with a striped canopy and steam, a heavy yellow-and-steel industrial cargo lift frame with a half-raised platform, corrugated metal shop huts with a low crawl tunnel passing under one of them, rooftop AC units and pipes, a water tower on stilts above, neon tube signs in cyan and magenta. More industrial, corrugated-metal and pipework material language than a festive market. Stylized video game environment concept art for a multiplayer hide-and-seek arena map. Chunky readable low-poly toy-like shapes with bevelled blocks, clean flat colours, no photoreal clutter. Night, rain-slick reflective rooftop surfaces, puddles, light drizzle. Palette: deep navy and slate structures with electric cyan and hot magenta neon signage as the dominant accents, small warm amber lantern highlights. No people, no characters, no text logos of real brands, no watermark.",
+    "inputs": [],
+    "jobId": "a489ad85-2227-496d-84fd-81b4b418fc27",
+    "createdAtUtc": "2026-09-24T22:08:48Z",
+    "approved": null,
+    "note": "Industrial material language: yellow lift frame with hazard stripes, corrugated huts, crawl tunnel, pipework. Striped awning is red/cream, would need recolouring to the cyan/magenta palette. Awaiting user choice."
+  }
+]

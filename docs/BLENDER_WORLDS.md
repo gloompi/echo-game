@@ -2,10 +2,13 @@
 
 Mirror Yard and Neon Carnival are original Blender environments based on the two supplied concept images. They are additional selectable maps; Afterhours, Switchyard and Glassworks remain available. A third concept reference was not present in the supplied assets and has no invented map entry.
 
-| Map           | Editable source                                       | Authoring script                  | Runtime model                            |
-| ------------- | ----------------------------------------------------- | --------------------------------- | ---------------------------------------- |
-| Mirror Yard   | `assets-src/worlds/mirror-yard/mirror-yard.blend`     | `scripts/worlds/mirror_yard.py`   | `public/assets/worlds/mirror-yard.glb`   |
-| Neon Carnival | `assets-src/worlds/neon-carnival/neon-carnival.blend` | `scripts/worlds/neon_carnival.py` | `public/assets/worlds/neon-carnival.glb` |
+| Map            | Editable source                                         | Authoring script                   | Runtime model                             |
+| -------------- | ------------------------------------------------------- | ---------------------------------- | ----------------------------------------- |
+| Mirror Yard    | `assets-src/worlds/mirror-yard/mirror-yard.blend`       | `scripts/worlds/mirror_yard.py`    | `public/assets/worlds/mirror-yard.glb`    |
+| Neon Carnival  | `assets-src/worlds/neon-carnival/neon-carnival.blend`   | `scripts/worlds/neon_carnival.py`  | `public/assets/worlds/neon-carnival.glb`  |
+| Rooftop Market | `assets-src/worlds/rooftop-market/rooftop-market.blend` | `scripts/worlds/rooftop_market.py` | `public/assets/worlds/rooftop-market.glb` |
+
+Rooftop Market is the first map made with the [3D asset pipeline](3D_ASSET_PIPELINE.md). It is currently a pass 1 graybox (colliders only) awaiting a two-client playtest; its brief, references and review renders are in `assets-src/worlds/rooftop-market/`.
 
 Each source directory also contains its generated `map.json`, Blender previews and authoring metadata. These models use original geometry and materials rather than downloaded environment meshes. The reference images establish visual direction; the playable layouts are adaptations with measured stairs, passages, cover, spawn points and mirror exits.
 
@@ -16,6 +19,7 @@ Run these commands from the repository root in Git Bash, using Blender 5.2:
 ```bash
 "/c/Program Files/Blender Foundation/Blender 5.2/blender.exe" --background --python-exit-code 1 --python scripts/worlds/mirror_yard.py
 "/c/Program Files/Blender Foundation/Blender 5.2/blender.exe" --background --python-exit-code 1 --python scripts/worlds/neon_carnival.py
+"/c/Program Files/Blender Foundation/Blender 5.2/blender.exe" --background --factory-startup --python-exit-code 1 --python scripts/worlds/rooftop_market.py
 pnpm run maps
 pnpm run fixtures
 pnpm run fixtures:check

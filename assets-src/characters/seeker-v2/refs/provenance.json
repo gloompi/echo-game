@@ -1,0 +1,50 @@
+[
+  {
+    "file": "00-hero-a.png",
+    "source": "higgsfield",
+    "model": "gpt_image_2",
+    "params": {
+      "aspect_ratio": "3:4",
+      "quality": "high",
+      "resolution": "2k"
+    },
+    "prompt": "Full-body hero concept art of a stylized designer-toy video game character called the Seeker, a hunter. Built entirely from chunky bevelled rectangular blocks like a premium vinyl collectible toy, oversized squarish head, no realistic anatomy. Primary read is BLUE ARMOUR in steel blue and deep navy with small cyan glow accents and a tiny magenta accent. Holds a chunky ORANGE toy blaster. Short blocky BROWN HAIR visible. A navy-and-white horizontal STRIPED SHIRT is visible under the armour. Clean flat colours, smooth matte vinyl surfaces, no textures, no noise, no thin parts, no antennas, no cables, no text, no logos. Three-quarter front view, full body including feet and both hands, standing on nothing, plain light neutral grey background, soft even studio lighting, crisp readable silhouette. Variant A, Scout: lean compact proportions about 3 heads tall. Open-face helmet worn like a thick headband with flip-up cyan visor pushed up onto the brown hair, fringe showing. Light chest plate and blocky shoulder pads; striped shirt sleeves clearly visible on the upper arms; armoured forearm gauntlets; chunky boots. Compact one-handed orange blaster held low.",
+    "inputs": [],
+    "jobId": "8ed080bd-cd63-4d4e-8ab6-ea96e0bbb626",
+    "createdAtUtc": "2026-09-24T22:05:36Z",
+    "approved": null,
+    "note": "Scout: lean, flip-up visor, striped torso band. Risks: the large translucent visor is a thin part and needs a solid, thicker remake; the striped torso is the part most likely to be read as a Hider at 15 m."
+  },
+  {
+    "file": "00-hero-b.png",
+    "source": "higgsfield",
+    "model": "gpt_image_2",
+    "params": {
+      "aspect_ratio": "3:4",
+      "quality": "high",
+      "resolution": "2k"
+    },
+    "prompt": "Full-body hero concept art of a stylized designer-toy video game character called the Seeker, a hunter. Built entirely from chunky bevelled rectangular blocks like a premium vinyl collectible toy, oversized squarish head, no realistic anatomy. Primary read is BLUE ARMOUR in steel blue and deep navy with small cyan glow accents and a tiny magenta accent. Holds a chunky ORANGE toy blaster. Short blocky BROWN HAIR visible. A navy-and-white horizontal STRIPED SHIRT is visible under the armour. Clean flat colours, smooth matte vinyl surfaces, no textures, no noise, no thin parts, no antennas, no cables, no text, no logos. Three-quarter front view, full body including feet and both hands, standing on nothing, plain light neutral grey background, soft even studio lighting, crisp readable silhouette. Variant B, Enforcer: top-heavy heavy-armour silhouette, very broad rounded-square shoulder pauldrons, big boxy chest plate with a cyan stripe, short stubby legs with big armoured boots. Squared helmet with the visor raised, a brown hair fringe poking out under the helmet brim. Striped shirt visible at the collar and at a gap above the belt. Large two-handed orange blaster held across the body.",
+    "inputs": [],
+    "jobId": "d5644ca8-4b30-4584-a7e4-05314b5c40d4",
+    "createdAtUtc": "2026-09-24T22:05:37Z",
+    "approved": null,
+    "note": "Enforcer: top-heavy heavy armour, two-handed blaster. Strongest Seeker read, with stripes only at the collar and waist. Risk: the pauldrons are far wider than the capsule (0.36 m radius, gear at most +0.15 m), so the shoulders must be narrowed about 30 percent in the model."
+  },
+  {
+    "file": "00-hero-c.png",
+    "source": "higgsfield",
+    "model": "gpt_image_2",
+    "params": {
+      "aspect_ratio": "3:4",
+      "quality": "high",
+      "resolution": "2k"
+    },
+    "prompt": "Full-body hero concept art of a stylized designer-toy video game character called the Seeker, a hunter. Built entirely from chunky bevelled rectangular blocks like a premium vinyl collectible toy, oversized squarish head, no realistic anatomy. Primary read is BLUE ARMOUR in steel blue and deep navy with small cyan glow accents and a tiny magenta accent. Holds a chunky ORANGE toy blaster. Short blocky BROWN HAIR visible. A navy-and-white horizontal STRIPED SHIRT is visible under the armour. Clean flat colours, smooth matte vinyl surfaces, no textures, no noise, no thin parts, no antennas, no cables, no text, no logos. Three-quarter front view, full body including feet and both hands, standing on nothing, plain light neutral grey background, soft even studio lighting, crisp readable silhouette. Variant C, Tactical: balanced big-head toy proportions about 2.5 heads tall. Low cap-like helmet with a heavy brow plate and a thin cyan visor slit, brown hair blocks at the sides and back. Sleeveless armoured vest so the striped shirt sleeves are prominent on both arms; blue armoured knee pads and boots; a boxy backpack with a cyan light. Pistol-style orange blaster held in the right hand pointing down.",
+    "inputs": [],
+    "jobId": "a57b9c7d-65ab-4e19-9670-c191a55a0055",
+    "createdAtUtc": "2026-09-24T22:05:38Z",
+    "approved": null,
+    "note": "Tactical: cap helmet, cyan visor slit (no eyes), sleeveless vest, backpack. Risk: the fully striped sleeves put a lot of Hider-like stripe area on the arms."
+  }
+]

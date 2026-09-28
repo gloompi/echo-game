@@ -50,6 +50,8 @@ pub enum MapId {
     MirrorYard,
     #[serde(rename = "neon-carnival")]
     NeonCarnival,
+    #[serde(rename = "rooftop-market")]
+    RooftopMarket,
 }
 
 impl MapId {
@@ -60,6 +62,7 @@ impl MapId {
             Self::Glassworks => "glassworks",
             Self::MirrorYard => "mirror-yard",
             Self::NeonCarnival => "neon-carnival",
+            Self::RooftopMarket => "rooftop-market",
         }
     }
 }

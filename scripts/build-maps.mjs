@@ -161,7 +161,7 @@ mirrors(glass, 'azure', 49, -46, -49, 46);
 mirrors(glass, 'amber', -49, 0, 49, 0);
 // Blender authoring emits both the visual GLB and its authoritative AABB descriptor.
 // Keep these required: a missing export must fail generation instead of dropping a selectable map.
-for (const id of ['mirror-yard', 'neon-carnival']) {
+for (const id of ['mirror-yard', 'neon-carnival', 'rooftop-market']) {
   const layout = JSON.parse(
     readFileSync(new URL(`../assets-src/worlds/${id}/map.json`, import.meta.url), 'utf8'),
   );

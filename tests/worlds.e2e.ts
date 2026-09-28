@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('two clients load and play both authored Blender worlds', async ({ browser }, info) => {
+test('two clients load and play every authored Blender world', async ({ browser }, info) => {
   test.setTimeout(120_000);
   const baseURL = info.project.use.baseURL;
   const a = await browser.newContext({ baseURL }),
@@ -26,6 +26,7 @@ test('two clients load and play both authored Blender worlds', async ({ browser 
     for (const [roundIndex, [id, name]] of [
       ['mirror-yard', 'Mirror Yard'],
       ['neon-carnival', 'Neon Carnival'],
+      ['rooftop-market', 'Rooftop Market'],
     ].entries()) {
       await host.locator('#room-map').selectOption(id);
       await host.locator('#save-room-settings').click();

@@ -1,0 +1,35 @@
+[
+  {
+    "file": "00-hero-a.png",
+    "source": "higgsfield",
+    "model": "gpt_image_2_5 (quality high, resolution 2k, aspect 2:3, background opaque, variant flare)",
+    "prompt": "Full-body hero concept art of the Hider player character for a stylized third-person hide-and-seek game. Chunky designer-toy vinyl figure built entirely from bevelled rectangular blocks: boxy head, boxy torso, block limbs, mitten-like block hands, chunky block shoes. Clean flat colours, no texture noise, no fabric wrinkles, no realistic anatomy, no thin parts, no accessories, no weapon, nothing held. Outfit: off-white long-sleeve shirt with bold horizontal dark navy stripes (wide, evenly spaced, clearly readable from far away), slate-blue trousers, warm light shoes. Brown hair modelled as a chunky sculpted block. Simple friendly face with block eyes. Standing relaxed, feet apart, whole figure visible head to feet, front three-quarter view, soft even studio lighting, plain light grey background, single character only, no text. Proportions: big cube head about one third of total height, short compact torso, short stubby legs, arms slightly wider than the body; classic collectible toy silhouette. Matte soft-vinyl finish, generously rounded bevels.",
+    "inputs": [],
+    "jobId": "25b5f53f-ff75-4607-840f-6c01a31ebe22",
+    "createdAtUtc": "2026-09-24T22:05:24Z",
+    "approved": null,
+    "note": "Direction A, chibi collectible: cube head ~1/3 height, stubby legs, matte soft-vinyl, rounded bevels. Awaiting user choice."
+  },
+  {
+    "file": "00-hero-b.png",
+    "source": "higgsfield",
+    "model": "gpt_image_2_5 (quality high, resolution 2k, aspect 2:3, background opaque, variant flare)",
+    "prompt": "Full-body hero concept art of the Hider player character for a stylized third-person hide-and-seek game. Chunky designer-toy vinyl figure built entirely from bevelled rectangular blocks: boxy head, boxy torso, block limbs, mitten-like block hands, chunky block shoes. Clean flat colours, no texture noise, no fabric wrinkles, no realistic anatomy, no thin parts, no accessories, no weapon, nothing held. Outfit: off-white long-sleeve shirt with bold horizontal dark navy stripes (wide, evenly spaced, clearly readable from far away), slate-blue trousers, warm light shoes. Brown hair modelled as a chunky sculpted block. Simple friendly face with block eyes. Standing relaxed, feet apart, whole figure visible head to feet, front three-quarter view, soft even studio lighting, plain light grey background, single character only, no text. Proportions: taller athletic runner build, head about one fifth of total height, broad square shoulders, long block legs with big chunky sneakers, forward-ready stance; a sporty action-figure silhouette. Satin plastic finish with crisp chamfered edges.",
+    "inputs": [],
+    "jobId": "fd618930-44aa-4e79-ae88-2fe0fb5a70c5",
+    "createdAtUtc": "2026-09-24T22:05:24Z",
+    "approved": null,
+    "note": "Direction B, athletic runner: head ~1/5 height, long legs, satin plastic, crisp chamfers. Awaiting user choice."
+  },
+  {
+    "file": "00-hero-c.png",
+    "source": "higgsfield",
+    "model": "gpt_image_2_5 (quality high, resolution 2k, aspect 2:3, background opaque, variant flare)",
+    "prompt": "Full-body hero concept art of the Hider player character for a stylized third-person hide-and-seek game. Chunky designer-toy vinyl figure built entirely from bevelled rectangular blocks: boxy head, boxy torso, block limbs, mitten-like block hands, chunky block shoes. Clean flat colours, no texture noise, no fabric wrinkles, no realistic anatomy, no thin parts, no accessories, no weapon, nothing held. Outfit: off-white long-sleeve shirt with bold horizontal dark navy stripes (wide, evenly spaced, clearly readable from far away), slate-blue trousers, warm light shoes. Brown hair modelled as a chunky sculpted block. Simple friendly face with block eyes. Standing relaxed, feet apart, whole figure visible head to feet, front three-quarter view, soft even studio lighting, plain light grey background, single character only, no text. Proportions: stacked-block build in between, head about one quarter of total height, pear-shaped torso wider at the hips, short thick legs, slightly oversized block hands; hair a big layered brown block quiff that clearly extends past the head outline. Striped shirt is a short-sleeve striped tee over a plain off-white long-sleeve, with a stepped hem. Semi-gloss toy plastic with large faceted bevels.",
+    "inputs": [],
+    "jobId": "2f6ef314-dd27-4d75-81dc-20737882669a",
+    "createdAtUtc": "2026-09-24T22:05:25Z",
+    "approved": null,
+    "note": "Direction C, stacked block: head ~1/4 height, layered striped tee over long sleeve, big faceted hair quiff, faceted bevels. Awaiting user choice."
+  }
+]

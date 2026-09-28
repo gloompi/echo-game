@@ -1,0 +1,13 @@
+{
+  "id": "rooftop-market",
+  "name": "Rooftop Market",
+  "generator": "scripts/worlds/rooftop_market.py",
+  "blender": "5.2.0 LTS",
+  "units": "metres",
+  "runtimeUp": "+Y",
+  "collisionCount": 163,
+  "meshes": 166,
+  "triangles": 1992,
+  "glbBytes": 194680,
+  "pass": "1-graybox"
+}

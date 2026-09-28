@@ -6,6 +6,7 @@ export const MAP_IDS = [
   'glassworks',
   'mirror-yard',
   'neon-carnival',
+  'rooftop-market',
 ] as const;
 export type MapId = (typeof MAP_IDS)[number];
 export type BunnyHop = 'off' | 'timed' | 'auto';

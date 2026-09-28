@@ -1,0 +1,55 @@
+{
+  "source": "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game\\public\\assets\\worlds\\rooftop-market.glb",
+  "kind": "world",
+  "renderedAtUtc": "2026-09-24T22:14:55.044281+00:00",
+  "blender": "5.2.0 LTS",
+  "triangles": 1992,
+  "gameBounds": {
+    "min": [
+      -32.0,
+      -0.3,
+      -32.0
+    ],
+    "max": [
+      32.0,
+      9.5,
+      32.0
+    ]
+  },
+  "references": [
+    "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game\\assets-src\\worlds\\rooftop-market\\refs\\00-hero-a.png"
+  ],
+  "views": [
+    "plan",
+    "corner-1",
+    "corner-2",
+    "corner-3",
+    "corner-4",
+    "eye-1",
+    "eye-2",
+    "eye-3",
+    "eye-4"
+  ],
+  "sheetRows": [
+    [
+      "00-hero-a.png"
+    ],
+    [
+      "plan.png",
+      "corner-1.png",
+      "corner-2.png",
+      "corner-3.png"
+    ],
+    [
+      "corner-4.png",
+      "eye-1.png",
+      "eye-2.png",
+      "eye-3.png"
+    ],
+    [
+      "eye-4.png"
+    ]
+  ],
+  "guides": false,
+  "colourTransform": "Standard"
+}

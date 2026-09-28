@@ -6,7 +6,7 @@ import * as T from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MAPS } from '../shared/map.js';
 
-for (const id of ['mirror-yard', 'neon-carnival'] as const) {
+for (const id of ['mirror-yard', 'neon-carnival', 'rooftop-market'] as const) {
   void test(`${id}: actual GLB contains the authoritative solids at metre scale and Y up`, async () => {
     const file = readFileSync(new URL(`../public/assets/worlds/${id}.glb`, import.meta.url));
     assert.equal(file.toString('utf8', 0, 4), 'glTF');

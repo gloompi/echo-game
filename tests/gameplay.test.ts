@@ -418,3 +418,119 @@ void test('Neon Carnival side stairs connect to the tunnel roof without blocking
   assert.ok(state.grounded);
   assert.ok(canOccupy(state, CFG.height, layout.boxes));
 });
+
+void test('Rooftop Market: every stair reaches the rooftop loop without jumping', () => {
+  const layout = MAPS['rooftop-market'],
+    settings = { ...options, mapId: layout.id };
+  type Controls = Partial<ReturnType<typeof neutralInput>>;
+  const routes: {
+    name: string;
+    start: { x: number; z: number };
+    climb: Controls;
+    step: Controls;
+  }[] = [
+    { name: 'nw-court', start: { x: -11, z: -18.5 }, climb: { mz: 1, mx: -1 }, step: { mx: -1 } },
+    { name: 'se-court', start: { x: 11, z: 18.5 }, climb: { mz: -1, mx: 1 }, step: { mx: 1 } },
+    { name: 'ne-lane', start: { x: 21.5, z: -18 }, climb: { mz: 1, mx: 1 }, step: { mz: 1 } },
+    { name: 'sw-lane', start: { x: -21.5, z: 18 }, climb: { mz: -1, mx: -1 }, step: { mz: -1 } },
+    { name: 'signal', start: { x: -25, z: 6 }, climb: { mz: 1 }, step: { mx: 1 } },
+    { name: 'hall', start: { x: 25, z: -6 }, climb: { mz: -1 }, step: { mx: -1 } },
+  ];
+  for (const route of routes) {
+    const state = makeMotor({ ...route.start, y: 0 });
+    assert.ok(canOccupy(state, CFG.height, layout.boxes), route.name);
+    for (let i = 0; i < 60; i++)
+      move(state, input(route.climb), 'hider', CFG.dt, layout.boxes, layout.half, settings);
+    for (let i = 0; i < 30; i++)
+      move(state, input(route.step), 'hider', CFG.dt, layout.boxes, layout.half, settings);
+    assert.ok(state.grounded, route.name);
+    assert.ok(Math.abs(state.y - 3) < 1e-8, `${route.name}: roof not reached (y ${state.y})`);
+    assert.ok(canOccupy(state, CFG.height, layout.boxes), route.name);
+  }
+});
+
+void test('Rooftop Market: the Hall tunnel blocks standing and permits a crouched passage both ways', () => {
+  const layout = MAPS['rooftop-market'],
+    ceiling = layout.boxes.find((b) => b.id === 'hall-tunnel-ceiling')!,
+    settings = { ...options, mapId: layout.id };
+  assert.ok(ceiling.y > bodyHeight(true) && ceiling.y < bodyHeight(false));
+  for (const route of [
+    { z: -7, mz: -1 },
+    { z: 7, mz: 1 },
+  ]) {
+    const state = makeMotor({ x: ceiling.x, y: 0, z: route.z });
+    const walk = (n: number, controls: Partial<ReturnType<typeof neutralInput>>) => {
+      for (let i = 0; i < n; i++)
+        move(state, input(controls), 'hider', CFG.dt, layout.boxes, layout.half, settings);
+    };
+    walk(30, { mz: route.mz });
+    const blocked = state.z;
+    walk(60, { mz: route.mz });
+    assert.ok(Math.abs(state.z - blocked) < 1e-8, 'Standing player entered the tunnel');
+    walk(300, { mz: route.mz, crouch: true });
+    assert.ok(
+      route.mz < 0
+        ? state.z > ceiling.z + ceiling.d / 2 + CFG.radius
+        : state.z < ceiling.z - ceiling.d / 2 - CFG.radius,
+      'Tunnel exit is blocked',
+    );
+    walk(20, {});
+    assert.equal(state.crouched, false);
+    assert.ok(canOccupy(state, CFG.height, layout.boxes));
+  }
+});
+
+void test('Rooftop Market: the cargo lift is a two-jump route onto the north-east roof', () => {
+  const layout = MAPS['rooftop-market'],
+    state = makeMotor({ x: 7.5, y: 0, z: -29.5 }),
+    settings = { ...options, mapId: layout.id };
+  const walk = (n: number, controls: Partial<ReturnType<typeof neutralInput>>) => {
+    for (let i = 0; i < n; i++)
+      move(state, input(controls), 'hider', CFG.dt, layout.boxes, layout.half, settings);
+  };
+  walk(40, { mx: 1 });
+  assert.ok(state.grounded && state.y === 0 && state.x < 9, 'Lift car is not a jump obstacle');
+  walk(20, { mx: 1, jump: true });
+  walk(15, { mx: 1 });
+  assert.ok(state.grounded && Math.abs(state.y - 1.5) < 1e-8, 'Did not land on the lift car');
+  walk(20, { mx: 1, jump: true });
+  walk(30, { mx: 1 });
+  assert.ok(state.grounded && Math.abs(state.y - 3) < 1e-8 && state.x > 12);
+});
+
+void test('Rooftop Market: the rooftop loop is one continuous lap at roof level', () => {
+  const layout = MAPS['rooftop-market'],
+    settings = { ...options, mapId: layout.id },
+    state = makeMotor({ x: -19, y: 3, z: -21 }),
+    lap = [
+      [-15, -25.5],
+      [15, -25.5],
+      [19, -21],
+      [19, 0],
+      [19, 21],
+      [15, 25.5],
+      [-15, 25.5],
+      [-19, 21],
+      [-19, 0],
+      [-19, -21],
+    ];
+  for (const [x, z] of lap) {
+    for (let i = 0; i < 600 && Math.hypot(x - state.x, z - state.z) > 0.3; i++) {
+      const d = Math.hypot(x - state.x, z - state.z);
+      move(
+        state,
+        input({ mx: (x - state.x) / d, mz: -(z - state.z) / d }),
+        'hider',
+        CFG.dt,
+        layout.boxes,
+        layout.half,
+        settings,
+      );
+      assert.ok(
+        state.y > 3 - 1e-8,
+        `Fell off the loop near ${state.x.toFixed(1)}, ${state.z.toFixed(1)}`,
+      );
+    }
+    assert.ok(Math.hypot(x - state.x, z - state.z) <= 0.3, `Loop blocked before ${x}, ${z}`);
+  }
+});

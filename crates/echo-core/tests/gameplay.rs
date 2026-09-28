@@ -302,6 +302,7 @@ fn map_data_has_clear_spawns_and_reciprocal_mirrors() {
         MapId::Glassworks,
         MapId::MirrorYard,
         MapId::NeonCarnival,
+        MapId::RooftopMarket,
     ] {
         let layout = map(id);
         assert_eq!(
