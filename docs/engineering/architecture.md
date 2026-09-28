@@ -18,6 +18,9 @@ client/
     transport-config.ts         discovery validation and endpoint policy
   transport.ts                  WebTransport streams and bounded queues
   game/snapshot-buffer.ts       bounded authorized-observation interpolation
+  game/character-motion.ts      pure clip choice from authorized pose fields
+  character-assets.ts           authored character definitions, loading and shared template
+  skinned-character.ts          per-player skinned instance: clip layers, skin tint, ghost
   ui/dom.ts                     required-element bindings and idempotent text updates
   ui/roster-panels.ts            lobby/score rendering and cache ownership
   main.ts                       remaining game/render composition

@@ -96,3 +96,7 @@ Blender 5.2.0 LTS on Windows, run headless against this revision's tools:
 
 No new character or map has been produced with this pipeline yet, and no loader for
 skinned GLB characters exists in the client.
+
+Update, 28 September 2026: `hider-hoodie` (`assets-src/characters/hider-hoodie/`) was
+produced with this pipeline and is the in-game Hider. The client loads skinned GLB characters
+through `client/character-assets.ts`; the Seeker is still procedural.

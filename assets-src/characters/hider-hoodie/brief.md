@@ -4,7 +4,8 @@
 Asset: character
 ID: hider-hoodie
 Role: hider
-Replaces in game: no, side-by-side until the user approves
+Replaces in game: yes, since 2026-09-28 at the user's request; the procedural Hider stays
+  only as the loading and failure fallback
 
 Identity to keep: none from the current Hider (see identity changes); keep the sheet's
   design, proportions and cyan accents
@@ -39,8 +40,9 @@ form and 4 material) is built and reviewed (`reviews/pass-3-form/review.md`,
 `reviews/pass-4-material/review.md`). Phase 4 (passes 5 rig and motion, 6 optimise and
 export) is built and reviewed (`reviews/pass-5-rig/review.md`,
 `reviews/pass-6-optimize/review.md`): `public/assets/characters/hider-hoodie.glb` passes
-`validate_glb.py` with the Hider clip set. It is not wired into the game client; the
-hand-off list is at the end of this brief.
+`validate_glb.py` with the Hider clip set. On 2026-09-28 the user asked for it as the game's
+Hider model: it now renders every Hider (see "Integration" at the end, after the hand-off
+list).
 
 ## Decisions (user, 2026-09-25)
 
@@ -314,6 +316,10 @@ breaking R1 or R2. Contrast with the black joggers (#353539) ranges from 2.8:1 (
   cylinder, and the gloves (0.52 m from elbow to fingertip) take the hands 0.10-0.39 m out
   in several clips. Both are reported for the user's acceptance (pass-5 review). Per the
   user's instruction the asset is not wired into the game client.
+- 2026-09-28: the user asked to add the character to the game as the Hider model. It
+  replaces the procedural Hider on `feat/hider-hoodie-in-game` (stacked on
+  `art/hider-hoodie`); root `AGENTS.md` and the skill now name the hooded Hider as the role
+  identity. The capsule-fit question (hand-off issue 1) is still open; hits are unchanged.
 
 ## Hand-off (Phase 4)
 
@@ -338,9 +344,9 @@ Deliverables (review-loop.md):
   launcher integration, rustfmt, clippy, Rust tests, client and server production builds,
   WebTransport integration, 9/9 browser E2E). The launcher group skips its share-launcher
   test on Windows by design (`skip: process.platform === 'win32'`); that one did not run.
-- In-game screenshots: none. The asset is not wired into the client yet, so there is no
-  in-game view; the review renders use Blender's EEVEE with the Standard transform, not the
-  game's ACES tone mapping and hemisphere light.
+- In-game screenshots: `reviews/in-game/` (added with the integration on 2026-09-28; the
+  pass reviews use Blender's EEVEE with the Standard transform, not the game's ACES tone
+  mapping and hemisphere light).
 
 Open issues and what was not verified:
 
@@ -349,20 +355,39 @@ Open issues and what was not verified:
    crouched hit box that follows the model); that is outside this asset.
 2. **Between keys** the 30 fps clips let a planted sole sink up to 1.5 cm and slide up to
    2 cm; 60 fps keys would cost about 65 KB.
-3. **Run and crouch_walk speeds**: authored for 6.4 and 2.88 m/s. The runtime should scale
-   playback with the actual speed (character.md), or the feet slide.
-4. **Mask and emission in game** (pass-4 review): the mask reads as a dark void under the
-   brim in the review light, and the cyan emission of 0.35 has not been seen under ACES.
-5. **Skins**: the per-skin hoodie colours (table above) have no runtime home yet.
-6. **Integration** (character.md, a separate echo-change task): a cached loader,
-   `SkeletonUtils.clone` of the whole scene per player (three.js makes 5 SkinnedMesh
-   primitives on one skeleton), an AnimationMixer mapped from the Pose fields, wave layered
-   over the legs (its clip has no leg tracks), the procedural Hider as fallback, disposal
-   that never frees shared resources. Root `AGENTS.md` and the skill name the striped blocky
-   Hider as the identity; that text changes if this model replaces it.
+3. **Run and crouch_walk speeds**: done in the integration; playback follows the ground speed
+   (0.5-2x the authored 6.4 and 2.88 m/s).
+4. **Mask and emission in game** (pass-4 review): now seen in game under ACES
+   (`reviews/in-game/`): the mask reads as a black face covering under the brim and the
+   cyan trims read clearly, without a visible glow at play distance. Not reviewed formally
+   against the sheet.
+5. **Skins**: done; `HIDER_HOODIE.tints` in `client/character-assets.ts` holds the table
+   above, and `tests/character-model.test.ts` enforces R1 and R2.
+6. **Integration**: done; see "Integration" below.
 7. **seeker-hunter** readability should be checked again when its material pass lands
    (pass-4 review).
-8. **Not verified**: the model in a browser build of the game, in network play, or on
-   low-end hardware. The GLB was loaded and played with the client's three.js version
-   (0.186) under Bun, not rendered in a browser. The wave's raised hand reaches 2.26 m, above
-   a 2.16 m lintel; shots stop at 2.16 m.
+8. **Not verified**: low-end hardware and play over a real network. The model is verified in
+   Chromium in the dev build and in the production build's browser E2E, with two local
+   players. The wave's raised hand reaches 2.26 m, above a 2.16 m lintel; shots stop at
+   2.16 m.
+
+## Integration (2026-09-28)
+
+On the user's request the model replaced the procedural Hider for every Hider: the player's
+own third-person model, other Hiders (delayed for Seekers, as before), the echo ghost and
+the menu stage. Branch `feat/hider-hoodie-in-game`; the code is described in character.md,
+"Integration", and the in-game captures are in `reviews/in-game/`.
+
+- **Fallback.** The procedural striped Hider shows while the GLB loads and stays if it fails
+  (a warning is logged and `#game[data-hider-model]` reads `error`).
+- **Clips.** Standing and running play `idle` and `run`, airborne `jump`, crouched
+  `crouch_idle` or `crouch_walk` (also in the air, where the crouched capsule still applies),
+  sliding `slide`. `wave` replaces the upper body over the legs' clip. `hit` is additive.
+- **Overlays in a crouch.** Played over a crouch or slide, the flinch lifted the hood to
+  1.19-1.21 m, above the 1.12 m clearance, and the wave would too; neither plays there.
+- **Ghost echo.** The procedural ghost's look carried over: the magenta translucent body
+  and a cyan back-face pass drawn after it.
+- **Menu stage.** The ghost moved from (0.55, 0, -1.5) to (2.35, 0, -1.25): the slimmer
+  model was hidden behind the Seeker, under the "THE ECHO" label.
+- **Unchanged.** Hits, movement and the capsule; shots still test the box described above
+  (issue 1).

@@ -1,7 +1,10 @@
 import * as T from 'three';
 import type { Skin, Weapon } from '../shared/balance.js';
-import { eyeHeight } from '../shared/physics.js';
+import { CFG } from '../shared/config.js';
+import { bodyHeight, eyeHeight } from '../shared/physics.js';
 import type { Pose, Role } from '../shared/types.js';
+import type { CharacterModel, CharacterTemplate } from './character-assets.js';
+import { SkinnedCharacter } from './skinned-character.js';
 const cube = new T.BoxGeometry(1, 1, 1);
 const outlineMat = new T.MeshBasicMaterial({ color: 0x080d1b, side: T.BackSide });
 const ghostBodyMat = new T.MeshBasicMaterial({
@@ -149,9 +152,14 @@ export class Character {
   private bindRing?: T.Mesh;
   private phase = Math.random() * Math.PI * 2;
   private ownedMaterials: T.Material[] = [];
+  private skinned: SkinnedCharacter | null = null;
+  private disposed = false;
+  /** `model` is the authored character that replaces the procedural body once it has loaded;
+   * the procedural body stays while it loads or if it fails. */
   constructor(
     readonly role: Role,
     readonly ghost = false,
+    model?: CharacterModel,
   ) {
     const seeker = role === 'seeker',
       skin = 0xe6b78c;
@@ -276,6 +284,27 @@ export class Character {
       this.group,
       new Set([this.shield, this.bindRing].filter(Boolean) as T.Object3D[]),
     );
+    const template = model?.template;
+    if (template) this.attach(template);
+    else if (model)
+      // `ready` never rejects: after a failed load it resolves null and the procedural body stays.
+      void model.ready.then((loaded) => {
+        if (loaded && !this.disposed) this.attach(loaded);
+      });
+  }
+  /** Whether the authored model has replaced the procedural body. */
+  get authored(): boolean {
+    return this.skinned !== null;
+  }
+  private attach(template: CharacterTemplate): void {
+    const skinned = new SkinnedCharacter(
+      template,
+      this.ghost ? { body: ghostBodyMat, shell: ghostOutlineMat } : null,
+    );
+    skinned.setSkin(this.skin);
+    this.group.add(skinned.root);
+    this.body.visible = false;
+    this.skinned = skinned;
   }
   setSkin(skin: Skin = 'classic'): void {
     if (this.ghost || this.skin === skin) return;
@@ -299,6 +328,7 @@ export class Character {
       material.color.setHex(color);
       material.emissive.setHex(color);
     });
+    this.skinned?.setSkin(skin);
   }
   setWeapon(weapon: Weapon = 'blaster'): void {
     if (this.role !== 'seeker' || this.weapon === weapon) return;
@@ -310,6 +340,7 @@ export class Character {
   }
   hit(): void {
     this.hitLeft = 0.42;
+    this.skinned?.hit();
   }
   animate(
     pose: Pick<Pose, 'moving' | 'grounded' | 'waving' | 'dashing'> & Partial<Pose>,
@@ -332,6 +363,12 @@ export class Character {
       this.bindRing.visible = !!pose.controlled;
       this.bindRing.rotation.z = time * 3;
     }
+    if (this.skinned) {
+      // The authored clips crouch, slide and wave by themselves.
+      this.skinned.update(pose, dt);
+      return;
+    }
+    this.body.scale.y = bodyHeight(pose.crouched) / CFG.height;
     this.phase += dt * (pose.moving > 0.5 ? pose.moving * 2.3 : 2);
     const walk = Math.min(1, pose.moving / 6),
       swing = Math.sin(this.phase) * 0.7 * walk;
@@ -372,6 +409,9 @@ export class Character {
     if (this.hitLeft > 0) this.body.rotation.z += Math.sin(this.hitLeft * 40) * this.hitLeft * 0.35;
   }
   dispose(): void {
+    this.disposed = true;
+    this.skinned?.dispose();
+    this.skinned = null;
     this.group.removeFromParent();
     for (const m of this.ownedMaterials) m.dispose();
     for (const geometry of this.ownedGeometry) geometry.dispose();

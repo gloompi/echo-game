@@ -21,8 +21,8 @@ reference pack define the target; review against those.
 
 ## Non-negotiables
 
-- Keep role identity unless the brief explicitly changes it: striped blocky Hider, blue
-  armored Seeker, orange blaster, cyan/magenta art direction (root `AGENTS.md`). "Better"
+- Keep role identity unless the brief explicitly changes it: hooded Hider (`hider-hoodie`),
+  blue armored Seeker, orange blaster, cyan/magenta art direction (root `AGENTS.md`). "Better"
   means higher craft within that identity, not a different game. If a brief conflicts,
   surface the conflict before modeling.
 - Art never owns authority. Collision comes from `map.json` boxes; hits use the server

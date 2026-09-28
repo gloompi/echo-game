@@ -39,4 +39,4 @@ Settings, scores and rooms are not persisted. A leaving host browser hands host 
 
 ## Native-engine migration
 
-Reuse shared map/tuning data, Rust room rules/protocol concepts and original visual designs. Renderer/input/audio integration and native transport adapters still need implementation. The existing art is procedural Three.js source, not a finished engine-independent skeletal GLB asset pack; see `assets-src/README.md`. No React conversion, native client, replay system or Signal Heist objectives are included in this server migration.
+Reuse shared map/tuning data, Rust room rules/protocol concepts and original visual designs. Renderer/input/audio integration and native transport adapters still need implementation. The Hider is a skeletal GLB (`public/assets/characters/hider-hoodie.glb`, source in `assets-src/characters/hider-hoodie/`); the Seeker, weapons and effects are still procedural Three.js source, not an engine-independent asset pack; see `assets-src/README.md`. No React conversion, native client, replay system or Signal Heist objectives are included in this server migration.

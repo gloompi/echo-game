@@ -1,6 +1,6 @@
 # Art source and migration boundary
 
-The existing visual source is preserved in `client/models.ts` (striped Hider, armored Seeker, toy blaster and procedural animation) and `client/world.ts` (arena rendering). The collision/spawn layout is now engine-independent `shared/arena.json` with metres, +Y up and character origins at the feet.
+The procedural visual source is preserved in `client/models.ts` (armored Seeker, toy blaster, procedural animation, and the striped Hider that now shows only while the authored Hider loads or if it fails) and `client/world.ts` (arena rendering). `characters/hider-hoodie/` holds the authored Hider's brief, references, reviews and `.blend`; its runtime GLB is `public/assets/characters/hider-hoodie.glb`. The collision/spawn layout is now engine-independent `shared/arena.json` with metres, +Y up and character origins at the feet.
 
 `worlds/mirror-yard/` and `worlds/neon-carnival/` contain original editable Blender environments, concept references, rendered previews and collision descriptors. Their game-ready GLBs live in `public/assets/worlds/`. See [Blender worlds](../docs/BLENDER_WORLDS.md) for rebuild commands and verification. The original three arenas remain procedural.
 
