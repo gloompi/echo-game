@@ -46,6 +46,11 @@ def parse():
 def load(args):
     if args.glb:
         eb.import_glb_copy(args.glb)
+        # glTF importers pose a model with its first animation (Blender's exporter sorts them
+        # by name, so crouch_idle comes first); review views show the rest pose instead.
+        for obj in bpy.context.scene.objects:
+            if obj.type == 'ARMATURE':
+                obj.data.pose_position = 'REST'
         return
     bpy.ops.wm.open_mainfile(filepath=str(Path(args.blend).resolve()), load_ui=False)
     for obj in bpy.context.scene.objects:  # Authoring rigs must not change review lighting.

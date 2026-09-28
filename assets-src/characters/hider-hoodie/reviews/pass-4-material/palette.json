@@ -1,0 +1,127 @@
+{
+ "tint_light (hoodie)": {
+  "region": "sleeve, front",
+  "sheet": "#EAD9C7",
+  "pass3Render": "#E5DFD6",
+  "pass4Render": "#E5DFD6",
+  "authoredPass3": "#EBE3D8",
+  "authoredPass4": "#EBE3D8",
+  "sheetLab": [
+   87.6,
+   2.9,
+   11.0
+  ],
+  "pass3Lab": [
+   89.1,
+   0.5,
+   5.1
+  ],
+  "pass4Lab": [
+   89.1,
+   0.5,
+   5.1
+  ],
+  "deltaEPass3": 6.5,
+  "deltaEPass4": 6.5
+ },
+ "black": {
+  "region": "joggers, front",
+  "sheet": "#484245",
+  "pass3Render": "#343539",
+  "pass4Render": "#35373B",
+  "authoredPass3": "#2B2C31",
+  "authoredPass4": "#2E2F35",
+  "sheetLab": [
+   28.7,
+   3.2,
+   -0.9
+  ],
+  "pass3Lab": [
+   22.2,
+   0.5,
+   -2.7
+  ],
+  "pass4Lab": [
+   23.0,
+   0.1,
+   -2.8
+  ],
+  "deltaEPass3": 7.2,
+  "deltaEPass4": 6.7
+ },
+ "cyan (emission 0.35)": {
+  "region": "hem band, front",
+  "sheet": "#43C3C8",
+  "pass3Render": "#34949E",
+  "pass4Render": "#3FB5C1",
+  "authoredPass3": "#3CB9C4",
+  "authoredPass4": "#3CB9C4",
+  "sheetLab": [
+   72.5,
+   -32.7,
+   -12.8
+  ],
+  "pass3Lab": [
+   56.5,
+   -24.3,
+   -13.5
+  ],
+  "pass4Lab": [
+   68.0,
+   -28.5,
+   -15.7
+  ],
+  "deltaEPass3": 18.1,
+  "deltaEPass4": 6.8
+ },
+ "skin": {
+  "region": "shin, front",
+  "sheet": "#D4A184",
+  "pass3Render": "#B78E77",
+  "pass4Render": "#BA9078",
+  "authoredPass3": "#D9A688",
+  "authoredPass4": "#DDA98A",
+  "sheetLab": [
+   70.3,
+   15.3,
+   22.5
+  ],
+  "pass3Lab": [
+   62.3,
+   12.3,
+   18.2
+  ],
+  "pass4Lab": [
+   63.1,
+   12.5,
+   18.8
+  ],
+  "deltaEPass3": 9.6,
+  "deltaEPass4": 8.5
+ },
+ "white": {
+  "region": "midsole, sneaker close-ups *",
+  "sheet": "#BEB9B8",
+  "pass3Render": "#DFD9D5",
+  "pass4Render": "#E0DBD6",
+  "authoredPass3": "#E4DDD7",
+  "authoredPass4": "#E6DFD8",
+  "sheetLab": [
+   75.5,
+   1.6,
+   1.1
+  ],
+  "pass3Lab": [
+   87.1,
+   1.4,
+   2.7
+  ],
+  "pass4Lab": [
+   87.7,
+   0.8,
+   3.0
+  ],
+  "deltaEPass3": 11.6,
+  "deltaEPass4": 12.3
+ }
+}

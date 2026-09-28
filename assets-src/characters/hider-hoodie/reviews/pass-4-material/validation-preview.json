@@ -1,0 +1,45 @@
+{
+  "glb": "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-hider-hoodie\\assets-src\\characters\\hider-hoodie\\hider-hoodie-preview.glb",
+  "kind": "character",
+  "bytes": 438972,
+  "checkedAtUtc": "2026-09-27T00:13:22.761729+00:00",
+  "blender": "5.2.0 LTS",
+  "importedFromCopiedDirectory": true,
+  "meshObjects": 18,
+  "triangles": 6986,
+  "materials": [
+    "black",
+    "cyan",
+    "skin",
+    "tint_light",
+    "white"
+  ],
+  "textures": [],
+  "gameBounds": {
+    "min": [
+      -0.4147,
+      0.0,
+      -0.2689
+    ],
+    "max": [
+      0.4147,
+      2.16,
+      0.246
+    ]
+  },
+  "heightMetres": 2.16,
+  "collisionHeightMetres": 2.16,
+  "skin": {
+    "armatures": 0,
+    "bones": 0,
+    "skinnedMeshes": 0,
+    "maxInfluences": 0
+  },
+  "clips": [],
+  "crouchPoseHeights": {},
+  "status": "failed",
+  "failures": [
+    "character has no skinned mesh"
+  ],
+  "warnings": []
+}

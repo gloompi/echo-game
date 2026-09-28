@@ -1,0 +1,53 @@
+{
+  "source": "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-hider-hoodie\\assets-src\\characters\\hider-hoodie\\hider-hoodie.blend",
+  "kind": "character",
+  "renderedAtUtc": "2026-09-25T09:52:31.736965+00:00",
+  "blender": "5.2.0 LTS",
+  "triangles": 1948,
+  "gameBounds": {
+    "min": [
+      -0.3861,
+      0.0,
+      -0.255
+    ],
+    "max": [
+      0.3861,
+      2.16,
+      0.231
+    ]
+  },
+  "references": [
+    "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-hider-hoodie\\assets-src\\characters\\hider-hoodie\\refs\\01-front.png",
+    "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-hider-hoodie\\assets-src\\characters\\hider-hoodie\\refs\\02-side-right.png",
+    "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-hider-hoodie\\assets-src\\characters\\hider-hoodie\\refs\\03-back.png"
+  ],
+  "views": [
+    "front",
+    "right",
+    "back",
+    "left",
+    "three-quarter",
+    "gameplay",
+    "gameplay-near"
+  ],
+  "sheetRows": [
+    [
+      "01-front.png",
+      "02-side-right.png",
+      "03-back.png"
+    ],
+    [
+      "front.png",
+      "right.png",
+      "back.png",
+      "left.png"
+    ],
+    [
+      "three-quarter.png",
+      "gameplay.png",
+      "gameplay-near.png"
+    ]
+  ],
+  "guides": true,
+  "colourTransform": "Standard"
+}

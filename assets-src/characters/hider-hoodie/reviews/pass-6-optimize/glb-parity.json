@@ -1,0 +1,50 @@
+{
+ "crouch_idle": {
+  "frames": 61,
+  "boneHeadMaxDifferenceMetres": 3e-06,
+  "worstFrame": 0,
+  "boundsMaxDifferenceMetres": 0.0
+ },
+ "crouch_walk": {
+  "frames": 16,
+  "boneHeadMaxDifferenceMetres": 3e-06,
+  "worstFrame": 14,
+  "boundsMaxDifferenceMetres": 1e-06
+ },
+ "hit": {
+  "frames": 14,
+  "boneHeadMaxDifferenceMetres": 1e-06,
+  "worstFrame": 11,
+  "boundsMaxDifferenceMetres": 0.0
+ },
+ "idle": {
+  "frames": 73,
+  "boneHeadMaxDifferenceMetres": 0.0,
+  "worstFrame": 0,
+  "boundsMaxDifferenceMetres": 0.0
+ },
+ "jump": {
+  "frames": 13,
+  "boneHeadMaxDifferenceMetres": 2e-06,
+  "worstFrame": 11,
+  "boundsMaxDifferenceMetres": 1e-06
+ },
+ "run": {
+  "frames": 19,
+  "boneHeadMaxDifferenceMetres": 2e-06,
+  "worstFrame": 2,
+  "boundsMaxDifferenceMetres": 3e-06
+ },
+ "slide": {
+  "frames": 13,
+  "boneHeadMaxDifferenceMetres": 4e-06,
+  "worstFrame": 11,
+  "boundsMaxDifferenceMetres": 4e-06
+ },
+ "wave": {
+  "frames": 31,
+  "boneHeadMaxDifferenceMetres": 1e-06,
+  "worstFrame": 8,
+  "boundsMaxDifferenceMetres": 1e-06
+ }
+}

@@ -1,0 +1,625 @@
+[
+  {
+    "file": "00-sheet.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [],
+    "jobId": null,
+    "createdAtUtc": "2026-09-13T23:28:09Z",
+    "approved": true,
+    "note": "Supplied as authoritative for the hider-hoodie brief (2026-09-25). 1122x1402 sheet: 4-view turnaround, 3 detail crops, 6 colour variations, gear row (out of scope, not cropped). createdAtUtc is the supplied file's modification time. The views disagree with each other; see \"Open decisions\" in brief.md.",
+    "sha256": "115e43f01ff051aa06d19cb5ba3c76b09d479514c9c5e756ff2dcc2d3827c7bc",
+    "original": "echo-character-assets/assets/3d65fd5d-cc23-4c75-a76d-71a3bc83e02c.png"
+  },
+  {
+    "file": "01-front.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Front view: hood up over the cap, full black mask. Match target for the front, except the chest bag: the bag is on the back (Decision 2026-09-25: bag on the back), so the front shows the harness straps instead. Also the hood-up head reference together with 10-part-hood-cap-mask. Framed like review_renders front view.",
+    "sha256": "7b8622f4a3ba84e75f760f471fb00e4fdcb0e5318cf06d18293e274b511193a3",
+    "crop": {
+      "sheetBox": [
+        -228,
+        99,
+        519,
+        846
+      ],
+      "keptPixels": [
+        19,
+        141,
+        272,
+        803
+      ],
+      "figure": {
+        "top": 147,
+        "soleBottom": 796,
+        "left": 22,
+        "right": 269
+      },
+      "framing": "review_renders ortho: square side = 1.15 x 650 px model height (front hood peak to sole); ground 48.5 px above the bottom edge; centred on the figure bbox. Outside keptPixels filled per row with the background at the kept band edges."
+    }
+  },
+  {
+    "file": "02-side-right.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Right side (faces image-right, like the review \"right\" render). Match target for the side, including the bag on the back and the harness, except the head: it shows the hood DOWN, and the hood stays up (Decision 2026-09-25: hood up everywhere), so the head is matched against 01 and 10-part-hood-cap-mask. Superseded as the side match target by 02b (Decision 6, 2026-09-25); kept as the record of passes 1-2.",
+    "sha256": "86a60a65e1b136808468ff0c429635c5d12309ea4acb8711209069a41d632103",
+    "crop": {
+      "sheetBox": [
+        -23,
+        99,
+        724,
+        846
+      ],
+      "keptPixels": [
+        275,
+        149,
+        425,
+        804
+      ],
+      "figure": {
+        "top": 155,
+        "soleBottom": 797,
+        "left": 278,
+        "right": 422
+      },
+      "framing": "review_renders ortho: square side = 1.15 x 650 px model height (front hood peak to sole); ground 48.5 px above the bottom edge; centred on the figure bbox. Outside keptPixels filled per row with the background at the kept band edges."
+    }
+  },
+  {
+    "file": "03-back.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Back view. Match target for the back, including the bag on the back with its cyan down-pointing triangle and the strap layout (black strap from the left shoulder, cyan from the right, meeting at the bag), except the head: it shows the hood DOWN, and the hood stays up (Decision 2026-09-25: hood up everywhere). Superseded as the back match target by 03b (Decision 6, 2026-09-25); kept as the record of passes 1-2.",
+    "sha256": "2068116a26386dfd734dc8c9cbaac33bcfa54cc6df456301cc2f3165bf5418b3",
+    "crop": {
+      "sheetBox": [
+        182,
+        101,
+        929,
+        848
+      ],
+      "keptPixels": [
+        429,
+        143,
+        681,
+        805
+      ],
+      "figure": {
+        "top": 149,
+        "soleBottom": 798,
+        "left": 432,
+        "right": 678
+      },
+      "framing": "review_renders ortho: square side = 1.15 x 650 px model height (front hood peak to sole); ground 48.5 px above the bottom edge; centred on the figure bbox. Outside keptPixels filled per row with the background at the kept band edges."
+    }
+  },
+  {
+    "file": "04-side-left.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": false,
+    "note": "Not a left view: the fourth figure faces image-right like 02 (brim, toes and mask point right; silhouette IoU with 02 is 0.73 as drawn vs 0.45 mirrored), a second right-side view. Rejected as a left reference; the left render is compared with 02 mirrored, except the asymmetric straps.",
+    "sha256": "503ba1c5873c987e08b75e36db76ed3f56f62eec4305eb120ce5b622ec1944ef",
+    "crop": {
+      "sheetBox": [
+        386,
+        99,
+        1133,
+        846
+      ],
+      "keptPixels": [
+        682,
+        149,
+        835,
+        804
+      ],
+      "figure": {
+        "top": 155,
+        "soleBottom": 797,
+        "left": 685,
+        "right": 832
+      },
+      "framing": "review_renders ortho: square side = 1.15 x 650 px model height (front hood peak to sole); ground 48.5 px above the bottom edge; centred on the figure bbox. Outside keptPixels filled per row with the background at the kept band edges."
+    }
+  },
+  {
+    "file": "10-part-hood-cap-mask.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Detail 1: hood UP over the cap, the head reference for every view. The brim projects past the hood opening; the mask is a separate faceted piece covering the face up to the brim; eyes hidden.",
+    "sha256": "467dc91e8bcfa98b8b2a14f4a940b83e489e87540c646be3009710924bdd43ea",
+    "crop": {
+      "sheetBox": [
+        891,
+        145,
+        1089,
+        369
+      ]
+    }
+  },
+  {
+    "file": "10-part-sling-bag.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Detail 2: the back bag. Bevelled hexagonal prism, zip along the top edge, strap to a buckle, cyan down-pointing triangle outline (slightly emissive); matches the bag in 03.",
+    "sha256": "81b091efe9b52cde48493dec5a87e8addedc6e6ce73c820eb8c5770373d44fbe",
+    "crop": {
+      "sheetBox": [
+        891,
+        389,
+        1089,
+        597
+      ]
+    }
+  },
+  {
+    "file": "10-part-glove.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Detail 3: black fingerless glove, cyan mark on the back of the hand, three white knuckle studs, bare fingertips; cyan hoodie cuff above.",
+    "sha256": "fc9f2154aa1df5b6609ec610ddbb5fefefcc0a993073ee80a0548494f8dbf47b",
+    "crop": {
+      "sheetBox": [
+        891,
+        615,
+        1089,
+        817
+      ]
+    }
+  },
+  {
+    "file": "30-colour-1-white-teal-hood.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": false,
+    "note": "Swatch 1: white hoodie with a teal hood crown. Not mapped to a skin (Decision 2026-09-25: skin mapping approved; classic comes from 01). Kept for context.",
+    "sha256": "d38ae2ce225131d02861b48e5286734be14907efaa8e1c03c9aa966ff4eae851",
+    "crop": {
+      "sheetBox": [
+        33,
+        868,
+        200,
+        1063
+      ]
+    }
+  },
+  {
+    "file": "30-colour-2-red.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Swatch 2: hoodie colour source for ember (#D8434B). Decision 2026-09-25: logos stay cyan, so ignore its red triangles and black strap; bag placement here (chest) is superseded.",
+    "sha256": "52d6a18ff7ecdb39845404f8b261aa5c439ebc21df9d753c58a8f08de293b74e",
+    "crop": {
+      "sheetBox": [
+        213,
+        868,
+        378,
+        1063
+      ]
+    }
+  },
+  {
+    "file": "30-colour-3-purple.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Swatch 3: hoodie colour source for violet (#9A5DDF). Decision 2026-09-25: logos stay cyan; chest bag placement superseded.",
+    "sha256": "7df26ac24a4c6b4a4312825160c203dabf99049a78798522653dfe31c79674f6",
+    "crop": {
+      "sheetBox": [
+        390,
+        868,
+        555,
+        1063
+      ]
+    }
+  },
+  {
+    "file": "30-colour-4-yellow.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Swatch 4: hoodie colour source for sunset (#E3B050, kept gold, not orange). Decision 2026-09-25: logos stay cyan; chest bag placement superseded.",
+    "sha256": "6b0dd113eebd518e002ffc4cff80934f312a6f710ef23478def763845622006f",
+    "crop": {
+      "sheetBox": [
+        567,
+        868,
+        732,
+        1063
+      ]
+    }
+  },
+  {
+    "file": "30-colour-5-charcoal-teal-hood.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Swatch 5: hue source for carbon only. Its hoodie measures L* 22, the same as the joggers; carbon is lifted to graphite #7C828C (L* 54) under the approved L* >= 50 rule, so do not match its lightness. Chest bag placement superseded.",
+    "sha256": "587ca45ce8a0be174d3b194f398e22b6d74c94a2ee098b2a183934defed55af2",
+    "crop": {
+      "sheetBox": [
+        744,
+        868,
+        909,
+        1063
+      ]
+    }
+  },
+  {
+    "file": "30-colour-6-white-grey.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-24T22:36:02Z",
+    "approved": true,
+    "note": "Swatch 6: hoodie colour source for arctic (#DDE8F2, cooler than classic). Decision 2026-09-25: logos stay cyan; chest bag placement superseded.",
+    "sha256": "58d26fd247350205e6c43ba9cf9854112e939ab187812a08bc3ed46ed99e79e0",
+    "crop": {
+      "sheetBox": [
+        921,
+        868,
+        1088,
+        1063
+      ]
+    }
+  },
+  {
+    "file": "00b-sheet.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T10:10:19Z",
+    "approved": true,
+    "note": "Sheet B, supplied 2026-09-25 with the instruction to build the side and back views from it (Decision 6). 1122x1402: 4-view turnaround (FRONT, LEFT, BACK, RIGHT) with the hood up in every view, head (hood up), bag and glove details, four sneaker panels. Its front view draws the chest bag again and its A-pose is wider than 01; see brief.md \"Sheet B\". createdAtUtc is the supplied file's modification time.",
+    "sha256": "82573ac8748fd1e64c2c56f41058cf41e2df0eaa42cadeb6f0eb2522d3ecb52e",
+    "original": "echo-character-assets/assets/ChatGPT Image Sep 25, 2026, 12_10_02 PM.png"
+  },
+  {
+    "file": "02b-side-right.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T15:10:32Z",
+    "approved": true,
+    "note": "Sheet B fourth figure, labelled RIGHT; faces image-right like the review \"right\" render. Side match target, head included (Decision 6): the hood-up profile with a crown lobe and a nape lobe, bag on the back, harness, cap and brim, sneakers. Supersedes 02 as the side target.",
+    "sha256": "fa37b9a6c92697fb853e6d0d7e56db006cd5627562adedf62366f04568c86eea",
+    "crop": {
+      "sheetBox": [
+        600,
+        21,
+        1366,
+        787
+      ],
+      "keptPixels": [
+        899,
+        65,
+        1070,
+        743
+      ],
+      "figure": {
+        "top": 71,
+        "soleBottom": 736,
+        "left": 902,
+        "right": 1063
+      },
+      "framing": "review_renders ortho: square side = 1.15 x 666 px model height (this view's hood peak to sole); ground 50.0 px above the bottom edge; centred on the figure bbox. Outside keptPixels filled per row with the background at the kept band edges."
+    }
+  },
+  {
+    "file": "03b-back.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T15:10:32Z",
+    "approved": true,
+    "note": "Sheet B back view. Back match target, head included (Decision 6): hood up with a U-shaped hem over the upper back, the back bag with its cyan triangle, black strap over the left shoulder and cyan over the right. Its A-pose is wider than 01 (hands about 0.45 m from the axis, 01 0.41 m); the bind pose keeps the arms of 01, the front target. Supersedes 03 as the back target.",
+    "sha256": "08a57d0719e58b2bf1a98f64ae40ae268872a8467e78759d1022db840bfa32ae",
+    "crop": {
+      "sheetBox": [
+        312,
+        20,
+        1079,
+        787
+      ],
+      "keptPixels": [
+        543,
+        64,
+        846,
+        743
+      ],
+      "figure": {
+        "top": 70,
+        "soleBottom": 736,
+        "left": 546,
+        "right": 843
+      },
+      "framing": "review_renders ortho: square side = 1.15 x 667 px model height (this view's hood peak to sole); ground 50.0 px above the bottom edge; centred on the figure bbox. Outside keptPixels filled per row with the background at the kept band edges."
+    }
+  },
+  {
+    "file": "04b-side-left.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T15:10:32Z",
+    "approved": false,
+    "note": "Sheet B second figure, labelled LEFT, but it faces image-right like 02b (silhouette IoU with 02b 0.913 as drawn, 0.692 mirrored): a second right-side view, not a left view. Rejected as a left reference; the left render is compared with 02b mirrored.",
+    "sha256": "35394ffa6d68174855c0de7d0169ca0571f442cdf55a9bd0c72885aa6c893237",
+    "crop": {
+      "sheetBox": [
+        44,
+        20,
+        812,
+        788
+      ],
+      "keptPixels": [
+        347,
+        64,
+        506,
+        743
+      ],
+      "figure": {
+        "top": 70,
+        "soleBottom": 737,
+        "left": 350,
+        "right": 504
+      },
+      "framing": "review_renders ortho: square side = 1.15 x 668 px model height (this view's hood peak to sole); ground 50.0 px above the bottom edge; centred on the figure bbox. Outside keptPixels filled per row with the background at the kept band edges."
+    }
+  },
+  {
+    "file": "10b-part-hood-cap-mask.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T15:10:32Z",
+    "approved": true,
+    "note": "Sheet B head detail, hood up, from the front: thick face rim whose two sides meet in a V under the chin with the drawstrings below, cap crown with the cyan triangle inside the opening, faceted mask, hood flaring onto the shoulders under the straps. Head detail for the form pass, with 10-part-hood-cap-mask.",
+    "sha256": "43fd987dc5bc204a51581535702e7afdcbac7cd9ecd80ce123fbac5a269b2485",
+    "crop": {
+      "sheetBox": [
+        25,
+        808,
+        356,
+        1126
+      ]
+    }
+  },
+  {
+    "file": "10b-part-sling-bag.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-26T23:46:47Z",
+    "approved": true,
+    "note": "Sheet B bag detail, worn as a chest sling as in 01; used for the bag form only (Decision 1 puts the bag on the back): a hexagonal pouch with bevelled edges, a zip along the top edge and the cyan down-pointing triangle outline on its face. Detail reference for the form pass.",
+    "sha256": "2cf3819d11ac4c6e59f69c10d15addf5b865b46b2b11827973a5bec5969a33f5",
+    "crop": {
+      "sheetBox": [
+        372,
+        808,
+        753,
+        1126
+      ]
+    }
+  },
+  {
+    "file": "10b-part-glove.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-26T23:46:47Z",
+    "approved": true,
+    "note": "Sheet B glove detail: fingerless glove with a black wrist strap carrying a cyan square, a cyan H on the back of the hand with its crossbar across the hand, three light knuckle studs and bare fingertips. Detail reference for the form pass.",
+    "sha256": "80105618fc03c92dffbb52dc7befe611a228ea65c9df0e5ed03b3e61cecdd9bb",
+    "crop": {
+      "sheetBox": [
+        768,
+        808,
+        1097,
+        1126
+      ]
+    }
+  },
+  {
+    "file": "10b-part-sneaker-side.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-26T23:46:47Z",
+    "approved": true,
+    "note": "Sheet B sneaker, side: white midsole in two blocks with an arch notch, cyan outsole edge, black heel counter, cyan quarter with a black patch, black vamp band, cyan toe box under a white toe cap, cyan laces, a tall black tongue and a cyan heel tab. Detail reference for the form pass.",
+    "sha256": "b91d9dde1fff1c45866a28c58a6269bb255092936873fdfe2813f5167a37c30a",
+    "crop": {
+      "sheetBox": [
+        25,
+        1174,
+        321,
+        1329
+      ]
+    }
+  },
+  {
+    "file": "10b-part-sneaker-front.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-26T23:46:47Z",
+    "approved": true,
+    "note": "Sheet B sneaker, front: tall tongue with a small cyan triangle, cyan laces, white toe cap over a black toe bumper, white midsole on the cyan outsole. Detail reference for the form pass.",
+    "sha256": "7a62af004696e8ae287b8da4c9234fd7e36ff21e26a11ac02f9448ca6c09a0d0",
+    "crop": {
+      "sheetBox": [
+        333,
+        1174,
+        551,
+        1329
+      ]
+    }
+  },
+  {
+    "file": "10b-part-sneaker-back.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-26T23:46:47Z",
+    "approved": true,
+    "note": "Sheet B sneaker, back: black heel counter and collar, cyan heel tab, cyan side panels, white heel on the cyan outsole. Detail reference for the form pass.",
+    "sha256": "73a711450873a1d4b62282b0ff581d1bf79e0ab3d2b945e309cec8f8dfd43bdd",
+    "crop": {
+      "sheetBox": [
+        563,
+        1174,
+        789,
+        1329
+      ]
+    }
+  },
+  {
+    "file": "10b-part-sneaker-sole.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00b-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-26T23:46:47Z",
+    "approved": true,
+    "note": "Sheet B sneaker sole: black tread inside a thick cyan rim, a black arch bridge, and a cyan triangle outline under the forefoot pointing to the toe. Detail reference for the form pass.",
+    "sha256": "65b1fb8e5b457782c7a04e2e7b0928df2a4071fe20b0b79e2f033a4a3b271641",
+    "crop": {
+      "sheetBox": [
+        801,
+        1174,
+        1098,
+        1329
+      ]
+    }
+  }
+]

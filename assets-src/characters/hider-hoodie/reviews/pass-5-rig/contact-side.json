@@ -1,0 +1,210 @@
+[
+ {
+  "clip": "run",
+  "side": "R",
+  "speed": 6.4,
+  "frames": [
+   {
+    "frame": 0,
+    "touchingVertices": 60,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 1,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0006,
+    "driftSincePreviousKeyMetres": 0.0006
+   },
+   {
+    "frame": 2,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0011,
+    "driftSincePreviousKeyMetres": 0.0006
+   },
+   {
+    "frame": 3,
+    "touchingVertices": 60,
+    "driftSinceTouchdownMetres": 0.0017,
+    "driftSincePreviousKeyMetres": 0.0006
+   },
+   {
+    "frame": 4,
+    "touchingVertices": 13,
+    "driftSinceTouchdownMetres": 0.0022,
+    "driftSincePreviousKeyMetres": 0.0005
+   },
+   {
+    "frame": 5,
+    "touchingVertices": 6,
+    "driftSinceTouchdownMetres": null,
+    "driftSincePreviousKeyMetres": null
+   }
+  ]
+ },
+ {
+  "clip": "run",
+  "side": "L",
+  "speed": 6.4,
+  "frames": [
+   {
+    "frame": 9,
+    "touchingVertices": 60,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 10,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0006,
+    "driftSincePreviousKeyMetres": 0.0006
+   },
+   {
+    "frame": 11,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0011,
+    "driftSincePreviousKeyMetres": 0.0006
+   },
+   {
+    "frame": 12,
+    "touchingVertices": 60,
+    "driftSinceTouchdownMetres": 0.0017,
+    "driftSincePreviousKeyMetres": 0.0006
+   },
+   {
+    "frame": 13,
+    "touchingVertices": 13,
+    "driftSinceTouchdownMetres": 0.0022,
+    "driftSincePreviousKeyMetres": 0.0005
+   },
+   {
+    "frame": 14,
+    "touchingVertices": 6,
+    "driftSinceTouchdownMetres": null,
+    "driftSincePreviousKeyMetres": null
+   }
+  ]
+ },
+ {
+  "clip": "crouch_walk",
+  "side": "R",
+  "speed": 2.88,
+  "frames": [
+   {
+    "frame": 0,
+    "touchingVertices": 60,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 1,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 2,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 3,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 4,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 5,
+    "touchingVertices": 76,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 6,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 7,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 8,
+    "touchingVertices": 8,
+    "driftSinceTouchdownMetres": 0.0004,
+    "driftSincePreviousKeyMetres": 0.0004
+   }
+  ]
+ },
+ {
+  "clip": "crouch_walk",
+  "side": "L",
+  "speed": 2.88,
+  "frames": [
+   {
+    "frame": 8,
+    "touchingVertices": 60,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 9,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 10,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 11,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 12,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 13,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 14,
+    "touchingVertices": 78,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 15,
+    "touchingVertices": 69,
+    "driftSinceTouchdownMetres": 0.0,
+    "driftSincePreviousKeyMetres": 0.0
+   },
+   {
+    "frame": 16,
+    "touchingVertices": 7,
+    "driftSinceTouchdownMetres": null,
+    "driftSincePreviousKeyMetres": null
+   }
+  ]
+ }
+]

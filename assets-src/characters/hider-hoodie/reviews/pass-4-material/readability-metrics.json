@@ -1,0 +1,455 @@
+{
+ "source": {
+  "actorCentresPx": {
+   "front-hider": [
+    550.6,
+    456.2
+   ],
+   "front-seeker": [
+    649.4,
+    456.2
+   ],
+   "behind-hider": [
+    649.4,
+    456.2
+   ],
+   "behind-seeker": [
+    550.6,
+    456.2
+   ]
+  },
+  "hider": "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-hider-hoodie\\assets-src\\characters\\hider-hoodie\\hider-hoodie-preview.glb",
+  "seekerHunter": "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-seeker-hunter\\assets-src\\characters\\seeker-hunter\\seeker-hunter-preview.glb",
+  "eye": 1.76,
+  "fovYDegrees": 72,
+  "cameras": {
+   "front": [
+    -4.5,
+    7.5
+   ],
+   "behind": [
+    4.5,
+    -7.5
+   ]
+  },
+  "pairOffsetMetres": 0.7,
+  "resolution": [
+   1200,
+   900
+  ],
+  "hoodie": {
+   "classic": "EBE3D8",
+   "ember": "D8434B",
+   "violet": "9A5DDF",
+   "sunset": "E3B050",
+   "arctic": "DDE8F2",
+   "carbon": "7C828C",
+   "jade": "3FAE7F",
+   "cobalt": "74A8EA"
+  },
+  "seekerArmourDark": {
+   "classic": null,
+   "cobalt": "17478f",
+   "ember": "9b422e",
+   "jade": "267c68",
+   "violet": "7350a5",
+   "arctic": "72929f",
+   "sunset": "b25373",
+   "carbon": "283343"
+  }
+ },
+ "lightness": {
+  "r3-front": {
+   "classic": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 75.9,
+     "lowerL": 20.4
+    },
+    "seeker": {
+     "heightPx": 159,
+     "upperL": 20.3,
+     "lowerL": 13.2
+    }
+   },
+   "ember": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 49.5,
+     "lowerL": 20.4
+    },
+    "seeker": {
+     "heightPx": 159,
+     "upperL": 19.7,
+     "lowerL": 13.2
+    }
+   },
+   "violet": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 50.6,
+     "lowerL": 20.4
+    },
+    "seeker": {
+     "heightPx": 159,
+     "upperL": 20.4,
+     "lowerL": 13.2
+    }
+   },
+   "sunset": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 68.7,
+     "lowerL": 20.4
+    },
+    "seeker": {
+     "heightPx": 159,
+     "upperL": 22.6,
+     "lowerL": 13.3
+    }
+   },
+   "arctic": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 76.2,
+     "lowerL": 20.4
+    },
+    "seeker": {
+     "heightPx": 159,
+     "upperL": 26.8,
+     "lowerL": 13.5
+    }
+   },
+   "carbon": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 52.6,
+     "lowerL": 20.4
+    },
+    "seeker": {
+     "heightPx": 159,
+     "upperL": 14.6,
+     "lowerL": 13.1
+    }
+   },
+   "jade": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 60.9,
+     "lowerL": 20.4
+    },
+    "seeker": {
+     "heightPx": 159,
+     "upperL": 22.4,
+     "lowerL": 13.3
+    }
+   },
+   "cobalt": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 63.8,
+     "lowerL": 20.4
+    },
+    "seeker": {
+     "heightPx": 159,
+     "upperL": 17.4,
+     "lowerL": 13.2
+    }
+   }
+  },
+  "sh-front": {
+   "classic": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 75.9,
+     "lowerL": 20.4
+    },
+    "seekerHunter": {
+     "heightPx": 155,
+     "upperL": 22.0,
+     "lowerL": 21.4
+    }
+   },
+   "ember": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 49.5,
+     "lowerL": 20.4
+    },
+    "seekerHunter": {
+     "heightPx": 155,
+     "upperL": 22.0,
+     "lowerL": 21.4
+    }
+   },
+   "violet": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 50.6,
+     "lowerL": 20.4
+    },
+    "seekerHunter": {
+     "heightPx": 155,
+     "upperL": 22.0,
+     "lowerL": 21.4
+    }
+   },
+   "sunset": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 68.7,
+     "lowerL": 20.4
+    },
+    "seekerHunter": {
+     "heightPx": 155,
+     "upperL": 22.0,
+     "lowerL": 21.4
+    }
+   },
+   "arctic": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 76.2,
+     "lowerL": 20.4
+    },
+    "seekerHunter": {
+     "heightPx": 155,
+     "upperL": 22.0,
+     "lowerL": 21.4
+    }
+   },
+   "carbon": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 52.6,
+     "lowerL": 20.4
+    },
+    "seekerHunter": {
+     "heightPx": 155,
+     "upperL": 22.0,
+     "lowerL": 21.4
+    }
+   },
+   "jade": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 60.9,
+     "lowerL": 20.4
+    },
+    "seekerHunter": {
+     "heightPx": 155,
+     "upperL": 22.0,
+     "lowerL": 21.4
+    }
+   },
+   "cobalt": {
+    "hider": {
+     "heightPx": 155,
+     "upperL": 63.8,
+     "lowerL": 20.4
+    },
+    "seekerHunter": {
+     "heightPx": 155,
+     "upperL": 22.0,
+     "lowerL": 21.4
+    }
+   }
+  },
+  "r3-behind": {
+   "classic": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 66.3,
+     "lowerL": 21.2
+    },
+    "seeker": {
+     "heightPx": 158,
+     "upperL": 18.9,
+     "lowerL": 12.7
+    }
+   },
+   "ember": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 42.7,
+     "lowerL": 21.2
+    },
+    "seeker": {
+     "heightPx": 158,
+     "upperL": 17.1,
+     "lowerL": 14.2
+    }
+   },
+   "violet": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 43.9,
+     "lowerL": 21.2
+    },
+    "seeker": {
+     "heightPx": 158,
+     "upperL": 18.1,
+     "lowerL": 14.2
+    }
+   },
+   "sunset": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 59.5,
+     "lowerL": 21.2
+    },
+    "seeker": {
+     "heightPx": 158,
+     "upperL": 21.3,
+     "lowerL": 14.2
+    }
+   },
+   "arctic": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 66.6,
+     "lowerL": 21.2
+    },
+    "seeker": {
+     "heightPx": 158,
+     "upperL": 26.1,
+     "lowerL": 14.2
+    }
+   },
+   "carbon": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 45.5,
+     "lowerL": 21.2
+    },
+    "seeker": {
+     "heightPx": 158,
+     "upperL": 12.4,
+     "lowerL": 12.7
+    }
+   },
+   "jade": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 53.2,
+     "lowerL": 21.2
+    },
+    "seeker": {
+     "heightPx": 158,
+     "upperL": 20.8,
+     "lowerL": 14.2
+    }
+   },
+   "cobalt": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 55.5,
+     "lowerL": 21.2
+    },
+    "seeker": {
+     "heightPx": 158,
+     "upperL": 13.4,
+     "lowerL": 12.8
+    }
+   }
+  },
+  "sh-behind": {
+   "classic": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 66.3,
+     "lowerL": 21.2
+    },
+    "seekerHunter": {
+     "heightPx": 153,
+     "upperL": 20.5,
+     "lowerL": 18.1
+    }
+   },
+   "ember": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 42.7,
+     "lowerL": 21.2
+    },
+    "seekerHunter": {
+     "heightPx": 153,
+     "upperL": 20.5,
+     "lowerL": 18.1
+    }
+   },
+   "violet": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 43.9,
+     "lowerL": 21.2
+    },
+    "seekerHunter": {
+     "heightPx": 153,
+     "upperL": 20.5,
+     "lowerL": 18.1
+    }
+   },
+   "sunset": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 59.5,
+     "lowerL": 21.2
+    },
+    "seekerHunter": {
+     "heightPx": 153,
+     "upperL": 20.5,
+     "lowerL": 18.1
+    }
+   },
+   "arctic": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 66.6,
+     "lowerL": 21.2
+    },
+    "seekerHunter": {
+     "heightPx": 153,
+     "upperL": 20.5,
+     "lowerL": 18.1
+    }
+   },
+   "carbon": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 45.5,
+     "lowerL": 21.2
+    },
+    "seekerHunter": {
+     "heightPx": 153,
+     "upperL": 20.5,
+     "lowerL": 18.1
+    }
+   },
+   "jade": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 53.2,
+     "lowerL": 21.2
+    },
+    "seekerHunter": {
+     "heightPx": 153,
+     "upperL": 20.5,
+     "lowerL": 18.1
+    }
+   },
+   "cobalt": {
+    "hider": {
+     "heightPx": 153,
+     "upperL": 55.5,
+     "lowerL": 21.2
+    },
+    "seekerHunter": {
+     "heightPx": 153,
+     "upperL": 20.5,
+     "lowerL": 18.1
+    }
+   }
+  }
+ }
+}

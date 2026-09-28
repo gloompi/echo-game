@@ -1,0 +1,50 @@
+{
+ "crouch_idle": {
+  "interpolation": [
+   "LINEAR"
+  ],
+  "quaternionSignFlips": 0
+ },
+ "crouch_walk": {
+  "interpolation": [
+   "LINEAR"
+  ],
+  "quaternionSignFlips": 0
+ },
+ "hit": {
+  "interpolation": [
+   "LINEAR"
+  ],
+  "quaternionSignFlips": 0
+ },
+ "idle": {
+  "interpolation": [
+   "LINEAR"
+  ],
+  "quaternionSignFlips": 0
+ },
+ "jump": {
+  "interpolation": [
+   "LINEAR"
+  ],
+  "quaternionSignFlips": 0
+ },
+ "run": {
+  "interpolation": [
+   "LINEAR"
+  ],
+  "quaternionSignFlips": 0
+ },
+ "slide": {
+  "interpolation": [
+   "LINEAR"
+  ],
+  "quaternionSignFlips": 0
+ },
+ "wave": {
+  "interpolation": [
+   "LINEAR"
+  ],
+  "quaternionSignFlips": 0
+ }
+}
