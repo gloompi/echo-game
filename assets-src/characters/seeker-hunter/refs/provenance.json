@@ -1,0 +1,369 @@
+[
+  {
+    "file": "00-sheet.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [],
+    "jobId": null,
+    "createdAtUtc": "2026-09-13T23:28:09Z",
+    "approved": true,
+    "note": "Supplied as authoritative for the seeker-hunter brief (2026-09-25). 1122x1402 sheet: 3-view turnaround (front, left side, back), 3 detail crops (hood and visor, chest, glove), 5 colour variations (default, arctic, void, sand, stealth), weapons row (out of scope, not cropped). createdAtUtc is the supplied file's modification time.",
+    "sha256": "c95df72c4c3823cf96372b2b289353959686744cd0e2d1be9ae7cadb00481a86",
+    "size": [
+      1122,
+      1402
+    ],
+    "original": "echo-character-assets/assets/cb8c4b2b-7b89-425f-81fa-33b3d19cc47b.png"
+  },
+  {
+    "file": "01-front.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Front view. Match target for the front render: pointed hood, glowing red T visor, one diagonal strap from the left shoulder to the right hip, holster on the right thigh (image left). Framed like the review_renders front view.",
+    "sha256": "05ce3e23c1b2a5e0731b40bc8bd066060033fd9c331abfcef0dc517af9c9d614",
+    "size": [
+      734,
+      734
+    ],
+    "crop": {
+      "sheetBox": [
+        -207,
+        115,
+        527,
+        849
+      ],
+      "keptPixels": [
+        12,
+        125,
+        310,
+        835
+      ],
+      "figure": {
+        "left": 25,
+        "top": 162.5,
+        "right": 294,
+        "soleBottom": 801
+      },
+      "groundRow": 801,
+      "framing": "review_renders ortho: square side = 1.15 x 638.5 px model height (front hood peak to sole), 1:1 sheet pixels; ground 48 px above the bottom edge; centred on the figure bbox. Outside keptPixels each row is filled with the median background at the kept band edges; rows outside the band use the median background of the nearest 5 kept rows."
+    }
+  },
+  {
+    "file": "02-side-left.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Side view. The figure faces image-left, so this is the character's LEFT side (the right-thigh holster is hidden) and it matches the review \"left\" render; the \"right\" render is compared with it mirrored, except the holster and strap. Perspective render: the far foot sits about 28 px (9 cm) above the near foot, so the ground row is taken between them.",
+    "sha256": "f38ddf996ed38675fad66228f0e61e78fb5e20ad85ef82117139892cb426602c",
+    "size": [
+      734,
+      734
+    ],
+    "crop": {
+      "sheetBox": [
+        37,
+        111,
+        771,
+        845
+      ],
+      "keptPixels": [
+        310,
+        125,
+        496,
+        835
+      ],
+      "figure": {
+        "left": 324,
+        "top": 162.5,
+        "right": 483,
+        "soleBottom": 811
+      },
+      "groundRow": 797,
+      "framing": "review_renders ortho: square side = 1.15 x 638.5 px model height (front hood peak to sole), 1:1 sheet pixels; ground 48 px above the bottom edge; centred on the figure bbox. Outside keptPixels each row is filled with the median background at the kept band edges; rows outside the band use the median background of the nearest 5 kept rows."
+    }
+  },
+  {
+    "file": "02-side-left-mirrored.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "02-side-left.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-26T10:36:40Z",
+    "approved": true,
+    "note": "Horizontal mirror of 02-side-left for the review \"right\" column, so the reference row lines up with the front, right, back and left renders. It cannot show right-side asymmetry: the right-thigh holster and the strap are compared with 01 instead (brief.md, Reference pack).",
+    "sha256": "c37a2fbf5440fe832acd9260744e1f6fa9d19d0b0a3c56af010fc8891541a427",
+    "size": [
+      734,
+      734
+    ],
+    "crop": {
+      "derivedFrom": "02-side-left.png",
+      "transform": "mirror left-right"
+    }
+  },
+  {
+    "file": "03-back.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Back view: flat back plate with a vertical red light, rear belt pouches with red strips, strap of the right-thigh holster, red strips behind the knees, red heels. No diagonal strap crosses the back; see brief.md.",
+    "sha256": "1ce691d8c151448c38511df2346cff6d55ea06e9327aa1f455e90745ef53b571",
+    "size": [
+      734,
+      734
+    ],
+    "crop": {
+      "sheetBox": [
+        267,
+        120,
+        1001,
+        854
+      ],
+      "keptPixels": [
+        496,
+        125,
+        786,
+        835
+      ],
+      "figure": {
+        "left": 506,
+        "top": 164.5,
+        "right": 762,
+        "soleBottom": 806
+      },
+      "groundRow": 806,
+      "framing": "review_renders ortho: square side = 1.15 x 638.5 px model height (front hood peak to sole), 1:1 sheet pixels; ground 48 px above the bottom edge; centred on the figure bbox. Outside keptPixels each row is filled with the median background at the kept band edges; rows outside the band use the median background of the nearest 5 kept rows."
+    }
+  },
+  {
+    "file": "10-part-hood-visor.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Detail: faceted hood with a pointed peak, black faceted face plate, glowing red T visor (bar with slightly lowered ends over a tapering stem), two red strips on the hood beside the opening.",
+    "sha256": "6600bf375b87b8d2365d842dae1f991588dfb0c7edc2a14fed9eeeeaa6178f01",
+    "size": [
+      201,
+      207
+    ],
+    "crop": {
+      "sheetBox": [
+        797,
+        165,
+        998,
+        372
+      ]
+    }
+  },
+  {
+    "file": "10-part-chest.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Detail: chest plates, small red sternum light, diagonal strap from the left shoulder, left chest pouch with a red slash, red tops on the shoulder plates.",
+    "sha256": "2774557c60f575b8e33d433f7e5bd93c38ca6eb79f88f4e929f3a5a676c2cd30",
+    "size": [
+      201,
+      202
+    ],
+    "crop": {
+      "sheetBox": [
+        797,
+        389,
+        998,
+        591
+      ]
+    }
+  },
+  {
+    "file": "10-part-glove.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Detail: black armoured glove with segmented fingers and knuckle plates, a framed red bar on the back of the hand, a wrist cuff.",
+    "sha256": "0629ccbd508ccb200c95ac2dfb72072d989948da545380185c6853dc070df892",
+    "size": [
+      201,
+      202
+    ],
+    "crop": {
+      "sheetBox": [
+        797,
+        607,
+        998,
+        809
+      ]
+    }
+  },
+  {
+    "file": "30-colour-1-default-red.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Variation DEFAULT (red, visor core #FA4E4D). Proposed source for classic; mapping awaits approval.",
+    "sha256": "05221248cf3cdc82e80626b4f424ea27385818b2e7abcc9a44c1a6e421dc430e",
+    "size": [
+      204,
+      191
+    ],
+    "crop": {
+      "sheetBox": [
+        31,
+        866,
+        235,
+        1057
+      ]
+    }
+  },
+  {
+    "file": "30-colour-2-arctic-blue.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Variation ARCTIC (blue, #4379FF). Proposed for the game's cobalt skin, not its arctic skin (name clash, see brief.md); mapping awaits approval.",
+    "sha256": "c7ad6ca8ac5ed50efdab214b92385f51bb1707c03edf34a57a1eedd43b838aad",
+    "size": [
+      203,
+      191
+    ],
+    "crop": {
+      "sheetBox": [
+        246,
+        866,
+        449,
+        1057
+      ]
+    }
+  },
+  {
+    "file": "30-colour-3-void-purple.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Variation VOID (purple, #C64DFA). Proposed for violet, lifted to #CB5EFF. This swatch also tints the hood fabric purple; the proposal keeps the suit black on every skin.",
+    "sha256": "03f2d081d13236f22c05aabc8a3c432c5d59232305f9dc77b789eca6ee2cdac2",
+    "size": [
+      204,
+      191
+    ],
+    "crop": {
+      "sheetBox": [
+        459,
+        866,
+        663,
+        1057
+      ]
+    }
+  },
+  {
+    "file": "30-colour-4-sand-gold.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Variation SAND (gold, #FCC559). Proposed for sunset. The chest slash stays red in this swatch (generation slip); every accent recolours.",
+    "sha256": "761893ac740b4d47c7a67ddcb963b895558b4fe741e5583820b34ae7e2b486ba",
+    "size": [
+      203,
+      191
+    ],
+    "crop": {
+      "sheetBox": [
+        674,
+        866,
+        877,
+        1057
+      ]
+    }
+  },
+  {
+    "file": "30-colour-5-stealth-white.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-sheet.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:34:52Z",
+    "approved": true,
+    "note": "Variation STEALTH (white, #F7F4FD). Proposed for arctic (cool white #EAF2FF) and, muted, for carbon (#949FAD).",
+    "sha256": "7d4f4fe50a21fc123edbed68789002baa9277066aeb4a9ba40e8e5f95e8c2766",
+    "size": [
+      204,
+      191
+    ],
+    "crop": {
+      "sheetBox": [
+        888,
+        866,
+        1092,
+        1057
+      ]
+    }
+  }
+]

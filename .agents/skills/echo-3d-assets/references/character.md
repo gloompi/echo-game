@@ -33,11 +33,12 @@ public/assets/characters/<id>.glb     runtime export only
 - Stylized PBR (`Principled BSDF` base colour, roughness, small metallic, optional
   emission). Prefer flat colours or a small palette atlas over noisy textures; textures 1024
   px target, 2048 max.
-- Skin palettes recolour clothing/armour at runtime (`PALETTES` in `client/models.ts`: a
-  light and a dark colour per skin). Put recolourable regions on materials named
-  `tint_light` (shirt/primary) and `tint_dark` (trousers/armour/secondary), authored in the
-  `classic` colours. Everything else keeps its own colour. This naming is the proposed
-  runtime contract; the loader code that applies it does not exist yet.
+- Skins recolour clothing/armour at runtime. Put the recolourable region on materials named
+  `tint_light` (shirt/primary), authored in the `classic` colour; everything else keeps its
+  own colour. The asset's definition in `client/character-assets.ts` gives one colour per
+  skin (`HIDER_HOODIE.tints`), because the procedural `PALETTES` pairs in `client/models.ts`
+  need not suit a new design. `tint_dark` (trousers/armour/secondary) is reserved but not
+  applied yet: no authored character uses it.
 - The ghost/decoy variant replaces every material at runtime, so do not rely on vertex
   colours or material-specific geometry for readability.
 
@@ -82,11 +83,34 @@ Check loops across the seam and foot contact in the side view.
 
 ## Integration (separate echo-change task)
 
-The runtime currently builds characters procedurally in `client/models.ts` (`Character`,
-driven by `Pose` fields `moving`, `grounded`, `crouched`, `sliding`, `dashing`, `waving`,
-`pitch`, `hitAt`, `skin`, `weapon`). Loading a GLB character needs a cached loader, cloned
-skinned instances per player (`SkeletonUtils.clone`), an `AnimationMixer` per character
-mapped from those pose fields, tint and ghost handling, weapon attachment at
-`weapon_socket`, and disposal that never frees shared cached resources. Keep the
-procedural character as the fallback while the model loads or fails. Observation privacy is
-unchanged: the character only renders poses the client was authorized to receive.
+Implemented for the Hider (`hider-hoodie`) and the Seeker (`seeker-hunter`):
+
+- `client/character-assets.ts` defines each authored character: URL, per-skin tints, the
+  speeds its `run` and `crouch_walk` were authored for (measured foot speeds), its upper-body
+  `overlay` clip (`wave` or `aim`), and optionally a `weaponSocket` and a `pitchBone`.
+  `CharacterModel` loads the GLB once per page and rejects a model without a skinned mesh,
+  `tint_light`, any required clip, an overlay that moves the legs, or a named bone it lacks.
+  An emissive `tint_light` glows in the skin colour.
+- `client/skinned-character.ts` clones the whole scene per player (`SkeletonUtils.clone`;
+  three.js makes one SkinnedMesh per primitive, rebound here to one skeleton) and plays the
+  clips on one `AnimationMixer`. The legs play the base clip; the upper body plays the same
+  clip in step, or the overlay; `hit` is additive. A Seeker holds its weapon at
+  `weapon_socket` and leans `chest.upper` into the view pitch. It disposes only its own
+  skeleton, never the shared geometry, materials, clips or weapons.
+- `client/weapon-assets.ts` loads the four generated weapons once per page (metres, +Z muzzle,
+  origin in the grip, `muzzle` node). All four share one layout, front grip 0.31 m ahead of and
+  0.03 m above the grip, so one Seeker clip set holds each. The procedural weapons stay as the
+  fallback, also in the first-person view.
+- `client/game/character-motion.ts` chooses the clip from the `Pose` fields (`moving`,
+  `grounded`, `crouched`, `sliding`, `waving`) and scales `run` and `crouch_walk` with the
+  ground speed (0.5-2x). The overlay and `hit` never play over a crouch or slide: authored
+  standing, they would lift the head above the crouch clearance.
+- `Character` in `client/models.ts` keeps the procedural body as the fallback while the
+  model loads or if it fails. The ghost echo swaps in the ghost materials.
+- Culling uses each mesh's bind-pose bounding sphere grown by 0.4 m. Export with no scaled
+  node: three.js culls with the node's world matrix, so a leftover armature scale shrinks the
+  sphere. `tests/character-model.test.ts` and `tests/seeker-model.test.ts` check every clip,
+  both hands on every weapon, and the crouch clearance with the weapon held.
+
+Observation privacy is unchanged: the character only renders poses the client was
+authorized to receive. Not implemented yet: `tint_dark`.

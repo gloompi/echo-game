@@ -1,0 +1,46 @@
+{
+ "run": {
+  "speedMetresPerSecond": 6.4,
+  "seconds": 0.6,
+  "feet": {
+   "R": {
+    "framesTouching": [
+     0.0,
+     18.0
+    ],
+    "maxVertexSlideMetres": 0.0154,
+    "lowestSoleMetres": -0.0153
+   },
+   "L": {
+    "framesTouching": [
+     9.0,
+     14.0
+    ],
+    "maxVertexSlideMetres": 0.0154,
+    "lowestSoleMetres": -0.0153
+   }
+  }
+ },
+ "crouch_walk": {
+  "speedMetresPerSecond": 2.88,
+  "seconds": 0.5,
+  "feet": {
+   "R": {
+    "framesTouching": [
+     0.0,
+     15.0
+    ],
+    "maxVertexSlideMetres": 0.0143,
+    "lowestSoleMetres": -0.0051
+   },
+   "L": {
+    "framesTouching": [
+     0.0,
+     15.0
+    ],
+    "maxVertexSlideMetres": 0.0199,
+    "lowestSoleMetres": -0.0051
+   }
+  }
+ }
+}

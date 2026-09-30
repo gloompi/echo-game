@@ -1,0 +1,303 @@
+{
+  "scale": {
+    "modelPx": 650,
+    "hoodPeakMetres": 2.16,
+    "metresPerSheetPx": 0.003323,
+    "sheetPxPerMetre": 300.93
+  },
+  "heights": [
+    {
+      "landmark": "hood peak",
+      "view": "front",
+      "sheetY": 147,
+      "metres": 2.16
+    },
+    {
+      "landmark": "cap crown",
+      "view": "side",
+      "sheetY": 155,
+      "metres": 2.137
+    },
+    {
+      "landmark": "brim tip",
+      "view": "side",
+      "sheetY": 197,
+      "metres": 1.997
+    },
+    {
+      "landmark": "brim lower edge",
+      "view": "front",
+      "sheetY": 212,
+      "metres": 1.944
+    },
+    {
+      "landmark": "mask chin",
+      "view": "front",
+      "sheetY": 257,
+      "metres": 1.794
+    },
+    {
+      "landmark": "hood opening V",
+      "view": "front",
+      "sheetY": 283,
+      "metres": 1.708
+    },
+    {
+      "landmark": "shoulder line",
+      "view": "front",
+      "sheetY": 290,
+      "metres": 1.685
+    },
+    {
+      "landmark": "sleeve cuff top",
+      "view": "front",
+      "sheetY": 382,
+      "metres": 1.379
+    },
+    {
+      "landmark": "sleeve cuff bottom",
+      "view": "front",
+      "sheetY": 413,
+      "metres": 1.276
+    },
+    {
+      "landmark": "glove top / wrist",
+      "view": "front",
+      "sheetY": 448,
+      "metres": 1.16
+    },
+    {
+      "landmark": "hem band top",
+      "view": "front",
+      "sheetY": 447,
+      "metres": 1.163
+    },
+    {
+      "landmark": "hem band bottom",
+      "view": "front",
+      "sheetY": 468,
+      "metres": 1.093
+    },
+    {
+      "landmark": "crotch",
+      "view": "front",
+      "sheetY": 520,
+      "metres": 0.92
+    },
+    {
+      "landmark": "fingertips",
+      "view": "front",
+      "sheetY": 535,
+      "metres": 0.871
+    },
+    {
+      "landmark": "knee",
+      "view": "front",
+      "sheetY": 625,
+      "metres": 0.572
+    },
+    {
+      "landmark": "jogger cuff bottom",
+      "view": "front",
+      "sheetY": 690,
+      "metres": 0.356
+    },
+    {
+      "landmark": "shoe collar",
+      "view": "front",
+      "sheetY": 713,
+      "metres": 0.279
+    }
+  ],
+  "fromAxis": [
+    {
+      "landmark": "hand (A-pose), right",
+      "view": "front",
+      "sheetX": 22,
+      "sheetY": 500,
+      "metres": 0.412,
+      "beyondCylinder": 0.052,
+      "beyondHitBoxAxisAligned": 0.032
+    },
+    {
+      "landmark": "hand (A-pose), left",
+      "view": "front",
+      "sheetX": 269,
+      "sheetY": 500,
+      "metres": 0.409,
+      "beyondCylinder": 0.049,
+      "beyondHitBoxAxisAligned": 0.029
+    },
+    {
+      "landmark": "sleeve at elbow, right",
+      "view": "front",
+      "sheetX": 39,
+      "sheetY": 420,
+      "metres": 0.356,
+      "beyondCylinder": -0.004,
+      "beyondHitBoxAxisAligned": -0.024
+    },
+    {
+      "landmark": "sleeve at elbow, left",
+      "view": "front",
+      "sheetX": 255,
+      "sheetY": 420,
+      "metres": 0.362,
+      "beyondCylinder": 0.002,
+      "beyondHitBoxAxisAligned": -0.018
+    },
+    {
+      "landmark": "shoulder, right",
+      "view": "front",
+      "sheetX": 63,
+      "sheetY": 300,
+      "metres": 0.276,
+      "beyondCylinder": -0.084,
+      "beyondHitBoxAxisAligned": -0.104
+    },
+    {
+      "landmark": "shoulder, left",
+      "view": "front",
+      "sheetX": 229,
+      "sheetY": 300,
+      "metres": 0.276,
+      "beyondCylinder": -0.084,
+      "beyondHitBoxAxisAligned": -0.104
+    },
+    {
+      "landmark": "hood side, right",
+      "view": "front",
+      "sheetX": 91,
+      "sheetY": 250,
+      "metres": 0.183,
+      "beyondCylinder": -0.177,
+      "beyondHitBoxAxisAligned": -0.197
+    },
+    {
+      "landmark": "hood side, left",
+      "view": "front",
+      "sheetX": 205,
+      "sheetY": 250,
+      "metres": 0.196,
+      "beyondCylinder": -0.164,
+      "beyondHitBoxAxisAligned": -0.184
+    },
+    {
+      "landmark": "cargo pocket, right",
+      "view": "front",
+      "sheetX": 58,
+      "sheetY": 560,
+      "metres": 0.292,
+      "beyondCylinder": -0.068,
+      "beyondHitBoxAxisAligned": -0.088
+    },
+    {
+      "landmark": "cargo pocket, left",
+      "view": "front",
+      "sheetX": 233,
+      "sheetY": 560,
+      "metres": 0.289,
+      "beyondCylinder": -0.071,
+      "beyondHitBoxAxisAligned": -0.091
+    },
+    {
+      "landmark": "shoe outer, right",
+      "view": "front",
+      "sheetX": 34,
+      "sheetY": 790,
+      "metres": 0.372,
+      "beyondCylinder": 0.012,
+      "beyondHitBoxAxisAligned": -0.008
+    },
+    {
+      "landmark": "shoe outer, left",
+      "view": "front",
+      "sheetX": 259,
+      "sheetY": 790,
+      "metres": 0.376,
+      "beyondCylinder": 0.016,
+      "beyondHitBoxAxisAligned": -0.004
+    },
+    {
+      "landmark": "cap brim tip (front)",
+      "view": "side",
+      "sheetX": 422,
+      "sheetY": 197,
+      "metres": 0.229,
+      "beyondCylinder": -0.131,
+      "beyondHitBoxAxisAligned": -0.151
+    },
+    {
+      "landmark": "mask front",
+      "view": "side",
+      "sheetX": 394,
+      "sheetY": 215,
+      "metres": 0.136,
+      "beyondCylinder": -0.224,
+      "beyondHitBoxAxisAligned": -0.244
+    },
+    {
+      "landmark": "chest front + straps",
+      "view": "side",
+      "sheetX": 398,
+      "sheetY": 340,
+      "metres": 0.15,
+      "beyondCylinder": -0.21,
+      "beyondHitBoxAxisAligned": -0.23
+    },
+    {
+      "landmark": "hem / pocket front",
+      "view": "side",
+      "sheetX": 404,
+      "sheetY": 440,
+      "metres": 0.169,
+      "beyondCylinder": -0.191,
+      "beyondHitBoxAxisAligned": -0.211
+    },
+    {
+      "landmark": "toe",
+      "view": "side",
+      "sheetX": 415,
+      "sheetY": 780,
+      "metres": 0.206,
+      "beyondCylinder": -0.154,
+      "beyondHitBoxAxisAligned": -0.174
+    },
+    {
+      "landmark": "cap back",
+      "view": "side",
+      "sheetX": 314,
+      "sheetY": 185,
+      "metres": 0.13,
+      "beyondCylinder": -0.23,
+      "beyondHitBoxAxisAligned": -0.25
+    },
+    {
+      "landmark": "hoodie back",
+      "view": "side",
+      "sheetX": 304,
+      "sheetY": 440,
+      "metres": 0.163,
+      "beyondCylinder": -0.197,
+      "beyondHitBoxAxisAligned": -0.217
+    },
+    {
+      "landmark": "heel",
+      "view": "side",
+      "sheetX": 294,
+      "sheetY": 780,
+      "metres": 0.196,
+      "beyondCylinder": -0.164,
+      "beyondHitBoxAxisAligned": -0.184
+    },
+    {
+      "landmark": "back bag",
+      "view": "side",
+      "sheetX": 278,
+      "sheetY": 360,
+      "metres": 0.249,
+      "beyondCylinder": -0.111,
+      "beyondHitBoxAxisAligned": -0.131
+    }
+  ]
+}

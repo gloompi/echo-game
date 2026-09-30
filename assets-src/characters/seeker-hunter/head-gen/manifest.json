@@ -1,0 +1,228 @@
+{
+  "workflow": "mr-mak-workspace character-sheet-pipeline (witnesstodark/mr-mak-workspace@6f50587)",
+  "goal": "seeker-hunter head, generated in Blender via the Higgsfield integration",
+  "budgetCredits": 30,
+  "spentCredits": 29.5,
+  "source": {
+    "file": "refs/00-source-sheet.png",
+    "origin": "user-supplied seeker-hunter sheet (refs/00-sheet.png)",
+    "sha256_16": "c95df72c4c3823cf"
+  },
+  "parts": [
+    {
+      "part": "apose_front_sheet",
+      "stage": "2A",
+      "category": "sheet",
+      "prompt": "prompts/01a_apose_front.txt",
+      "attempts": [
+        {
+          "jobId": "bfef67f4-8ff1-46a6-a112-308b1f228758",
+          "model": "nano_banana_pro",
+          "params": {
+            "aspect_ratio": "1:1",
+            "resolution": "2k"
+          },
+          "inputs": [
+            "refs/00-source-sheet.png"
+          ],
+          "credits": 2,
+          "verdict": "pass",
+          "reason": "clean strict front",
+          "estimated_camera_rotation_degrees": 0,
+          "checklist_warnings": [
+            "palms face the thighs, not the camera"
+          ],
+          "image": "refs/01a-apose-front-t1.png",
+          "image_hash": "1319d88a248ca02f",
+          "verifier": "Claude Opus 5.5 image inspection with 08_3q_classifier strict-front rubric"
+        }
+      ],
+      "final_verdict": "pass",
+      "retry_count": 0,
+      "accepted_image": "refs/01a-apose-front-t1.png"
+    },
+    {
+      "part": "head_front",
+      "stage": "4",
+      "category": "body-essential",
+      "prompt": "prompts/02_head_front.txt",
+      "attempts": [
+        {
+          "jobId": "2633c0a5-5952-4dc3-be7a-761d68b7f92f",
+          "model": "nano_banana_pro",
+          "params": {
+            "aspect_ratio": "1:1",
+            "resolution": "2k"
+          },
+          "inputs": [
+            "refs/01a-apose-front-t1.png"
+          ],
+          "credits": 2,
+          "verdict": "pass",
+          "reason": "clean strict front",
+          "estimated_camera_rotation_degrees": 0,
+          "image": "refs/02-head-front-t1.png",
+          "image_hash": "d470866a835c6706",
+          "verifier": "Claude Opus 5.5 image inspection with 08_3q_classifier strict-front rubric"
+        }
+      ],
+      "final_verdict": "pass",
+      "retry_count": 0,
+      "accepted_image": "refs/02-head-front-t1.png"
+    },
+    {
+      "part": "head_side",
+      "stage": "5",
+      "category": "multiview-side",
+      "prompt": "prompts/06_head_side.txt",
+      "attempts": [
+        {
+          "jobId": "3704aaad-42bb-41ec-89a2-0b902e7f14de",
+          "model": "nano_banana_pro",
+          "inputs": [
+            "refs/01a-apose-front-t1.png",
+            "refs/02-head-front-t1.png"
+          ],
+          "credits": 2,
+          "verdict": "soft_fail",
+          "reason": "left profile drifts ~10 deg toward front (visor edge visible) and hood pitched forward",
+          "image": "refs/03-head-side-t1.png",
+          "image_hash": "90a0b0207b2a8607",
+          "verifier": "Claude Opus 5.5 image inspection with 08_3q_classifier multiview rubric"
+        },
+        {
+          "jobId": "70cd5eb4-e6e2-48c7-94fd-b4f464709a00",
+          "model": "nano_banana_pro",
+          "prompt": "prompts/06_head_side_retry1.txt",
+          "credits": 2,
+          "verdict": "hard_fail",
+          "reason": "angle fixed (dead 90 deg, upright) but invented a human ear opening, nose and lips on a faceless character; trailing flap remains",
+          "image": "refs/03-head-side-t2.png",
+          "image_hash": "867683c3ed806e1d",
+          "verifier": "Claude Opus 5.5 image inspection with 08_3q_classifier multiview-side rubric"
+        },
+        {
+          "jobId": "d778afbf-3cf9-44a6-a7b5-ef5069af9181",
+          "model": "nano_banana_flash",
+          "prompt": "prompts/06_head_side_retry2.txt",
+          "credits": 1.5,
+          "verdict": "hard_fail",
+          "reason": "rendered the full body instead of the head, plus a floating ghost arm; the head itself is a clean faceless upright profile",
+          "image": "refs/03-head-side-t3.png",
+          "image_hash": "15a67f96109a4f43",
+          "verifier": "Claude Opus 5.5 image inspection with 08_3q_classifier multiview-side rubric"
+        }
+      ],
+      "final_verdict": "accepted_with_warning",
+      "retry_count": 2,
+      "accepted_image": "refs/03-head-side-t3-crop.png",
+      "user_decision": "Mak option (a): crop the head out of attempt 3 (cleanest faceless profile); soft_fail: visor edge sliver, ~5x upscale, hood deeper than tall"
+    },
+    {
+      "part": "head_back",
+      "stage": "5",
+      "category": "multiview-back",
+      "prompt": "prompts/06_head_back.txt",
+      "attempts": [
+        {
+          "jobId": "a2c26d03-71ac-47e4-a09b-656797af57ac",
+          "model": "nano_banana_pro",
+          "inputs": [
+            "refs/01a-apose-front-t1.png",
+            "refs/02-head-front-t1.png"
+          ],
+          "credits": 2,
+          "verdict": "pass",
+          "reason": "clean strict back",
+          "image": "refs/03-head-back-t1.png",
+          "image_hash": "c686b23ed7785228",
+          "verifier": "Claude Opus 5.5 image inspection with 08_3q_classifier multiview rubric"
+        }
+      ],
+      "final_verdict": "pass",
+      "retry_count": 0,
+      "accepted_image": "refs/03-head-back-t1.png"
+    },
+    {
+      "part": "head_right",
+      "stage": "derived",
+      "image": "refs/04-head-right-mirrored.png",
+      "note": "horizontal mirror of the accepted left profile (symmetric head)"
+    }
+  ],
+  "gates": {
+    "gate2_multiview": "user chose default (head side + back), 2026-09-30"
+  },
+  "updatedUtc": "2026-09-30T13:36:02+00:00",
+  "mesh": {
+    "jobId": "f402006b-c75b-4596-9d8e-0d491bb764ed",
+    "model": "tripo_h3_1_multiview_to_3d",
+    "params": {
+      "texture": true,
+      "pbr": false
+    },
+    "inputs": [
+      "refs/02-head-front-t1.png",
+      "refs/03-head-side-t1.png",
+      "refs/03-head-back-t1.png"
+    ],
+    "estimatedCredits": 9,
+    "raw": "refs/raw-f402006b.glb",
+    "raw_stats": {
+      "tris": 1423972,
+      "loose_parts": 86
+    },
+    "blender": {
+      "file": "seeker-head.blend",
+      "scene": "Seeker head gen",
+      "object": "seeker_head",
+      "imported_with": "Higgsfield connector bl_import_model",
+      "cleanup": [
+        "scaled to 0.47 m tall, centred at z=1.93 (demo head scale)",
+        "rotation mode quaternion->XYZ, rotated -90 deg Z so visor faces Blender -Y, transforms applied",
+        "material alpha forced to 1 (import rendered see-through)",
+        "13 floater parts (<200 verts, 569 verts) deleted",
+        "Decimate collapse modifier at 6,000 tris (kept live; 2,500 tris smeared texture)"
+      ],
+      "saved": true
+    },
+    "acceptance": "not accepted yet: mesh execution succeeded; visual acceptance pending user review",
+    "known_issues": [
+      "trailing cowl flap behind the neck inherited from the soft_fail side view; will clip into shoulders",
+      "6k tris is too many for the head within a 10k character budget",
+      "texture speckles at UV seams after decimation",
+      "not rigged, not exported, not game-ready"
+    ],
+    "verdict": "rejected by user: double face (front mirrored onto back). Cause: 3 unlabeled images; Tripo needs view-keyed or exactly 4 positional [front,left,back,right] inputs and Higgsfield sends an unlabeled list"
+  },
+  "mesh_v2": {
+    "jobId": "acc1fa8b-ecdc-47b5-addd-9f5451af330b",
+    "model": "tripo_h3_1_multiview_to_3d",
+    "credits_estimated": 9,
+    "inputs_in_order": [
+      "refs/mv4/0-02-head-front-t1.png",
+      "refs/mv4/1-03-head-side-t3-crop.png",
+      "refs/mv4/2-03-head-back-t1.png",
+      "refs/mv4/3-04-head-right-mirrored.png"
+    ],
+    "note": "exactly 4 images in Tripo positional order [front,left,back,right], 1024px; Higgsfield still stores them as unlabeled 'image' medias",
+    "raw": "refs/raw-acc1fa8b.glb",
+    "blender_object": "seeker_head.v2 (v1 kept as seeker_head.v1_doubleface at x=0.55)",
+    "review": "front clean (hood, faceplate, carved T visor); back still has a shallow face-like cavity; profile too deep (0.46 m deep x 0.33 m wide) from the boxy side crop",
+    "verdict": "back and proportions fixed; awaiting user acceptance",
+    "live_fix": [
+      "work decimate 1.43M -> 60k tris (applied)",
+      "back hollow filled: back-half verts >0.5 cm inside the convex hull pushed onto it with 0.5-2 cm falloff (6,901 verts; max depth was 5.3 cm)",
+      "a smoothing pass cracked the unwelded shells; reverted from seeker-head.blend1 (undo via MCP jumped too far back)",
+      "proportions set from the user sheet (w:d:h ~0.88:0.89:1): 0.41 x 0.42 x 0.47 m, linear scale",
+      "generated texture replaced with flat materials by sampling it per face: hood_charcoal #2B2A30, faceplate_black #0C0C10 (recessed front faces), accent_emissive #FA4E4D (visor + side strips); painted red bar on the back mapped to hood",
+      "saved seeker-head.blend; review sheets review-v2-fixed.png, review-v2-flat-materials.png"
+    ],
+    "known_issues": [
+      "60k tris: needs final reduction for the 10k character budget",
+      "jagged edges on the red strips (per-face material split)",
+      "lumpy generated surface, not crisp facets",
+      "not rigged, not exported"
+    ]
+  }
+}

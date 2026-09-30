@@ -12,8 +12,11 @@ Jump and crouch remain rebindable; combat keys are reserved to avoid conflicts.
 
 The skin selector appears in personal settings and the lobby. There are eight
 palettes: Classic, Cobalt, Ember, Jade, Violet, Arctic, Sunset and Carbon. These
-are procedural recolours, not eight new character meshes. Role silhouettes and
-hider stripes remain identifiable. Skins do not affect hitboxes or movement.
+are recolours, not eight new character meshes: the Hider's hoodie takes one colour
+per skin (`HIDER_HOODIE.tints` in `client/character-assets.ts`), and the Seeker
+(and the procedural Hider shown while the model loads) a light and dark palette
+pair. Role silhouettes stay identifiable, and no hoodie colour is dark or blue
+enough to read as the Seeker. Skins do not affect hitboxes or movement.
 A mild blood-edge overlay and body flinch play on damage; blood can be disabled
 and its CSS animation respects reduced-motion preferences.
 

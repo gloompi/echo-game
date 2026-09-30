@@ -1,0 +1,10 @@
+[CRITICAL CORRECTION] The previous attempt failed strict-profile verification: left profile drifted about 10 degrees toward the front (the edge of the red visor was visible) and the hood was pitched forward with a long cowl flap trailing down behind the neck.
+Estimated rotation: 10° off a dead 90° profile, toward the front.
+
+YOU MUST regenerate with the head axis at EXACTLY 90 degrees. NO three-quarter angle. NO rotation toward the front. The red T visor must NOT be visible — only the side of the hood, its red side strip, and the hood opening edge in silhouette. The head is upright, not pitched forward; the base of the hood is level with the base in the front-facing head extract, with no flap trailing behind the neck.
+
+Reference the attached strict-front A-pose character sheet and the front-facing head extract. Render the same head in STRICT PROFILE view — rotated exactly 90 degrees, camera sees the character's left ear, nose pointing to the camera-right edge of frame. NO 3/4. Strict orthographic. Neutral expression, mouth closed, eye open. White background, neutral flat lighting at 2K. Same face, hair, accessories.
+
+Avoid: no three-quarter view, no 3/4 angle, no 45° angle, no rotated showcase, no perspective distortion, no foreshortening, no different pose, no broken A-pose, no different materials, no different color, no environment, no background, no shadow, no dramatic lighting, no presentable hero angle
+
+Anti-drift reinforcement (mandatory): zero rotation in the horizontal plane beyond the 90° profile. Camera at exactly 90 degrees azimuth relative to the subject. Same height and proportions as the front-facing head extract.

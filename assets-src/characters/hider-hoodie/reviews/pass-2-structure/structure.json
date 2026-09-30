@@ -1,0 +1,594 @@
+[
+ {
+  "name": "bag",
+  "type": "MESH",
+  "parent": "torso",
+  "rigJoint": "chest",
+  "originGame": [
+   0.0,
+   1.45,
+   -0.0
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 144,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 4,
+  "triangulated": 296,
+  "materials": [
+   "black",
+   "cyan"
+  ]
+ },
+ {
+  "name": "cap",
+  "type": "MESH",
+  "parent": "head",
+  "rigJoint": "head",
+  "originGame": [
+   0.0,
+   1.73,
+   -0.01
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 108,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 3,
+  "triangulated": 236,
+  "materials": [
+   "black"
+  ]
+ },
+ {
+  "name": "forearm.L",
+  "type": "MESH",
+  "parent": "sleeve.L",
+  "rigJoint": "forearm.L",
+  "originGame": [
+   0.285,
+   1.385,
+   -0.02
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 40,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 92,
+  "materials": [
+   "cyan",
+   "skin"
+  ]
+ },
+ {
+  "name": "forearm.R",
+  "type": "MESH",
+  "parent": "sleeve.R",
+  "rigJoint": "forearm.R",
+  "originGame": [
+   -0.285,
+   1.385,
+   -0.02
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 40,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 92,
+  "materials": [
+   "cyan",
+   "skin"
+  ]
+ },
+ {
+  "name": "glove.L",
+  "type": "MESH",
+  "parent": "forearm.L",
+  "rigJoint": "hand.L",
+  "originGame": [
+   0.345,
+   1.16,
+   -0.0
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 34,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 4,
+  "triangulated": 80,
+  "materials": [
+   "black",
+   "skin"
+  ]
+ },
+ {
+  "name": "glove.R",
+  "type": "MESH",
+  "parent": "forearm.R",
+  "rigJoint": "hand.R",
+  "originGame": [
+   -0.345,
+   1.16,
+   -0.0
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 34,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 4,
+  "triangulated": 80,
+  "materials": [
+   "black",
+   "skin"
+  ]
+ },
+ {
+  "name": "head",
+  "type": "EMPTY",
+  "parent": "torso",
+  "rigJoint": "head",
+  "originGame": [
+   0.0,
+   1.73,
+   -0.01
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ {
+  "name": "hider_hoodie",
+  "type": "EMPTY",
+  "parent": null,
+  "rigJoint": null,
+  "originGame": [
+   0.0,
+   0.0,
+   -0.0
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ {
+  "name": "hood",
+  "type": "MESH",
+  "parent": "head",
+  "rigJoint": "head",
+  "originGame": [
+   0.0,
+   1.73,
+   -0.01
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 400,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 828,
+  "materials": [
+   "tint_light"
+  ]
+ },
+ {
+  "name": "joggers_hips",
+  "type": "MESH",
+  "parent": "hider_hoodie",
+  "rigJoint": "hips",
+  "originGame": [
+   0.0,
+   0.97,
+   -0.0
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 36,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 92,
+  "materials": [
+   "black"
+  ]
+ },
+ {
+  "name": "joggers_shin.L",
+  "type": "MESH",
+  "parent": "joggers_thigh.L",
+  "rigJoint": "shin.L",
+  "originGame": [
+   0.192,
+   0.57,
+   -0.03
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 64,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 140,
+  "materials": [
+   "black",
+   "skin"
+  ]
+ },
+ {
+  "name": "joggers_shin.R",
+  "type": "MESH",
+  "parent": "joggers_thigh.R",
+  "rigJoint": "shin.R",
+  "originGame": [
+   -0.192,
+   0.57,
+   -0.03
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 64,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 140,
+  "materials": [
+   "black",
+   "skin"
+  ]
+ },
+ {
+  "name": "joggers_thigh.L",
+  "type": "MESH",
+  "parent": "joggers_hips",
+  "rigJoint": "thigh.L",
+  "originGame": [
+   0.115,
+   0.97,
+   -0.0
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 38,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 2,
+  "triangulated": 88,
+  "materials": [
+   "black"
+  ]
+ },
+ {
+  "name": "joggers_thigh.R",
+  "type": "MESH",
+  "parent": "joggers_hips",
+  "rigJoint": "thigh.R",
+  "originGame": [
+   -0.115,
+   0.97,
+   -0.0
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 38,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 2,
+  "triangulated": 88,
+  "materials": [
+   "black"
+  ]
+ },
+ {
+  "name": "mask",
+  "type": "MESH",
+  "parent": "head",
+  "rigJoint": "head",
+  "originGame": [
+   0.0,
+   1.73,
+   -0.01
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 72,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 164,
+  "materials": [
+   "black"
+  ]
+ },
+ {
+  "name": "sleeve.L",
+  "type": "MESH",
+  "parent": "torso",
+  "rigJoint": "upper_arm.L",
+  "originGame": [
+   0.205,
+   1.645,
+   -0.01
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 48,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 108,
+  "materials": [
+   "tint_light"
+  ]
+ },
+ {
+  "name": "sleeve.R",
+  "type": "MESH",
+  "parent": "torso",
+  "rigJoint": "upper_arm.R",
+  "originGame": [
+   -0.205,
+   1.645,
+   -0.01
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 48,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 108,
+  "materials": [
+   "tint_light"
+  ]
+ },
+ {
+  "name": "sneaker.L",
+  "type": "MESH",
+  "parent": "joggers_shin.L",
+  "rigJoint": "foot.L",
+  "originGame": [
+   0.228,
+   0.12,
+   -0.095
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 50,
+  "ngons": 4,
+  "nonManifoldEdges": 0,
+  "islands": 2,
+  "triangulated": 132,
+  "materials": [
+   "white",
+   "cyan"
+  ]
+ },
+ {
+  "name": "sneaker.R",
+  "type": "MESH",
+  "parent": "joggers_shin.R",
+  "rigJoint": "foot.R",
+  "originGame": [
+   -0.228,
+   0.12,
+   -0.095
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 50,
+  "ngons": 4,
+  "nonManifoldEdges": 0,
+  "islands": 2,
+  "triangulated": 132,
+  "materials": [
+   "white",
+   "cyan"
+  ]
+ },
+ {
+  "name": "torso",
+  "type": "MESH",
+  "parent": "joggers_hips",
+  "rigJoint": "spine",
+  "originGame": [
+   0.0,
+   1.1,
+   -0.0
+  ],
+  "rotation": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "tris": 0,
+  "quads": 120,
+  "ngons": 2,
+  "nonManifoldEdges": 0,
+  "islands": 1,
+  "triangulated": 260,
+  "materials": [
+   "cyan",
+   "tint_light"
+  ]
+ }
+]

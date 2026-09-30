@@ -1,0 +1,1458 @@
+{
+ "crouch_idle": {
+  "bag": {
+   "fromAxisMetres": 0.366,
+   "outsideCylinderMetres": 0.006,
+   "frame": 45,
+   "direction": "back",
+   "height": 0.807,
+   "outsideHitBoxMetres": -0.039,
+   "hitBoxFrame": 45,
+   "hitBoxDirection": "back"
+  },
+  "cap": {
+   "fromAxisMetres": 0.557,
+   "outsideCylinderMetres": 0.197,
+   "frame": 15,
+   "direction": "front",
+   "height": 0.807,
+   "outsideHitBoxMetres": 0.177,
+   "hitBoxFrame": 14,
+   "hitBoxDirection": "front"
+  },
+  "forearm.L": {
+   "fromAxisMetres": 0.539,
+   "outsideCylinderMetres": 0.179,
+   "frame": 15,
+   "direction": "left",
+   "height": 0.422,
+   "outsideHitBoxMetres": 0.151,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "forearm.R": {
+   "fromAxisMetres": 0.539,
+   "outsideCylinderMetres": 0.179,
+   "frame": 15,
+   "direction": "right",
+   "height": 0.422,
+   "outsideHitBoxMetres": 0.151,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "glove.L": {
+   "fromAxisMetres": 0.64,
+   "outsideCylinderMetres": 0.28,
+   "frame": 15,
+   "direction": "left",
+   "height": 0.261,
+   "outsideHitBoxMetres": 0.237,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "glove.R": {
+   "fromAxisMetres": 0.64,
+   "outsideCylinderMetres": 0.28,
+   "frame": 15,
+   "direction": "right",
+   "height": 0.261,
+   "outsideHitBoxMetres": 0.237,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "hood": {
+   "fromAxisMetres": 0.579,
+   "outsideCylinderMetres": 0.219,
+   "frame": 14,
+   "direction": "front",
+   "height": 0.73,
+   "outsideHitBoxMetres": 0.198,
+   "hitBoxFrame": 14,
+   "hitBoxDirection": "front"
+  },
+  "joggers_hips": {
+   "fromAxisMetres": 0.536,
+   "outsideCylinderMetres": 0.176,
+   "frame": 0,
+   "direction": "back",
+   "height": 0.417,
+   "outsideHitBoxMetres": 0.148,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  },
+  "joggers_shin.L": {
+   "fromAxisMetres": 0.42,
+   "outsideCylinderMetres": 0.06,
+   "frame": 0,
+   "direction": "back",
+   "height": 0.64,
+   "outsideHitBoxMetres": -0.02,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  },
+  "joggers_shin.R": {
+   "fromAxisMetres": 0.31,
+   "outsideCylinderMetres": -0.05,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.554,
+   "outsideHitBoxMetres": -0.082,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "joggers_thigh.L": {
+   "fromAxisMetres": 0.549,
+   "outsideCylinderMetres": 0.189,
+   "frame": 0,
+   "direction": "back",
+   "height": 0.367,
+   "outsideHitBoxMetres": 0.142,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  },
+  "joggers_thigh.R": {
+   "fromAxisMetres": 0.524,
+   "outsideCylinderMetres": 0.164,
+   "frame": 0,
+   "direction": "back",
+   "height": 0.41,
+   "outsideHitBoxMetres": 0.086,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  },
+  "mask": {
+   "fromAxisMetres": 0.459,
+   "outsideCylinderMetres": 0.099,
+   "frame": 14,
+   "direction": "front",
+   "height": 0.8,
+   "outsideHitBoxMetres": 0.07,
+   "hitBoxFrame": 9,
+   "hitBoxDirection": "front"
+  },
+  "sleeve.L": {
+   "fromAxisMetres": 0.423,
+   "outsideCylinderMetres": 0.063,
+   "frame": 15,
+   "direction": "left",
+   "height": 0.646,
+   "outsideHitBoxMetres": 0.042,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "sleeve.R": {
+   "fromAxisMetres": 0.423,
+   "outsideCylinderMetres": 0.063,
+   "frame": 15,
+   "direction": "right",
+   "height": 0.646,
+   "outsideHitBoxMetres": 0.042,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "sneaker.L": {
+   "fromAxisMetres": 0.447,
+   "outsideCylinderMetres": 0.087,
+   "frame": 0,
+   "direction": "back",
+   "height": 0.201,
+   "outsideHitBoxMetres": -0.014,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "sneaker.R": {
+   "fromAxisMetres": 0.484,
+   "outsideCylinderMetres": 0.124,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.056,
+   "outsideHitBoxMetres": -0.011,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  },
+  "torso": {
+   "fromAxisMetres": 0.466,
+   "outsideCylinderMetres": 0.106,
+   "frame": 45,
+   "direction": "back",
+   "height": 0.552,
+   "outsideHitBoxMetres": 0.086,
+   "hitBoxFrame": 45,
+   "hitBoxDirection": "back"
+  }
+ },
+ "crouch_walk": {
+  "bag": {
+   "fromAxisMetres": 0.363,
+   "outsideCylinderMetres": 0.003,
+   "frame": 0,
+   "direction": "back",
+   "height": 0.818,
+   "outsideHitBoxMetres": -0.042,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  },
+  "cap": {
+   "fromAxisMetres": 0.556,
+   "outsideCylinderMetres": 0.196,
+   "frame": 0,
+   "direction": "front",
+   "height": 0.84,
+   "outsideHitBoxMetres": 0.176,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  },
+  "forearm.L": {
+   "fromAxisMetres": 0.546,
+   "outsideCylinderMetres": 0.186,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.439,
+   "outsideHitBoxMetres": 0.151,
+   "hitBoxFrame": 2,
+   "hitBoxDirection": "left"
+  },
+  "forearm.R": {
+   "fromAxisMetres": 0.546,
+   "outsideCylinderMetres": 0.186,
+   "frame": 7,
+   "direction": "right",
+   "height": 0.438,
+   "outsideHitBoxMetres": 0.151,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "glove.L": {
+   "fromAxisMetres": 0.66,
+   "outsideCylinderMetres": 0.3,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.317,
+   "outsideHitBoxMetres": 0.237,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "left"
+  },
+  "glove.R": {
+   "fromAxisMetres": 0.66,
+   "outsideCylinderMetres": 0.3,
+   "frame": 7,
+   "direction": "right",
+   "height": 0.315,
+   "outsideHitBoxMetres": 0.237,
+   "hitBoxFrame": 1,
+   "hitBoxDirection": "right"
+  },
+  "hood": {
+   "fromAxisMetres": 0.576,
+   "outsideCylinderMetres": 0.216,
+   "frame": 0,
+   "direction": "front",
+   "height": 0.735,
+   "outsideHitBoxMetres": 0.196,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  },
+  "joggers_hips": {
+   "fromAxisMetres": 0.536,
+   "outsideCylinderMetres": 0.176,
+   "frame": 6,
+   "direction": "back",
+   "height": 0.421,
+   "outsideHitBoxMetres": 0.148,
+   "hitBoxFrame": 6,
+   "hitBoxDirection": "back"
+  },
+  "joggers_shin.L": {
+   "fromAxisMetres": 0.581,
+   "outsideCylinderMetres": 0.221,
+   "frame": 1,
+   "direction": "back",
+   "height": 0.228,
+   "outsideHitBoxMetres": 0.144,
+   "hitBoxFrame": 1,
+   "hitBoxDirection": "back"
+  },
+  "joggers_shin.R": {
+   "fromAxisMetres": 0.577,
+   "outsideCylinderMetres": 0.217,
+   "frame": 8,
+   "direction": "back",
+   "height": 0.212,
+   "outsideHitBoxMetres": 0.142,
+   "hitBoxFrame": 8,
+   "hitBoxDirection": "back"
+  },
+  "joggers_thigh.L": {
+   "fromAxisMetres": 0.545,
+   "outsideCylinderMetres": 0.185,
+   "frame": 4,
+   "direction": "back",
+   "height": 0.366,
+   "outsideHitBoxMetres": 0.132,
+   "hitBoxFrame": 4,
+   "hitBoxDirection": "back"
+  },
+  "joggers_thigh.R": {
+   "fromAxisMetres": 0.547,
+   "outsideCylinderMetres": 0.187,
+   "frame": 11,
+   "direction": "back",
+   "height": 0.361,
+   "outsideHitBoxMetres": 0.136,
+   "hitBoxFrame": 11,
+   "hitBoxDirection": "back"
+  },
+  "mask": {
+   "fromAxisMetres": 0.458,
+   "outsideCylinderMetres": 0.098,
+   "frame": 0,
+   "direction": "front",
+   "height": 0.815,
+   "outsideHitBoxMetres": 0.066,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  },
+  "sleeve.L": {
+   "fromAxisMetres": 0.425,
+   "outsideCylinderMetres": 0.065,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.657,
+   "outsideHitBoxMetres": 0.042,
+   "hitBoxFrame": 6,
+   "hitBoxDirection": "left"
+  },
+  "sleeve.R": {
+   "fromAxisMetres": 0.425,
+   "outsideCylinderMetres": 0.065,
+   "frame": 7,
+   "direction": "right",
+   "height": 0.656,
+   "outsideHitBoxMetres": 0.042,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "sneaker.L": {
+   "fromAxisMetres": 0.711,
+   "outsideCylinderMetres": 0.351,
+   "frame": 1,
+   "direction": "back",
+   "height": 0.134,
+   "outsideHitBoxMetres": 0.285,
+   "hitBoxFrame": 1,
+   "hitBoxDirection": "back"
+  },
+  "sneaker.R": {
+   "fromAxisMetres": 0.694,
+   "outsideCylinderMetres": 0.334,
+   "frame": 9,
+   "direction": "back",
+   "height": 0.137,
+   "outsideHitBoxMetres": 0.267,
+   "hitBoxFrame": 9,
+   "hitBoxDirection": "back"
+  },
+  "torso": {
+   "fromAxisMetres": 0.465,
+   "outsideCylinderMetres": 0.105,
+   "frame": 0,
+   "direction": "back",
+   "height": 0.565,
+   "outsideHitBoxMetres": 0.085,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  }
+ },
+ "hit": {
+  "bag": {
+   "fromAxisMetres": 0.344,
+   "outsideCylinderMetres": -0.016,
+   "frame": 3,
+   "direction": "back",
+   "height": 1.394,
+   "outsideHitBoxMetres": -0.052,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "back"
+  },
+  "cap": {
+   "fromAxisMetres": 0.354,
+   "outsideCylinderMetres": -0.006,
+   "frame": 3,
+   "direction": "back",
+   "height": 1.977,
+   "outsideHitBoxMetres": -0.027,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "back"
+  },
+  "forearm.L": {
+   "fromAxisMetres": 0.434,
+   "outsideCylinderMetres": 0.074,
+   "frame": 3,
+   "direction": "left",
+   "height": 1.196,
+   "outsideHitBoxMetres": 0.052,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "left"
+  },
+  "forearm.R": {
+   "fromAxisMetres": 0.43,
+   "outsideCylinderMetres": 0.07,
+   "frame": 3,
+   "direction": "right",
+   "height": 1.2,
+   "outsideHitBoxMetres": 0.049,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "right"
+  },
+  "glove.L": {
+   "fromAxisMetres": 0.492,
+   "outsideCylinderMetres": 0.132,
+   "frame": 3,
+   "direction": "left",
+   "height": 1.072,
+   "outsideHitBoxMetres": 0.104,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "left"
+  },
+  "glove.R": {
+   "fromAxisMetres": 0.489,
+   "outsideCylinderMetres": 0.129,
+   "frame": 3,
+   "direction": "right",
+   "height": 1.076,
+   "outsideHitBoxMetres": 0.097,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "right"
+  },
+  "hood": {
+   "fromAxisMetres": 0.442,
+   "outsideCylinderMetres": 0.082,
+   "frame": 3,
+   "direction": "back",
+   "height": 1.903,
+   "outsideHitBoxMetres": 0.061,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "back"
+  },
+  "joggers_hips": {
+   "fromAxisMetres": 0.253,
+   "outsideCylinderMetres": -0.107,
+   "frame": 3,
+   "direction": "left",
+   "height": 0.963,
+   "outsideHitBoxMetres": -0.129,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_shin.L": {
+   "fromAxisMetres": 0.301,
+   "outsideCylinderMetres": -0.059,
+   "frame": 3,
+   "direction": "left",
+   "height": 0.564,
+   "outsideHitBoxMetres": -0.082,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_shin.R": {
+   "fromAxisMetres": 0.301,
+   "outsideCylinderMetres": -0.059,
+   "frame": 3,
+   "direction": "right",
+   "height": 0.564,
+   "outsideHitBoxMetres": -0.082,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "joggers_thigh.L": {
+   "fromAxisMetres": 0.302,
+   "outsideCylinderMetres": -0.058,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.636,
+   "outsideHitBoxMetres": -0.087,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_thigh.R": {
+   "fromAxisMetres": 0.302,
+   "outsideCylinderMetres": -0.058,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.636,
+   "outsideHitBoxMetres": -0.087,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "mask": {
+   "fromAxisMetres": 0.338,
+   "outsideCylinderMetres": -0.022,
+   "frame": 3,
+   "direction": "back",
+   "height": 1.951,
+   "outsideHitBoxMetres": -0.043,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "back"
+  },
+  "sleeve.L": {
+   "fromAxisMetres": 0.396,
+   "outsideCylinderMetres": 0.036,
+   "frame": 3,
+   "direction": "left",
+   "height": 1.424,
+   "outsideHitBoxMetres": -0.006,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "left"
+  },
+  "sleeve.R": {
+   "fromAxisMetres": 0.391,
+   "outsideCylinderMetres": 0.031,
+   "frame": 3,
+   "direction": "right",
+   "height": 1.427,
+   "outsideHitBoxMetres": -0.0,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "right"
+  },
+  "sneaker.L": {
+   "fromAxisMetres": 0.407,
+   "outsideCylinderMetres": 0.047,
+   "frame": 2,
+   "direction": "left",
+   "height": 0.026,
+   "outsideHitBoxMetres": -0.014,
+   "hitBoxFrame": 5,
+   "hitBoxDirection": "left"
+  },
+  "sneaker.R": {
+   "fromAxisMetres": 0.407,
+   "outsideCylinderMetres": 0.047,
+   "frame": 2,
+   "direction": "right",
+   "height": 0.032,
+   "outsideHitBoxMetres": -0.014,
+   "hitBoxFrame": 5,
+   "hitBoxDirection": "right"
+  },
+  "torso": {
+   "fromAxisMetres": 0.3,
+   "outsideCylinderMetres": -0.06,
+   "frame": 3,
+   "direction": "back",
+   "height": 1.676,
+   "outsideHitBoxMetres": -0.094,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "back"
+  }
+ },
+ "idle": {
+  "bag": {
+   "fromAxisMetres": 0.303,
+   "outsideCylinderMetres": -0.057,
+   "frame": 54,
+   "direction": "back",
+   "height": 1.445,
+   "outsideHitBoxMetres": -0.107,
+   "hitBoxFrame": 54,
+   "hitBoxDirection": "back"
+  },
+  "cap": {
+   "fromAxisMetres": 0.252,
+   "outsideCylinderMetres": -0.108,
+   "frame": 5,
+   "direction": "front",
+   "height": 1.985,
+   "outsideHitBoxMetres": -0.128,
+   "hitBoxFrame": 5,
+   "hitBoxDirection": "front"
+  },
+  "forearm.L": {
+   "fromAxisMetres": 0.41,
+   "outsideCylinderMetres": 0.05,
+   "frame": 56,
+   "direction": "left",
+   "height": 1.175,
+   "outsideHitBoxMetres": 0.03,
+   "hitBoxFrame": 56,
+   "hitBoxDirection": "left"
+  },
+  "forearm.R": {
+   "fromAxisMetres": 0.413,
+   "outsideCylinderMetres": 0.053,
+   "frame": 52,
+   "direction": "right",
+   "height": 1.179,
+   "outsideHitBoxMetres": 0.033,
+   "hitBoxFrame": 52,
+   "hitBoxDirection": "right"
+  },
+  "glove.L": {
+   "fromAxisMetres": 0.457,
+   "outsideCylinderMetres": 0.097,
+   "frame": 57,
+   "direction": "left",
+   "height": 1.024,
+   "outsideHitBoxMetres": 0.07,
+   "hitBoxFrame": 56,
+   "hitBoxDirection": "left"
+  },
+  "glove.R": {
+   "fromAxisMetres": 0.461,
+   "outsideCylinderMetres": 0.101,
+   "frame": 52,
+   "direction": "right",
+   "height": 1.028,
+   "outsideHitBoxMetres": 0.074,
+   "hitBoxFrame": 52,
+   "hitBoxDirection": "right"
+  },
+  "hood": {
+   "fromAxisMetres": 0.251,
+   "outsideCylinderMetres": -0.109,
+   "frame": 41,
+   "direction": "back",
+   "height": 1.977,
+   "outsideHitBoxMetres": -0.13,
+   "hitBoxFrame": 39,
+   "hitBoxDirection": "back"
+  },
+  "joggers_hips": {
+   "fromAxisMetres": 0.251,
+   "outsideCylinderMetres": -0.109,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.971,
+   "outsideHitBoxMetres": -0.129,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_shin.L": {
+   "fromAxisMetres": 0.3,
+   "outsideCylinderMetres": -0.06,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.501,
+   "outsideHitBoxMetres": -0.082,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_shin.R": {
+   "fromAxisMetres": 0.3,
+   "outsideCylinderMetres": -0.06,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.501,
+   "outsideHitBoxMetres": -0.082,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "joggers_thigh.L": {
+   "fromAxisMetres": 0.302,
+   "outsideCylinderMetres": -0.058,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.636,
+   "outsideHitBoxMetres": -0.087,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_thigh.R": {
+   "fromAxisMetres": 0.302,
+   "outsideCylinderMetres": -0.058,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.636,
+   "outsideHitBoxMetres": -0.087,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "mask": {
+   "fromAxisMetres": 0.156,
+   "outsideCylinderMetres": -0.204,
+   "frame": 6,
+   "direction": "front",
+   "height": 1.917,
+   "outsideHitBoxMetres": -0.224,
+   "hitBoxFrame": 6,
+   "hitBoxDirection": "front"
+  },
+  "sleeve.L": {
+   "fromAxisMetres": 0.368,
+   "outsideCylinderMetres": 0.008,
+   "frame": 54,
+   "direction": "left",
+   "height": 1.431,
+   "outsideHitBoxMetres": -0.013,
+   "hitBoxFrame": 54,
+   "hitBoxDirection": "left"
+  },
+  "sleeve.R": {
+   "fromAxisMetres": 0.368,
+   "outsideCylinderMetres": 0.008,
+   "frame": 54,
+   "direction": "right",
+   "height": 1.434,
+   "outsideHitBoxMetres": -0.013,
+   "hitBoxFrame": 54,
+   "hitBoxDirection": "right"
+  },
+  "sneaker.L": {
+   "fromAxisMetres": 0.407,
+   "outsideCylinderMetres": 0.047,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.044,
+   "outsideHitBoxMetres": -0.014,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "sneaker.R": {
+   "fromAxisMetres": 0.407,
+   "outsideCylinderMetres": 0.047,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.056,
+   "outsideHitBoxMetres": -0.014,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "torso": {
+   "fromAxisMetres": 0.231,
+   "outsideCylinderMetres": -0.129,
+   "frame": 54,
+   "direction": "left",
+   "height": 1.2,
+   "outsideHitBoxMetres": -0.152,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  }
+ },
+ "jump": {
+  "bag": {
+   "fromAxisMetres": 0.282,
+   "outsideCylinderMetres": -0.078,
+   "frame": 0,
+   "direction": "back",
+   "height": 1.451,
+   "outsideHitBoxMetres": -0.135,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  },
+  "cap": {
+   "fromAxisMetres": 0.296,
+   "outsideCylinderMetres": -0.064,
+   "frame": 12,
+   "direction": "front",
+   "height": 2.004,
+   "outsideHitBoxMetres": -0.084,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "front"
+  },
+  "forearm.L": {
+   "fromAxisMetres": 0.491,
+   "outsideCylinderMetres": 0.131,
+   "frame": 12,
+   "direction": "left",
+   "height": 1.282,
+   "outsideHitBoxMetres": 0.069,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "left"
+  },
+  "forearm.R": {
+   "fromAxisMetres": 0.473,
+   "outsideCylinderMetres": 0.113,
+   "frame": 12,
+   "direction": "right",
+   "height": 1.356,
+   "outsideHitBoxMetres": 0.051,
+   "hitBoxFrame": 9,
+   "hitBoxDirection": "right"
+  },
+  "glove.L": {
+   "fromAxisMetres": 0.641,
+   "outsideCylinderMetres": 0.281,
+   "frame": 12,
+   "direction": "front",
+   "height": 1.211,
+   "outsideHitBoxMetres": 0.116,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "left"
+  },
+  "glove.R": {
+   "fromAxisMetres": 0.619,
+   "outsideCylinderMetres": 0.259,
+   "frame": 8,
+   "direction": "front",
+   "height": 1.307,
+   "outsideHitBoxMetres": 0.115,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "front"
+  },
+  "hood": {
+   "fromAxisMetres": 0.228,
+   "outsideCylinderMetres": -0.132,
+   "frame": 0,
+   "direction": "back",
+   "height": 1.964,
+   "outsideHitBoxMetres": -0.153,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  },
+  "joggers_hips": {
+   "fromAxisMetres": 0.251,
+   "outsideCylinderMetres": -0.109,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.971,
+   "outsideHitBoxMetres": -0.129,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_shin.L": {
+   "fromAxisMetres": 0.455,
+   "outsideCylinderMetres": 0.095,
+   "frame": 12,
+   "direction": "back",
+   "height": 0.451,
+   "outsideHitBoxMetres": 0.002,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "back"
+  },
+  "joggers_shin.R": {
+   "fromAxisMetres": 0.511,
+   "outsideCylinderMetres": 0.151,
+   "frame": 12,
+   "direction": "front",
+   "height": 0.818,
+   "outsideHitBoxMetres": 0.073,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "front"
+  },
+  "joggers_thigh.L": {
+   "fromAxisMetres": 0.306,
+   "outsideCylinderMetres": -0.054,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.581,
+   "outsideHitBoxMetres": -0.087,
+   "hitBoxFrame": 1,
+   "hitBoxDirection": "left"
+  },
+  "joggers_thigh.R": {
+   "fromAxisMetres": 0.494,
+   "outsideCylinderMetres": 0.134,
+   "frame": 12,
+   "direction": "front",
+   "height": 0.88,
+   "outsideHitBoxMetres": 0.053,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "front"
+  },
+  "mask": {
+   "fromAxisMetres": 0.207,
+   "outsideCylinderMetres": -0.153,
+   "frame": 12,
+   "direction": "front",
+   "height": 1.927,
+   "outsideHitBoxMetres": -0.173,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "front"
+  },
+  "sleeve.L": {
+   "fromAxisMetres": 0.393,
+   "outsideCylinderMetres": 0.033,
+   "frame": 12,
+   "direction": "left",
+   "height": 1.45,
+   "outsideHitBoxMetres": 0.011,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "left"
+  },
+  "sleeve.R": {
+   "fromAxisMetres": 0.392,
+   "outsideCylinderMetres": 0.032,
+   "frame": 12,
+   "direction": "right",
+   "height": 1.456,
+   "outsideHitBoxMetres": 0.012,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "right"
+  },
+  "sneaker.L": {
+   "fromAxisMetres": 0.582,
+   "outsideCylinderMetres": 0.222,
+   "frame": 12,
+   "direction": "back",
+   "height": 0.363,
+   "outsideHitBoxMetres": 0.143,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "back"
+  },
+  "sneaker.R": {
+   "fromAxisMetres": 0.47,
+   "outsideCylinderMetres": 0.11,
+   "frame": 12,
+   "direction": "right",
+   "height": 0.345,
+   "outsideHitBoxMetres": -0.014,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "right"
+  },
+  "torso": {
+   "fromAxisMetres": 0.246,
+   "outsideCylinderMetres": -0.114,
+   "frame": 12,
+   "direction": "left",
+   "height": 1.57,
+   "outsideHitBoxMetres": -0.152,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  }
+ },
+ "run": {
+  "bag": {
+   "fromAxisMetres": 0.281,
+   "outsideCylinderMetres": -0.079,
+   "frame": 0,
+   "direction": "front",
+   "height": 1.573,
+   "outsideHitBoxMetres": -0.136,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  },
+  "cap": {
+   "fromAxisMetres": 0.351,
+   "outsideCylinderMetres": -0.009,
+   "frame": 0,
+   "direction": "front",
+   "height": 1.884,
+   "outsideHitBoxMetres": -0.029,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  },
+  "forearm.L": {
+   "fromAxisMetres": 0.468,
+   "outsideCylinderMetres": 0.108,
+   "frame": 0,
+   "direction": "front",
+   "height": 1.367,
+   "outsideHitBoxMetres": 0.019,
+   "hitBoxFrame": 9,
+   "hitBoxDirection": "left"
+  },
+  "forearm.R": {
+   "fromAxisMetres": 0.468,
+   "outsideCylinderMetres": 0.108,
+   "frame": 9,
+   "direction": "front",
+   "height": 1.367,
+   "outsideHitBoxMetres": 0.019,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "glove.L": {
+   "fromAxisMetres": 0.586,
+   "outsideCylinderMetres": 0.226,
+   "frame": 0,
+   "direction": "front",
+   "height": 1.458,
+   "outsideHitBoxMetres": 0.166,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  },
+  "glove.R": {
+   "fromAxisMetres": 0.586,
+   "outsideCylinderMetres": 0.226,
+   "frame": 9,
+   "direction": "front",
+   "height": 1.458,
+   "outsideHitBoxMetres": 0.166,
+   "hitBoxFrame": 9,
+   "hitBoxDirection": "front"
+  },
+  "hood": {
+   "fromAxisMetres": 0.26,
+   "outsideCylinderMetres": -0.1,
+   "frame": 0,
+   "direction": "front",
+   "height": 1.659,
+   "outsideHitBoxMetres": -0.148,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  },
+  "joggers_hips": {
+   "fromAxisMetres": 0.335,
+   "outsideCylinderMetres": -0.025,
+   "frame": 6,
+   "direction": "front",
+   "height": 0.883,
+   "outsideHitBoxMetres": -0.08,
+   "hitBoxFrame": 6,
+   "hitBoxDirection": "front"
+  },
+  "joggers_shin.L": {
+   "fromAxisMetres": 0.607,
+   "outsideCylinderMetres": 0.247,
+   "frame": 14,
+   "direction": "back",
+   "height": 0.338,
+   "outsideHitBoxMetres": 0.176,
+   "hitBoxFrame": 14,
+   "hitBoxDirection": "back"
+  },
+  "joggers_shin.R": {
+   "fromAxisMetres": 0.607,
+   "outsideCylinderMetres": 0.247,
+   "frame": 5,
+   "direction": "back",
+   "height": 0.338,
+   "outsideHitBoxMetres": 0.176,
+   "hitBoxFrame": 5,
+   "hitBoxDirection": "back"
+  },
+  "joggers_thigh.L": {
+   "fromAxisMetres": 0.505,
+   "outsideCylinderMetres": 0.145,
+   "frame": 3,
+   "direction": "front",
+   "height": 0.867,
+   "outsideHitBoxMetres": 0.067,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "front"
+  },
+  "joggers_thigh.R": {
+   "fromAxisMetres": 0.505,
+   "outsideCylinderMetres": 0.145,
+   "frame": 12,
+   "direction": "front",
+   "height": 0.867,
+   "outsideHitBoxMetres": 0.067,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "front"
+  },
+  "mask": {
+   "fromAxisMetres": 0.26,
+   "outsideCylinderMetres": -0.1,
+   "frame": 0,
+   "direction": "front",
+   "height": 1.811,
+   "outsideHitBoxMetres": -0.12,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  },
+  "sleeve.L": {
+   "fromAxisMetres": 0.392,
+   "outsideCylinderMetres": 0.032,
+   "frame": 0,
+   "direction": "left",
+   "height": 1.309,
+   "outsideHitBoxMetres": 0.007,
+   "hitBoxFrame": 5,
+   "hitBoxDirection": "left"
+  },
+  "sleeve.R": {
+   "fromAxisMetres": 0.392,
+   "outsideCylinderMetres": 0.032,
+   "frame": 9,
+   "direction": "right",
+   "height": 1.309,
+   "outsideHitBoxMetres": 0.007,
+   "hitBoxFrame": 4,
+   "hitBoxDirection": "right"
+  },
+  "sneaker.L": {
+   "fromAxisMetres": 0.875,
+   "outsideCylinderMetres": 0.515,
+   "frame": 5,
+   "direction": "front",
+   "height": 0.236,
+   "outsideHitBoxMetres": 0.446,
+   "hitBoxFrame": 5,
+   "hitBoxDirection": "front"
+  },
+  "sneaker.R": {
+   "fromAxisMetres": 0.875,
+   "outsideCylinderMetres": 0.515,
+   "frame": 14,
+   "direction": "front",
+   "height": 0.236,
+   "outsideHitBoxMetres": 0.446,
+   "hitBoxFrame": 14,
+   "hitBoxDirection": "front"
+  },
+  "torso": {
+   "fromAxisMetres": 0.272,
+   "outsideCylinderMetres": -0.088,
+   "frame": 0,
+   "direction": "front",
+   "height": 1.59,
+   "outsideHitBoxMetres": -0.141,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "front"
+  }
+ },
+ "slide": {
+  "bag": {
+   "fromAxisMetres": 0.366,
+   "outsideCylinderMetres": 0.006,
+   "frame": 12,
+   "direction": "back",
+   "height": 0.799,
+   "outsideHitBoxMetres": -0.038,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "back"
+  },
+  "cap": {
+   "fromAxisMetres": 0.556,
+   "outsideCylinderMetres": 0.196,
+   "frame": 5,
+   "direction": "front",
+   "height": 0.8,
+   "outsideHitBoxMetres": 0.176,
+   "hitBoxFrame": 5,
+   "hitBoxDirection": "front"
+  },
+  "forearm.L": {
+   "fromAxisMetres": 0.539,
+   "outsideCylinderMetres": 0.179,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.423,
+   "outsideHitBoxMetres": 0.151,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "forearm.R": {
+   "fromAxisMetres": 0.539,
+   "outsideCylinderMetres": 0.179,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.423,
+   "outsideHitBoxMetres": 0.151,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "glove.L": {
+   "fromAxisMetres": 0.638,
+   "outsideCylinderMetres": 0.278,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.261,
+   "outsideHitBoxMetres": 0.237,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "glove.R": {
+   "fromAxisMetres": 0.638,
+   "outsideCylinderMetres": 0.278,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.261,
+   "outsideHitBoxMetres": 0.239,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "right"
+  },
+  "hood": {
+   "fromAxisMetres": 0.577,
+   "outsideCylinderMetres": 0.217,
+   "frame": 12,
+   "direction": "front",
+   "height": 0.713,
+   "outsideHitBoxMetres": 0.197,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "front"
+  },
+  "joggers_hips": {
+   "fromAxisMetres": 0.538,
+   "outsideCylinderMetres": 0.178,
+   "frame": 12,
+   "direction": "back",
+   "height": 0.403,
+   "outsideHitBoxMetres": 0.151,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "back"
+  },
+  "joggers_shin.L": {
+   "fromAxisMetres": 0.527,
+   "outsideCylinderMetres": 0.167,
+   "frame": 12,
+   "direction": "back",
+   "height": 0.308,
+   "outsideHitBoxMetres": 0.081,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "back"
+  },
+  "joggers_shin.R": {
+   "fromAxisMetres": 0.382,
+   "outsideCylinderMetres": 0.022,
+   "frame": 12,
+   "direction": "front",
+   "height": 0.177,
+   "outsideHitBoxMetres": -0.082,
+   "hitBoxFrame": 3,
+   "hitBoxDirection": "right"
+  },
+  "joggers_thigh.L": {
+   "fromAxisMetres": 0.553,
+   "outsideCylinderMetres": 0.193,
+   "frame": 7,
+   "direction": "back",
+   "height": 0.368,
+   "outsideHitBoxMetres": 0.152,
+   "hitBoxFrame": 7,
+   "hitBoxDirection": "back"
+  },
+  "joggers_thigh.R": {
+   "fromAxisMetres": 0.524,
+   "outsideCylinderMetres": 0.164,
+   "frame": 0,
+   "direction": "back",
+   "height": 0.41,
+   "outsideHitBoxMetres": 0.086,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  },
+  "mask": {
+   "fromAxisMetres": 0.458,
+   "outsideCylinderMetres": 0.098,
+   "frame": 5,
+   "direction": "front",
+   "height": 0.798,
+   "outsideHitBoxMetres": 0.067,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "front"
+  },
+  "sleeve.L": {
+   "fromAxisMetres": 0.423,
+   "outsideCylinderMetres": 0.063,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.647,
+   "outsideHitBoxMetres": 0.042,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "sleeve.R": {
+   "fromAxisMetres": 0.423,
+   "outsideCylinderMetres": 0.063,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.647,
+   "outsideHitBoxMetres": 0.042,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "sneaker.L": {
+   "fromAxisMetres": 0.674,
+   "outsideCylinderMetres": 0.314,
+   "frame": 12,
+   "direction": "back",
+   "height": 0.262,
+   "outsideHitBoxMetres": 0.245,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "back"
+  },
+  "sneaker.R": {
+   "fromAxisMetres": 0.681,
+   "outsideCylinderMetres": 0.321,
+   "frame": 12,
+   "direction": "front",
+   "height": 0.142,
+   "outsideHitBoxMetres": 0.234,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "front"
+  },
+  "torso": {
+   "fromAxisMetres": 0.469,
+   "outsideCylinderMetres": 0.109,
+   "frame": 12,
+   "direction": "back",
+   "height": 0.545,
+   "outsideHitBoxMetres": 0.089,
+   "hitBoxFrame": 12,
+   "hitBoxDirection": "back"
+  }
+ },
+ "wave": {
+  "bag": {
+   "fromAxisMetres": 0.306,
+   "outsideCylinderMetres": -0.054,
+   "frame": 0,
+   "direction": "back",
+   "height": 1.431,
+   "outsideHitBoxMetres": -0.112,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "back"
+  },
+  "cap": {
+   "fromAxisMetres": 0.239,
+   "outsideCylinderMetres": -0.121,
+   "frame": 4,
+   "direction": "front",
+   "height": 1.995,
+   "outsideHitBoxMetres": -0.15,
+   "hitBoxFrame": 4,
+   "hitBoxDirection": "front"
+  },
+  "forearm.L": {
+   "fromAxisMetres": 0.397,
+   "outsideCylinderMetres": 0.037,
+   "frame": 0,
+   "direction": "left",
+   "height": 1.201,
+   "outsideHitBoxMetres": 0.016,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "forearm.R": {
+   "fromAxisMetres": 0.556,
+   "outsideCylinderMetres": 0.196,
+   "frame": 4,
+   "direction": "right",
+   "height": 1.956,
+   "outsideHitBoxMetres": 0.172,
+   "hitBoxFrame": 4,
+   "hitBoxDirection": "right"
+  },
+  "glove.L": {
+   "fromAxisMetres": 0.469,
+   "outsideCylinderMetres": 0.109,
+   "frame": 0,
+   "direction": "left",
+   "height": 1.066,
+   "outsideHitBoxMetres": 0.061,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "glove.R": {
+   "fromAxisMetres": 0.752,
+   "outsideCylinderMetres": 0.392,
+   "frame": 4,
+   "direction": "right",
+   "height": 1.989,
+   "outsideHitBoxMetres": 0.321,
+   "hitBoxFrame": 4,
+   "hitBoxDirection": "right"
+  },
+  "hood": {
+   "fromAxisMetres": 0.282,
+   "outsideCylinderMetres": -0.078,
+   "frame": 4,
+   "direction": "back",
+   "height": 1.955,
+   "outsideHitBoxMetres": -0.121,
+   "hitBoxFrame": 11,
+   "hitBoxDirection": "back"
+  },
+  "joggers_hips": {
+   "fromAxisMetres": 0.251,
+   "outsideCylinderMetres": -0.109,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.971,
+   "outsideHitBoxMetres": -0.129,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_shin.L": {
+   "fromAxisMetres": 0.3,
+   "outsideCylinderMetres": -0.06,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.501,
+   "outsideHitBoxMetres": -0.082,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_shin.R": {
+   "fromAxisMetres": 0.3,
+   "outsideCylinderMetres": -0.06,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.501,
+   "outsideHitBoxMetres": -0.082,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "joggers_thigh.L": {
+   "fromAxisMetres": 0.302,
+   "outsideCylinderMetres": -0.058,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.636,
+   "outsideHitBoxMetres": -0.087,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "joggers_thigh.R": {
+   "fromAxisMetres": 0.302,
+   "outsideCylinderMetres": -0.058,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.636,
+   "outsideHitBoxMetres": -0.087,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "mask": {
+   "fromAxisMetres": 0.182,
+   "outsideCylinderMetres": -0.178,
+   "frame": 4,
+   "direction": "right",
+   "height": 2.006,
+   "outsideHitBoxMetres": -0.201,
+   "hitBoxFrame": 4,
+   "hitBoxDirection": "right"
+  },
+  "sleeve.L": {
+   "fromAxisMetres": 0.347,
+   "outsideCylinderMetres": -0.013,
+   "frame": 0,
+   "direction": "left",
+   "height": 1.448,
+   "outsideHitBoxMetres": -0.034,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "sleeve.R": {
+   "fromAxisMetres": 0.444,
+   "outsideCylinderMetres": 0.084,
+   "frame": 11,
+   "direction": "right",
+   "height": 1.778,
+   "outsideHitBoxMetres": 0.061,
+   "hitBoxFrame": 11,
+   "hitBoxDirection": "right"
+  },
+  "sneaker.L": {
+   "fromAxisMetres": 0.407,
+   "outsideCylinderMetres": 0.047,
+   "frame": 0,
+   "direction": "left",
+   "height": 0.044,
+   "outsideHitBoxMetres": -0.014,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "left"
+  },
+  "sneaker.R": {
+   "fromAxisMetres": 0.407,
+   "outsideCylinderMetres": 0.047,
+   "frame": 0,
+   "direction": "right",
+   "height": 0.056,
+   "outsideHitBoxMetres": -0.014,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  },
+  "torso": {
+   "fromAxisMetres": 0.248,
+   "outsideCylinderMetres": -0.112,
+   "frame": 0,
+   "direction": "right",
+   "height": 1.704,
+   "outsideHitBoxMetres": -0.135,
+   "hitBoxFrame": 0,
+   "hitBoxDirection": "right"
+  }
+ }
+}

@@ -1,0 +1,10 @@
+[CRITICAL CORRECTION] The previous attempts failed strict-profile verification. Attempt 1: drifted about 10 degrees toward the front and the hood pitched forward. Attempt 2: correct 90° angle, but it invented a human ear opening, a human nose and lips — this character has NO face.
+Estimated rotation: 0° off a dead 90° profile on attempt 2; the failure is identity.
+
+YOU MUST regenerate with the head axis at EXACTLY 90 degrees, upright, AND keep the character faceless. There is NO ear, NO ear opening, NO nose, NO lips, NO chin, NO skin anywhere. Inside the hood opening sits a flat black faceted faceplate, recessed behind the hood's front edge, seen edge-on in profile as a thin dark vertical slab. The hood side is one continuous faceted surface with a single red light strip. The base of the hood is level and ends at the collar, with no flap trailing down behind the neck.
+
+Reference the attached strict-front A-pose character sheet and the front-facing head extract. Render the same head in STRICT PROFILE view — rotated exactly 90 degrees, camera sees the character's left ear, nose pointing to the camera-right edge of frame. NO 3/4. Strict orthographic. Neutral expression, mouth closed, eye open. White background, neutral flat lighting at 2K. Same face, hair, accessories.
+
+Avoid: no three-quarter view, no 3/4 angle, no 45° angle, no rotated showcase, no perspective distortion, no foreshortening, no different pose, no broken A-pose, no different materials, no different color, no environment, no background, no shadow, no dramatic lighting, no presentable hero angle
+
+Anti-drift reinforcement (mandatory): zero rotation in the horizontal plane beyond the 90° profile. Camera at exactly 90 degrees azimuth relative to the subject. Same height, proportions and faceless faceplate as the front-facing head extract. Avoid: ear, ear hole, nose, lips, mouth, human face, skin, trailing flap.

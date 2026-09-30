@@ -1,7 +1,11 @@
 import * as T from 'three';
 import type { Skin, Weapon } from '../shared/balance.js';
-import { eyeHeight } from '../shared/physics.js';
+import { CFG } from '../shared/config.js';
+import { bodyHeight, eyeHeight } from '../shared/physics.js';
 import type { Pose, Role } from '../shared/types.js';
+import type { CharacterModel, CharacterTemplate } from './character-assets.js';
+import { SkinnedCharacter } from './skinned-character.js';
+import type { WeaponModels } from './weapon-assets.js';
 const cube = new T.BoxGeometry(1, 1, 1);
 const outlineMat = new T.MeshBasicMaterial({ color: 0x080d1b, side: T.BackSide });
 const ghostBodyMat = new T.MeshBasicMaterial({
@@ -123,6 +127,38 @@ export function makeWeapon(weapon: Weapon = 'blaster'): T.Group {
   freezeMeshLocals(gun);
   return gun;
 }
+/** Procedural guns are authored in units callers scale by this, with the grip block centred at
+ * PROCEDURAL_GRIP; generated weapons are placed in that frame so every caller lines up. */
+const PROCEDURAL_SCALE = 0.47;
+const PROCEDURAL_GRIP = new T.Vector3(0, -0.29, -0.05);
+/** A weapon in the procedural gun's frame (callers scale it by 0.47): the generated model once it
+ * has loaded, else the procedural blocks. `userData.generated` tells the two apart. */
+export function makeSeekerWeapon(weapon: Weapon, models?: WeaponModels | null): T.Group {
+  const generated = models?.instance(weapon);
+  if (!generated) {
+    const gun = makeWeapon(weapon);
+    gun.userData.generated = false;
+    return gun;
+  }
+  const gun = new T.Group();
+  generated.scale.setScalar(1 / PROCEDURAL_SCALE);
+  generated.position.copy(PROCEDURAL_GRIP);
+  gun.add(generated);
+  gun.userData.weapon = weapon;
+  gun.userData.generated = true;
+  return gun;
+}
+/** A weapon for an authored hand socket: metres, origin in the grip, +Z muzzle. */
+function socketWeapon(weapon: Weapon, models?: WeaponModels | null): T.Object3D {
+  const generated = models?.instance(weapon);
+  if (generated) return generated;
+  const holder = new T.Group(),
+    gun = makeWeapon(weapon);
+  gun.scale.setScalar(PROCEDURAL_SCALE);
+  gun.position.copy(PROCEDURAL_GRIP).multiplyScalar(-PROCEDURAL_SCALE);
+  holder.add(gun);
+  return holder;
+}
 const PALETTES: Record<Skin, [number, number]> = {
   classic: [0xf4eee7, 0x39566f],
   cobalt: [0xb6d8f4, 0x17478f],
@@ -149,9 +185,15 @@ export class Character {
   private bindRing?: T.Mesh;
   private phase = Math.random() * Math.PI * 2;
   private ownedMaterials: T.Material[] = [];
+  private skinned: SkinnedCharacter | null = null;
+  private disposed = false;
+  /** `model` is the authored character that replaces the procedural body once it has loaded;
+   * the procedural body stays while it loads or if it fails. */
   constructor(
     readonly role: Role,
     readonly ghost = false,
+    model?: CharacterModel,
+    private readonly weapons?: WeaponModels,
   ) {
     const seeker = role === 'seeker',
       skin = 0xe6b78c;
@@ -217,8 +259,8 @@ export class Character {
         block(this.head, [0.045, 0.19, 0.16], [side * 0.59, 1.77, 0], 0x655a72);
       }
       block(this.head, [0.29, 0.035, 0.028], [0.025, 1.49, 0.314], 0x7c4040).rotation.z = 0.08;
-      this.gun = makeWeapon();
-      this.gun.scale.setScalar(0.47);
+      this.gun = makeSeekerWeapon('blaster', weapons);
+      this.gun.scale.setScalar(PROCEDURAL_SCALE);
       this.group.add(this.gun);
     } else {
       block(this.head, [0.76, 0.22, 0.67], [0, 2.005, -0.015], 0x55352b, true);
@@ -276,6 +318,44 @@ export class Character {
       this.group,
       new Set([this.shield, this.bindRing].filter(Boolean) as T.Object3D[]),
     );
+    // Generated weapons replace the procedural ones once they load (visuals only).
+    if (seeker && weapons && !ghost)
+      void weapons.ready.then(() => {
+        if (!this.disposed) this.refreshWeapon();
+      });
+    const template = model?.template;
+    if (template) this.attach(template);
+    else if (model)
+      // `ready` never rejects: after a failed load it resolves null and the procedural body stays.
+      void model.ready.then((loaded) => {
+        if (loaded && !this.disposed) this.attach(loaded);
+      });
+  }
+  /** Whether the authored model has replaced the procedural body. */
+  get authored(): boolean {
+    return this.skinned !== null;
+  }
+  private attach(template: CharacterTemplate): void {
+    const skinned = new SkinnedCharacter(
+      template,
+      this.ghost ? { body: ghostBodyMat, shell: ghostOutlineMat } : null,
+    );
+    skinned.setSkin(this.skin);
+    this.group.add(skinned.root);
+    this.body.visible = false;
+    this.skinned = skinned;
+    this.refreshWeapon();
+  }
+  /** Rebuilds the held weapon for the current weapon type and whatever models have loaded. */
+  private refreshWeapon(): void {
+    if (this.role !== 'seeker') return;
+    const held = !this.ghost && !!this.skinned?.hasWeaponSocket;
+    this.gun?.removeFromParent();
+    this.gun = makeSeekerWeapon(this.weapon, this.weapons);
+    this.gun.scale.setScalar(PROCEDURAL_SCALE);
+    this.gun.visible = !held;
+    this.group.add(this.gun);
+    if (held) this.skinned?.setWeapon(socketWeapon(this.weapon, this.weapons));
   }
   setSkin(skin: Skin = 'classic'): void {
     if (this.ghost || this.skin === skin) return;
@@ -299,17 +379,16 @@ export class Character {
       material.color.setHex(color);
       material.emissive.setHex(color);
     });
+    this.skinned?.setSkin(skin);
   }
   setWeapon(weapon: Weapon = 'blaster'): void {
     if (this.role !== 'seeker' || this.weapon === weapon) return;
     this.weapon = weapon;
-    this.gun?.removeFromParent();
-    this.gun = makeWeapon(weapon);
-    this.gun.scale.setScalar(0.47);
-    this.group.add(this.gun);
+    this.refreshWeapon();
   }
   hit(): void {
     this.hitLeft = 0.42;
+    this.skinned?.hit();
   }
   animate(
     pose: Pick<Pose, 'moving' | 'grounded' | 'waving' | 'dashing'> & Partial<Pose>,
@@ -332,6 +411,12 @@ export class Character {
       this.bindRing.visible = !!pose.controlled;
       this.bindRing.rotation.z = time * 3;
     }
+    if (this.skinned) {
+      // The authored clips crouch, slide and wave by themselves.
+      this.skinned.update(pose, dt);
+      return;
+    }
+    this.body.scale.y = bodyHeight(pose.crouched) / CFG.height;
     this.phase += dt * (pose.moving > 0.5 ? pose.moving * 2.3 : 2);
     const walk = Math.min(1, pose.moving / 6),
       swing = Math.sin(this.phase) * 0.7 * walk;
@@ -372,6 +457,9 @@ export class Character {
     if (this.hitLeft > 0) this.body.rotation.z += Math.sin(this.hitLeft * 40) * this.hitLeft * 0.35;
   }
   dispose(): void {
+    this.disposed = true;
+    this.skinned?.dispose();
+    this.skinned = null;
     this.group.removeFromParent();
     for (const m of this.ownedMaterials) m.dispose();
     for (const geometry of this.ownedGeometry) geometry.dispose();

@@ -1,0 +1,3 @@
+Reference the attached strict-front A-pose character sheet and the front-facing head extract. Render the back of the same head — exactly 180 degrees rotated, camera sees the back of the skull dead-on. NO 3/4. Show the hair from behind in full, any tied details (ponytail, braid, hair accessories on the back). White background, neutral flat lighting at 2K.
+
+Avoid: no three-quarter view, no 3/4 angle, no 45° angle, no rotated showcase, no perspective distortion, no foreshortening, no different pose, no broken A-pose, no different materials, no different color, no environment, no background, no shadow, no dramatic lighting, no presentable hero angle

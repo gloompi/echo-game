@@ -1,0 +1,1002 @@
+{
+  "scale": {
+    "modelPx": 638.5,
+    "hoodPeakMetres": 2.16,
+    "sheetPxPerMetre": 295.6,
+    "metresPerSheetPx": 0.003383,
+    "hoodPeakRow": {
+      "front": 162.5,
+      "side": 162.5,
+      "back": 164.5
+    },
+    "groundRow": {
+      "front": 801.0,
+      "side": 797.0,
+      "back": 806.0
+    },
+    "viewHeightPx": {
+      "front": 638.5,
+      "side": 634.5,
+      "back": 641.5
+    },
+    "axisColumn": {
+      "front": 161.5,
+      "side": 404.0,
+      "back": 634.0
+    },
+    "note": "The sheet views are perspective renders, not orthographic: in the side view the far foot sits about 28 px higher than the near foot, so the side ground row is taken between them (near 811, far 782). Measurements carry about 2-3% error."
+  },
+  "heights": [
+    {
+      "landmark": "hood peak",
+      "view": "front",
+      "sheetY": 162.5,
+      "metres": 2.16
+    },
+    {
+      "landmark": "hood rim, top of face opening",
+      "view": "front",
+      "sheetY": 202,
+      "metres": 2.026
+    },
+    {
+      "landmark": "hood rim tip (forward point)",
+      "view": "side",
+      "sheetY": 198,
+      "metres": 2.026
+    },
+    {
+      "landmark": "visor T bar (centre)",
+      "view": "front",
+      "sheetY": 223,
+      "metres": 1.955
+    },
+    {
+      "landmark": "hood lower rim (sides)",
+      "view": "front",
+      "sheetY": 258,
+      "metres": 1.837
+    },
+    {
+      "landmark": "visor T stem bottom",
+      "view": "front",
+      "sheetY": 267,
+      "metres": 1.806
+    },
+    {
+      "landmark": "face plate chin",
+      "view": "front",
+      "sheetY": 274,
+      "metres": 1.783
+    },
+    {
+      "landmark": "shoulder plate tops",
+      "view": "front",
+      "sheetY": 283,
+      "metres": 1.752
+    },
+    {
+      "landmark": "collar V",
+      "view": "front",
+      "sheetY": 289,
+      "metres": 1.732
+    },
+    {
+      "landmark": "deltoid plate top",
+      "view": "front",
+      "sheetY": 307,
+      "metres": 1.671
+    },
+    {
+      "landmark": "deltoid plate bottom",
+      "view": "front",
+      "sheetY": 352,
+      "metres": 1.519
+    },
+    {
+      "landmark": "elbow",
+      "view": "front",
+      "sheetY": 395,
+      "metres": 1.373
+    },
+    {
+      "landmark": "belt pouch tops",
+      "view": "front",
+      "sheetY": 422,
+      "metres": 1.282
+    },
+    {
+      "landmark": "belt strap (centre)",
+      "view": "front",
+      "sheetY": 436,
+      "metres": 1.235
+    },
+    {
+      "landmark": "belt pouch bottoms",
+      "view": "front",
+      "sheetY": 465,
+      "metres": 1.137
+    },
+    {
+      "landmark": "glove cuff / wrist",
+      "view": "front",
+      "sheetY": 470,
+      "metres": 1.12
+    },
+    {
+      "landmark": "holster top (right thigh)",
+      "view": "front",
+      "sheetY": 500,
+      "metres": 1.018
+    },
+    {
+      "landmark": "crotch",
+      "view": "front",
+      "sheetY": 517,
+      "metres": 0.961
+    },
+    {
+      "landmark": "fingertips (A-pose)",
+      "view": "front",
+      "sheetY": 546,
+      "metres": 0.863
+    },
+    {
+      "landmark": "holster bottom",
+      "view": "front",
+      "sheetY": 572,
+      "metres": 0.775
+    },
+    {
+      "landmark": "knee pad top",
+      "view": "front",
+      "sheetY": 585,
+      "metres": 0.731
+    },
+    {
+      "landmark": "knee pad chevron (bottom)",
+      "view": "front",
+      "sheetY": 660,
+      "metres": 0.477
+    },
+    {
+      "landmark": "shoe collar (ankle strap top)",
+      "view": "front",
+      "sheetY": 727,
+      "metres": 0.25
+    },
+    {
+      "landmark": "sole",
+      "view": "front",
+      "sheetY": 801,
+      "metres": 0.0
+    }
+  ],
+  "fromAxis": [
+    {
+      "landmark": "hood side, right",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 106,
+      "sheetY": 255,
+      "metres": 0.188,
+      "beyondCylinder": -0.172
+    },
+    {
+      "landmark": "hood side, left",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 217,
+      "sheetY": 255,
+      "metres": 0.188,
+      "beyondCylinder": -0.172
+    },
+    {
+      "landmark": "shoulder plate, right",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 77,
+      "sheetY": 290,
+      "metres": 0.286,
+      "beyondCylinder": -0.074
+    },
+    {
+      "landmark": "shoulder plate, left",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 246,
+      "sheetY": 290,
+      "metres": 0.286,
+      "beyondCylinder": -0.074
+    },
+    {
+      "landmark": "deltoid plate, right",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 54,
+      "sheetY": 350,
+      "metres": 0.364,
+      "beyondCylinder": 0.004
+    },
+    {
+      "landmark": "deltoid plate, left",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 268,
+      "sheetY": 350,
+      "metres": 0.36,
+      "beyondCylinder": 0.0
+    },
+    {
+      "landmark": "forearm at elbow, right",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 38,
+      "sheetY": 410,
+      "metres": 0.418,
+      "beyondCylinder": 0.058
+    },
+    {
+      "landmark": "forearm at elbow, left",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 284,
+      "sheetY": 410,
+      "metres": 0.414,
+      "beyondCylinder": 0.054
+    },
+    {
+      "landmark": "hand (A-pose), right",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 25,
+      "sheetY": 495,
+      "metres": 0.462,
+      "beyondCylinder": 0.102
+    },
+    {
+      "landmark": "hand (A-pose), left",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 294,
+      "sheetY": 495,
+      "metres": 0.448,
+      "beyondCylinder": 0.088
+    },
+    {
+      "landmark": "belt pouch, right",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 91,
+      "sheetY": 450,
+      "metres": 0.238,
+      "beyondCylinder": -0.122
+    },
+    {
+      "landmark": "belt pouch, left",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 232,
+      "sheetY": 450,
+      "metres": 0.238,
+      "beyondCylinder": -0.122
+    },
+    {
+      "landmark": "holster, right thigh",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 79,
+      "sheetY": 520,
+      "metres": 0.279,
+      "beyondCylinder": -0.081
+    },
+    {
+      "landmark": "knee pad, right",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 78,
+      "sheetY": 645,
+      "metres": 0.282,
+      "beyondCylinder": -0.078
+    },
+    {
+      "landmark": "knee pad, left",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 253,
+      "sheetY": 645,
+      "metres": 0.31,
+      "beyondCylinder": -0.05
+    },
+    {
+      "landmark": "shoe outer, right",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 48,
+      "sheetY": 795,
+      "metres": 0.384,
+      "beyondCylinder": 0.024
+    },
+    {
+      "landmark": "shoe outer, left",
+      "view": "front",
+      "direction": "side",
+      "sheetX": 278,
+      "sheetY": 795,
+      "metres": 0.394,
+      "beyondCylinder": 0.034
+    },
+    {
+      "landmark": "hood rim tip",
+      "view": "side",
+      "direction": "forward",
+      "sheetX": 338,
+      "sheetY": 198,
+      "metres": 0.223,
+      "beyondCylinder": -0.137
+    },
+    {
+      "landmark": "hood back",
+      "view": "side",
+      "direction": "back",
+      "sheetX": 458,
+      "sheetY": 270,
+      "metres": 0.183,
+      "beyondCylinder": -0.177
+    },
+    {
+      "landmark": "chest plate front",
+      "view": "side",
+      "direction": "forward",
+      "sheetX": 349,
+      "sheetY": 350,
+      "metres": 0.186,
+      "beyondCylinder": -0.174
+    },
+    {
+      "landmark": "back plate",
+      "view": "side",
+      "direction": "back",
+      "sheetX": 483,
+      "sheetY": 335,
+      "metres": 0.267,
+      "beyondCylinder": -0.093
+    },
+    {
+      "landmark": "belt pouch front",
+      "view": "side",
+      "direction": "forward",
+      "sheetX": 340,
+      "sheetY": 455,
+      "metres": 0.217,
+      "beyondCylinder": -0.143
+    },
+    {
+      "landmark": "belt back",
+      "view": "side",
+      "direction": "back",
+      "sheetX": 456,
+      "sheetY": 455,
+      "metres": 0.176,
+      "beyondCylinder": -0.184
+    },
+    {
+      "landmark": "knee pad front",
+      "view": "side",
+      "direction": "forward",
+      "sheetX": 345,
+      "sheetY": 600,
+      "metres": 0.2,
+      "beyondCylinder": -0.16
+    },
+    {
+      "landmark": "toe",
+      "view": "side",
+      "direction": "forward",
+      "sheetX": 325,
+      "sheetY": 765,
+      "metres": 0.267,
+      "beyondCylinder": -0.093
+    },
+    {
+      "landmark": "heel",
+      "view": "side",
+      "direction": "back",
+      "sheetX": 446,
+      "sheetY": 795,
+      "metres": 0.142,
+      "beyondCylinder": -0.218
+    }
+  ],
+  "derived": {
+    "headsTall": 5.7,
+    "crotchFractionOfHeight": 0.445,
+    "shoulderWidthAcrossDeltoidPlatesMetres": 0.724,
+    "hood": {
+      "widthMetres": 0.376,
+      "depthMetres": 0.406,
+      "faceOpeningMetres": {
+        "top": 2.026,
+        "chin": 1.783,
+        "width": 0.328
+      },
+      "peakAboveVisorMetres": 0.205
+    },
+    "visorT": {
+      "barWidthMetres": 0.139,
+      "barThicknessMetres": 0.022,
+      "stemLengthMetres": 0.139,
+      "stemWidthMetres": 0.02
+    },
+    "deltoidPlate": {
+      "topMetres": 1.671,
+      "bottomMetres": 1.519,
+      "outerFaceFromAxisMetres": 0.36,
+      "sideDepthMetres": 0.129
+    },
+    "hands": {
+      "lengthWristToFingertipMetres": 0.257,
+      "widthMetres": [
+        0.122,
+        0.142
+      ],
+      "bindPoseSocket": {
+        "sheetX": 45,
+        "sheetY": 512,
+        "heightMetres": 0.978,
+        "fromAxisMetres": 0.394
+      }
+    },
+    "stanceFootCentresFromAxisMetres": {
+      "right": 0.267,
+      "left": 0.304
+    }
+  },
+  "crouchEstimate": {
+    "segmentsMetres": {
+      "ankle": 0.12,
+      "shin": 0.48,
+      "thigh": 0.4,
+      "hipToNeck": 0.74,
+      "neckToPeak": 0.42,
+      "hipToShoulder": 0.69
+    },
+    "head30": {
+      "pose": {
+        "shinForwardDeg": 45,
+        "thighBelowHorizontalDeg": 20,
+        "torsoForwardDeg": 55,
+        "headFromVerticalDeg": 30
+      },
+      "joints": {
+        "ankle": [
+          0.0,
+          0.12
+        ],
+        "knee": [
+          0.339,
+          0.459
+        ],
+        "hip": [
+          -0.036,
+          0.323
+        ],
+        "shoulder": [
+          0.529,
+          0.718
+        ],
+        "neck": [
+          0.57,
+          0.747
+        ],
+        "hoodPeak": [
+          0.78,
+          1.111
+        ]
+      },
+      "hoodPeakMetres": 1.111
+    },
+    "head20": {
+      "pose": {
+        "shinForwardDeg": 45,
+        "thighBelowHorizontalDeg": 20,
+        "torsoForwardDeg": 55,
+        "headFromVerticalDeg": 20
+      },
+      "joints": {
+        "ankle": [
+          0.0,
+          0.12
+        ],
+        "knee": [
+          0.339,
+          0.459
+        ],
+        "hip": [
+          -0.036,
+          0.323
+        ],
+        "shoulder": [
+          0.529,
+          0.718
+        ],
+        "neck": [
+          0.57,
+          0.747
+        ],
+        "hoodPeak": [
+          0.713,
+          1.142
+        ]
+      },
+      "hoodPeakMetres": 1.142
+    },
+    "head40": {
+      "pose": {
+        "shinForwardDeg": 45,
+        "thighBelowHorizontalDeg": 20,
+        "torsoForwardDeg": 55,
+        "headFromVerticalDeg": 40
+      },
+      "joints": {
+        "ankle": [
+          0.0,
+          0.12
+        ],
+        "knee": [
+          0.339,
+          0.459
+        ],
+        "hip": [
+          -0.036,
+          0.323
+        ],
+        "shoulder": [
+          0.529,
+          0.718
+        ],
+        "neck": [
+          0.57,
+          0.747
+        ],
+        "hoodPeak": [
+          0.84,
+          1.069
+        ]
+      },
+      "hoodPeakMetres": 1.069
+    },
+    "clearanceMetres": 1.12,
+    "validatorFailsAboveMetres": 1.17
+  },
+  "currentWeaponPlacement": {
+    "source": "client/models.ts Character.animate (seeker), makeBlaster/makeWeapon",
+    "scale": 0.47,
+    "originAtPitch0": {
+      "x": -0.27,
+      "y": 1.43,
+      "z": 0.49
+    },
+    "gripCentreInWeaponSpace": [
+      0,
+      -0.29,
+      -0.05
+    ],
+    "gripOffsetAtScaleMetres": [
+      0,
+      -0.136,
+      -0.024
+    ],
+    "gripAtPitch0Metres": {
+      "x": -0.27,
+      "y": 1.294,
+      "z": 0.466
+    },
+    "muzzleAtPitch0Metres": {
+      "x": -0.27,
+      "y": 1.491,
+      "z": 0.988
+    }
+  },
+  "colours": {
+    "swatchAccents": {
+      "default": {
+        "visorCore": {
+          "hex": "#FA4E4D",
+          "hueDeg": 0,
+          "saturation": 0.69,
+          "Lstar": 58.3
+        },
+        "shoulderStripCore": {
+          "hex": "#F94848",
+          "hueDeg": 360,
+          "saturation": 0.71,
+          "Lstar": 57.2
+        },
+        "hoodCrown": {
+          "hex": "#504B57",
+          "hueDeg": 265,
+          "saturation": 0.14,
+          "Lstar": 32.8
+        }
+      },
+      "arctic": {
+        "visorCore": {
+          "hex": "#4379FF",
+          "hueDeg": 223,
+          "saturation": 0.74,
+          "Lstar": 54.1
+        },
+        "shoulderStripCore": {
+          "hex": "#476DFC",
+          "hueDeg": 227,
+          "saturation": 0.72,
+          "Lstar": 51.0
+        },
+        "hoodCrown": {
+          "hex": "#474A5E",
+          "hueDeg": 232,
+          "saturation": 0.24,
+          "Lstar": 31.9
+        }
+      },
+      "void": {
+        "visorCore": {
+          "hex": "#C64DFA",
+          "hueDeg": 282,
+          "saturation": 0.69,
+          "Lstar": 56.3
+        },
+        "shoulderStripCore": {
+          "hex": "#CC5FEF",
+          "hueDeg": 285,
+          "saturation": 0.6,
+          "Lstar": 59.2
+        },
+        "hoodCrown": {
+          "hex": "#51406C",
+          "hueDeg": 263,
+          "saturation": 0.41,
+          "Lstar": 30.6
+        }
+      },
+      "sand": {
+        "visorCore": {
+          "hex": "#FCC559",
+          "hueDeg": 40,
+          "saturation": 0.65,
+          "Lstar": 82.6
+        },
+        "shoulderStripCore": {
+          "hex": "#FCCD67",
+          "hueDeg": 41,
+          "saturation": 0.59,
+          "Lstar": 84.7
+        },
+        "hoodCrown": {
+          "hex": "#575259",
+          "hueDeg": 283,
+          "saturation": 0.08,
+          "Lstar": 35.6
+        }
+      },
+      "stealth": {
+        "visorCore": {
+          "hex": "#F7F4FD",
+          "hueDeg": 260,
+          "saturation": 0.04,
+          "Lstar": 96.6
+        },
+        "shoulderStripCore": {
+          "hex": "#F5E8E6",
+          "hueDeg": 8,
+          "saturation": 0.06,
+          "Lstar": 92.9
+        },
+        "hoodCrown": {
+          "hex": "#535361",
+          "hueDeg": 240,
+          "saturation": 0.14,
+          "Lstar": 35.8
+        }
+      }
+    },
+    "suit": {
+      "sheet background": {
+        "sheetBox": [
+          5,
+          300,
+          20,
+          700
+        ],
+        "median": {
+          "hex": "#2E2E32",
+          "hueDeg": 240,
+          "saturation": 0.08,
+          "Lstar": 19.1
+        },
+        "litTopQuartile": {
+          "hex": "#313236",
+          "hueDeg": 228,
+          "saturation": 0.09,
+          "Lstar": 20.8
+        },
+        "LstarP10P90": [
+          18.5,
+          21.3
+        ]
+      },
+      "hood fabric, lit top (front)": {
+        "sheetBox": [
+          115,
+          175,
+          140,
+          215
+        ],
+        "median": {
+          "hex": "#765E5E",
+          "hueDeg": 0,
+          "saturation": 0.2,
+          "Lstar": 42.3
+        },
+        "litTopQuartile": {
+          "hex": "#866B68",
+          "hueDeg": 6,
+          "saturation": 0.22,
+          "Lstar": 47.7
+        },
+        "LstarP10P90": [
+          18.5,
+          48.8
+        ]
+      },
+      "hood fabric (back)": {
+        "sheetBox": [
+          600,
+          180,
+          680,
+          250
+        ],
+        "median": {
+          "hex": "#3F3C46",
+          "hueDeg": 258,
+          "saturation": 0.14,
+          "Lstar": 26.0
+        },
+        "litTopQuartile": {
+          "hex": "#5A5056",
+          "hueDeg": 327,
+          "saturation": 0.11,
+          "Lstar": 35.2
+        },
+        "LstarP10P90": [
+          13.1,
+          35.7
+        ]
+      },
+      "face plate (front)": {
+        "sheetBox": [
+          145,
+          235,
+          158,
+          262
+        ],
+        "median": {
+          "hex": "#312426",
+          "hueDeg": 351,
+          "saturation": 0.27,
+          "Lstar": 15.8
+        },
+        "litTopQuartile": {
+          "hex": "#432428",
+          "hueDeg": 352,
+          "saturation": 0.46,
+          "Lstar": 18.4
+        },
+        "LstarP10P90": [
+          9.6,
+          18.5
+        ]
+      },
+      "chest plate (front)": {
+        "sheetBox": [
+          95,
+          300,
+          130,
+          345
+        ],
+        "median": {
+          "hex": "#574D4F",
+          "hueDeg": 348,
+          "saturation": 0.11,
+          "Lstar": 33.8
+        },
+        "litTopQuartile": {
+          "hex": "#5F5556",
+          "hueDeg": 354,
+          "saturation": 0.11,
+          "Lstar": 37.1
+        },
+        "LstarP10P90": [
+          14.3,
+          37.2
+        ]
+      },
+      "torso fabric (front)": {
+        "sheetBox": [
+          140,
+          380,
+          185,
+          420
+        ],
+        "median": {
+          "hex": "#312E33",
+          "hueDeg": 276,
+          "saturation": 0.1,
+          "Lstar": 19.4
+        },
+        "litTopQuartile": {
+          "hex": "#3A3539",
+          "hueDeg": 312,
+          "saturation": 0.09,
+          "Lstar": 22.8
+        },
+        "LstarP10P90": [
+          17.1,
+          22.8
+        ]
+      },
+      "back fabric (back)": {
+        "sheetBox": [
+          580,
+          480,
+          700,
+          520
+        ],
+        "median": {
+          "hex": "#2B2B35",
+          "hueDeg": 240,
+          "saturation": 0.19,
+          "Lstar": 17.9
+        },
+        "litTopQuartile": {
+          "hex": "#3F383B",
+          "hueDeg": 334,
+          "saturation": 0.11,
+          "Lstar": 24.3
+        },
+        "LstarP10P90": [
+          9.6,
+          24.7
+        ]
+      },
+      "thigh fabric (front)": {
+        "sheetBox": [
+          110,
+          515,
+          150,
+          565
+        ],
+        "median": {
+          "hex": "#29262C",
+          "hueDeg": 270,
+          "saturation": 0.14,
+          "Lstar": 15.7
+        },
+        "litTopQuartile": {
+          "hex": "#362E33",
+          "hueDeg": 322,
+          "saturation": 0.15,
+          "Lstar": 20.0
+        },
+        "LstarP10P90": [
+          8.5,
+          21.1
+        ]
+      },
+      "knee pad (front)": {
+        "sheetBox": [
+          95,
+          590,
+          135,
+          640
+        ],
+        "median": {
+          "hex": "#262528",
+          "hueDeg": 260,
+          "saturation": 0.07,
+          "Lstar": 14.9
+        },
+        "litTopQuartile": {
+          "hex": "#4C4448",
+          "hueDeg": 330,
+          "saturation": 0.11,
+          "Lstar": 29.8
+        },
+        "LstarP10P90": [
+          7.0,
+          30.2
+        ]
+      },
+      "shin (front)": {
+        "sheetBox": [
+          100,
+          670,
+          130,
+          720
+        ],
+        "median": {
+          "hex": "#1C1B21",
+          "hueDeg": 250,
+          "saturation": 0.18,
+          "Lstar": 10.1
+        },
+        "litTopQuartile": {
+          "hex": "#282529",
+          "hueDeg": 285,
+          "saturation": 0.1,
+          "Lstar": 15.1
+        },
+        "LstarP10P90": [
+          8.6,
+          16.2
+        ]
+      },
+      "glove (front)": {
+        "sheetBox": [
+          35,
+          490,
+          60,
+          530
+        ],
+        "median": {
+          "hex": "#302E31",
+          "hueDeg": 280,
+          "saturation": 0.06,
+          "Lstar": 19.2
+        },
+        "litTopQuartile": {
+          "hex": "#443B3C",
+          "hueDeg": 353,
+          "saturation": 0.13,
+          "Lstar": 25.8
+        },
+        "LstarP10P90": [
+          6.5,
+          26.2
+        ]
+      },
+      "shoe upper (front)": {
+        "sheetBox": [
+          60,
+          755,
+          110,
+          785
+        ],
+        "median": {
+          "hex": "#36333B",
+          "hueDeg": 262,
+          "saturation": 0.14,
+          "Lstar": 21.8
+        },
+        "litTopQuartile": {
+          "hex": "#5B4E50",
+          "hueDeg": 351,
+          "saturation": 0.14,
+          "Lstar": 34.5
+        },
+        "LstarP10P90": [
+          12.8,
+          35.4
+        ]
+      }
+    },
+    "gameBackgroundsLstar": {
+      "#07111E": 4.9,
+      "#091321": 5.7,
+      "#111C2E": 10.2,
+      "#10282B": 14.4
+    },
+    "note": "Sheet colours include the sheet lighting; base colours are set and tuned in the material pass."
+  }
+}

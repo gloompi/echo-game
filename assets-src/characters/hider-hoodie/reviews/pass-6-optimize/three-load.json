@@ -1,0 +1,111 @@
+{
+ "three": "186",
+ "skinnedMeshes": 5,
+ "bones": 18,
+ "boneNames": [
+  "root",
+  "hips",
+  "spine",
+  "chest",
+  "neck",
+  "head",
+  "upper_armL",
+  "forearmL",
+  "handL",
+  "upper_armR",
+  "forearmR",
+  "handR",
+  "thighL",
+  "shinL",
+  "footL",
+  "thighR",
+  "shinR",
+  "footR"
+ ],
+ "materials": [
+  "black",
+  "cyan",
+  "skin",
+  "tint_light",
+  "white"
+ ],
+ "triangles": 6986,
+ "restBounds": {
+  "min": [
+   -0.4147,
+   0,
+   -0.2689
+  ],
+  "max": [
+   0.4147,
+   2.16,
+   0.246
+  ]
+ },
+ "clips": {
+  "crouch_idle": {
+   "seconds": 2,
+   "tracks": 18,
+   "tallestMetres": 1.0713,
+   "lowestMetres": 0,
+   "maxHalfExtentMetres": 0.6169,
+   "differenceFromBlender": 0
+  },
+  "crouch_walk": {
+   "seconds": 0.5,
+   "tracks": 18,
+   "tallestMetres": 1.0833,
+   "lowestMetres": 0,
+   "maxHalfExtentMetres": 0.6646,
+   "differenceFromBlender": 0
+  },
+  "hit": {
+   "seconds": 0.4333,
+   "tracks": 18,
+   "tallestMetres": 2.1652,
+   "lowestMetres": 0,
+   "maxHalfExtentMetres": 0.4837,
+   "differenceFromBlender": 0
+  },
+  "idle": {
+   "seconds": 2.4,
+   "tracks": 18,
+   "tallestMetres": 2.162,
+   "lowestMetres": 0,
+   "maxHalfExtentMetres": 0.4542,
+   "differenceFromBlender": 0
+  },
+  "jump": {
+   "seconds": 0.4,
+   "tracks": 18,
+   "tallestMetres": 2.1652,
+   "lowestMetres": 0,
+   "maxHalfExtentMetres": 0.5227,
+   "differenceFromBlender": 0
+  },
+  "run": {
+   "seconds": 0.6,
+   "tracks": 18,
+   "tallestMetres": 2.0743,
+   "lowestMetres": 0,
+   "maxHalfExtentMetres": 0.8259,
+   "differenceFromBlender": 0
+  },
+  "slide": {
+   "seconds": 0.4,
+   "tracks": 18,
+   "tallestMetres": 1.0713,
+   "lowestMetres": 0,
+   "maxHalfExtentMetres": 0.6253,
+   "differenceFromBlender": 0
+  },
+  "wave": {
+   "seconds": 1,
+   "tracks": 10,
+   "tallestMetres": 2.2619,
+   "lowestMetres": 0,
+   "maxHalfExtentMetres": 0.7006,
+   "differenceFromBlender": 0
+  }
+ }
+}

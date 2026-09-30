@@ -1,0 +1,42 @@
+{
+ "idle": {
+  "armBodyOverlaps": {},
+  "tallestMetres": 2.162,
+  "lowestMetres": 0.0
+ },
+ "run": {
+  "armBodyOverlaps": {},
+  "tallestMetres": 2.0743,
+  "lowestMetres": -0.0
+ },
+ "jump": {
+  "armBodyOverlaps": {},
+  "tallestMetres": 2.1652,
+  "lowestMetres": -0.0
+ },
+ "crouch_idle": {
+  "armBodyOverlaps": {},
+  "tallestMetres": 1.0713,
+  "lowestMetres": -0.0
+ },
+ "crouch_walk": {
+  "armBodyOverlaps": {},
+  "tallestMetres": 1.0833,
+  "lowestMetres": -0.0
+ },
+ "slide": {
+  "armBodyOverlaps": {},
+  "tallestMetres": 1.0713,
+  "lowestMetres": -0.0
+ },
+ "hit": {
+  "armBodyOverlaps": {},
+  "tallestMetres": 2.1652,
+  "lowestMetres": -0.0
+ },
+ "wave": {
+  "armBodyOverlaps": {},
+  "tallestMetres": 2.2619,
+  "lowestMetres": 0.0
+ }
+}

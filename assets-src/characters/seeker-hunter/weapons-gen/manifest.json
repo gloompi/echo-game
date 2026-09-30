@@ -1,0 +1,178 @@
+{
+ "goal": "generated Seeker weapons for the game's four weapon types (shared/balance.ts WEAPONS)",
+ "decision": "black + red emissive, matching the Seeker sheet (user, 2026-09-30); AGENTS.md art line updated",
+ "budgetCredits": 60,
+ "spentCredits": 46,
+ "source": {
+  "refs/00-source-sheet.png": "c95df72c4c3823cf"
+ },
+ "sharedLayout": {
+  "rule": "one clip set fits every weapon: origin = pistol-grip centre (on weapon_socket), muzzle -Y in Blender (+Z in glTF), front-grip contact 0.31 m ahead and 0.03 m above the grip",
+  "solved": "per weapon uniform scale + small pitch from measured grip/front-grip points"
+ },
+ "weapons": {
+  "blaster": {
+   "picture": {
+    "jobId": "87a06bb6-e820-4ca6-9ef9-e5add613fa05",
+    "model": "nano_banana_pro",
+    "credits": 2,
+    "prompt": "prompts/blaster.txt",
+    "verdict": "pass",
+    "image": "refs/blaster-t1.png"
+   },
+   "mesh": {
+    "jobId": "0758aaaf-b43c-400c-bc56-48adcde00cf7",
+    "model": "tripo_h3_1_image_to_3d",
+    "params": {
+     "face_limit": 3000,
+     "texture": true,
+     "pbr": false
+    },
+    "credits": 9,
+    "raw": "refs/raw-blaster.glb"
+   },
+   "layout": {
+    "scale": 0.631,
+    "tilt_deg": -1.5,
+    "length_m": 0.632
+   },
+   "export": {
+    "file": "blaster.glb",
+    "texture": "512 px webp",
+    "nodes": [
+     "blaster",
+     "muzzle"
+    ]
+   }
+  },
+  "scatter": {
+   "picture": {
+    "attempts": [
+     {
+      "jobId": "bfbe0aa2-5651-4475-84cd-f0d5eed9714e",
+      "verdict": "hard_fail: copied the sheet's weapon row and background"
+     },
+     {
+      "jobId": "604f839f-159b-4d28-aedd-c74dec83a58c",
+      "prompt": "prompts/scatter_retry1.txt",
+      "verdict": "pass"
+     }
+    ],
+    "model": "nano_banana_pro",
+    "credits": 4,
+    "image": "refs/scatter-t2.png"
+   },
+   "mesh": {
+    "jobId": "a9e71d0f-1400-40ee-b803-454803203cc2",
+    "model": "tripo_h3_1_image_to_3d",
+    "params": {
+     "face_limit": 3000,
+     "texture": true,
+     "pbr": false
+    },
+    "credits": 9,
+    "raw": "refs/raw-scatter.glb"
+   },
+   "layout": {
+    "scale": 0.881,
+    "tilt_deg": -2.6,
+    "length_m": 0.886
+   },
+   "export": {
+    "file": "scatter.glb",
+    "texture": "512 px webp",
+    "nodes": [
+     "scatter",
+     "muzzle"
+    ]
+   }
+  },
+  "repeater": {
+   "picture": {
+    "jobId": "cfd57479-e65b-4641-aef3-a574e6187c55",
+    "model": "nano_banana_pro",
+    "credits": 2,
+    "prompt": "prompts/repeater.txt",
+    "verdict": "pass",
+    "image": "refs/repeater-t1.png"
+   },
+   "mesh": {
+    "jobId": "c45efa57-38a4-4f46-b4c3-9a3ca13eafca",
+    "model": "tripo_h3_1_image_to_3d",
+    "params": {
+     "face_limit": 3000,
+     "texture": true,
+     "pbr": false
+    },
+    "credits": 9,
+    "raw": "refs/raw-repeater.glb"
+   },
+   "layout": {
+    "scale": 0.644,
+    "tilt_deg": -1.6,
+    "length_m": 0.646
+   },
+   "export": {
+    "file": "repeater.glb",
+    "texture": "512 px webp",
+    "nodes": [
+     "repeater",
+     "muzzle"
+    ]
+   }
+  },
+  "web": {
+   "picture": {
+    "jobId": "037bca96-13f3-44e8-bfee-ef063c8d164e",
+    "model": "nano_banana_pro",
+    "credits": 2,
+    "prompt": "prompts/web.txt",
+    "verdict": "pass",
+    "image": "refs/web-t1.png"
+   },
+   "mesh": {
+    "jobId": "a7f19c52-ec4c-4d3f-8797-3c91cac6d35c",
+    "model": "tripo_h3_1_image_to_3d",
+    "params": {
+     "face_limit": 3000,
+     "texture": true,
+     "pbr": false
+    },
+    "credits": 9,
+    "raw": "refs/raw-web.glb"
+   },
+   "layout": {
+    "scale": 0.479,
+    "tilt_deg": 7.3,
+    "length_m": 0.482
+   },
+   "export": {
+    "file": "web.glb",
+    "texture": "512 px webp",
+    "nodes": [
+     "web",
+     "muzzle"
+    ]
+   }
+  }
+ },
+ "clipCheck": {
+  "method": "every frame of every clip with every weapon: left-hand gap to the front-grip contact, and weapon faces ahead of the grip overlapping the body (hands/forearms excluded)",
+  "result": "hand gap <= 2.3 cm (hit), <= 1.2 cm elsewhere; no front overlap except scatter grazing a thigh in 3 run frames (2 face pairs)",
+  "holds": "../body-gen/holds.json (grid-searched per pose)",
+  "review": "review-weapons-in-clips.png"
+ },
+ "updatedUtc": "2026-09-30T17:43:40+00:00",
+ "rightHandFix": {
+  "date": "2026-09-30",
+  "problem": "right wrist folded ~115 deg: weapon_socket was oriented for a hand hanging in the A-pose, so pointing the gun forward forced the wrist down",
+  "fix": [
+   "weapon_socket re-oriented to a natural pistol grip: hand in line with the forearm, 20 deg down, palm toward the gun; socket at the fist centre (45% along hand.R, 3 cm to the palm)",
+   "left hand given a full frame (palm on the front grip) instead of a direction only",
+   "hold search rejects wrists bent > 40 deg; jump uses one searched hold per key",
+   "bug fixed: PoseBone.matrix leaked scale; search now attaches its weapon first"
+  ],
+  "result": "all clips x all weapons, every frame: wrists <= 39 deg, left-hand gap <= 1.9 cm; blaster/repeater/web never enter the body; scatter grazes (2-9 face pairs) in slide, aim and crouch clips",
+  "review": "weapons-gen/review-right-hand.png, weapons-gen/review-weapons-in-clips.png"
+ }
+}

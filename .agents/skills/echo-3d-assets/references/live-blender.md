@@ -69,12 +69,18 @@ Spend within the brief's credit budget without asking per job
 2. **Pick the job from the live catalog** (`bl_list_models`, `higgsfield model get <id>`
    for parameters). Current good fits, not pinned choices:
 
-   | Asset                          | Job                                                      | Tool                                                           |
-   | ------------------------------ | -------------------------------------------------------- | -------------------------------------------------------------- |
-   | Character from turnaround      | `tripo_h3_1_multiview_to_3d` (front/side/back, in order) | CLI `generate create` (multi-image), then import               |
-   | Character/prop from one image  | `tripo_h3_1_image_to_3d`, `hunyuan3d_v3_image_to_3d`     | `bl_image_to_3d(image_path, job_type)`                         |
-   | Prop from a text description   | `tripo_3d`, `hunyuan3d_v3_1_text_to_3d`                  | `bl_generate_3d(prompt, job_type)`                             |
-   | Map props from a concept sheet | `sam_3_3d` (extract objects, optional `prompt`)          | CLI `generate create sam_3_3d --image ... --prompt "<object>"` |
+   | Asset                          | Job                                             | Tool                                                            |
+   | ------------------------------ | ----------------------------------------------- | --------------------------------------------------------------- |
+   | Character or prop, one picture | `tripo_h3_1_image_to_3d` (strict-front A-pose)  | `bl_image_to_3d(image_path, job_type)` or CLI `generate create` |
+   | Character from views           | `tripo_h3_1_multiview_to_3d`: avoid (see below) | CLI `generate create` (exactly 4 images)                        |
+   | Prop from a text description   | `tripo_3d`, `hunyuan3d_v3_1_text_to_3d`         | `bl_generate_3d(prompt, job_type)`                              |
+   | Map props from a concept sheet | `sam_3_3d` (extract objects, optional `prompt`) | CLI `generate create sam_3_3d --image ... --prompt "<object>"`  |
+
+   One strict-front picture gives the cleanest characters: the model infers a plain back. Multiview
+   is risky: Higgsfield stores the images as unlabeled `image` inputs, so Tripo cannot tell front from
+   back, and a 3-view set put the front face on the back of the head. If you must, send exactly 4
+   pictures in Tripo's order [front, left, back, right] and check the back before cleanup. Pass
+   `face_limit` (for example 3000 for a weapon) to get a low-poly mesh directly.
 
    Characters generate in a clean A-pose with no props, so auto-rig works (section 6).
 
@@ -150,3 +156,27 @@ with props extracted from the approved concept sheets (section 4, `sam_3_3d`), c
 as in section 5 and fitted inside or flush to their colliders. The layout script must
 update colliders in place and never delete the `Art` collections. Export the runtime GLB
 from the saved file with the documented glTF flags.
+
+## 9. Gotchas seen in practice
+
+- Imports: a Tripo GLB comes in with QUATERNION rotation mode (set `rotation_mode = 'XYZ'` before
+  Euler rotations) and a see-through material in Material Preview (force the Principled Alpha to 1),
+  which can fake which way the model faces. Check facing with numbers, not only screenshots.
+- Screenshots via MCP can be stale: run `bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP',
+iterations=2)` first. `bpy.ops.ed.undo` via MCP is not step-granular; revert from the `.blend1`.
+- Generated meshes are loose shells: smoothing cracks them. Decimate (collapse) keeps them intact.
+- `auto_rig` ignores `height_meters` and returns the model at 1.70 m under a 0.0127-scaled
+  armature. Rescale it, then bake the scale (rescale pose-bone location keys with it) before
+  export: three.js culls a skinned mesh with its node's world matrix, so a scaled armature shrinks
+  the culling sphere to centimetres.
+- Keying poses from code: setting `PoseBone.matrix` leaks a tiny scale, so reset `scale` after;
+  keep each bone's quaternion keys on one hemisphere or the in-between frames spin the long way.
+  Solve feet with IK on an explicit path every 2 frames; interpolated rotations scuff the floor.
+- The runtime splits every base clip at the overlay clip's bones, so key `wave`/`aim` on
+  upper-body bones only. Measure each looping clip's foot speed and put it in the character
+  definition; the runtime scales playback by at most 2x.
+- A weapon socket must be oriented for a natural grip (hand in line with the forearm), not for
+  the A-pose, or the wrist folds when the arm raises the gun. Check the wrist angle on every
+  frame (at most about 40 degrees).
+- Export textures as WEBP and keep blend files without the raw generations (reproducible from
+  the job IDs); `refs/raw-*.glb` and `*.blend1` are git-ignored.

@@ -1,0 +1,370 @@
+{
+  "id": "hider-hoodie",
+  "generator": "scripts/characters/hider_hoodie.py",
+  "generatorSha256": "723f28ba3f6d05cb637b24bae8c3605c25dd3459f7223446bec69b5fc923c4af",
+  "stage": "export",
+  "blender": "5.2.0 LTS",
+  "units": "metres",
+  "runtimeUp": "+Y",
+  "facing": "+Z",
+  "blend": "hider-hoodie.blend",
+  "runtimeGlb": "public/assets/characters/hider-hoodie.glb",
+  "glbBytes": 829408,
+  "parts": [
+    {
+      "name": "joggers_hips",
+      "joint": "hips",
+      "parent": "hider_hoodie",
+      "pivot": [
+        0.0,
+        0.97,
+        0.0
+      ],
+      "triangles": null
+    },
+    {
+      "name": "torso",
+      "joint": "spine",
+      "parent": "joggers_hips",
+      "pivot": [
+        0.0,
+        1.1,
+        0.0
+      ],
+      "triangles": null
+    },
+    {
+      "name": "head",
+      "joint": "head",
+      "parent": "torso",
+      "empty": true,
+      "pivot": [
+        0.0,
+        1.73,
+        -0.01
+      ],
+      "triangles": null
+    },
+    {
+      "name": "bag",
+      "joint": "chest",
+      "parent": "torso",
+      "pivot": [
+        0.0,
+        1.45,
+        0.0
+      ],
+      "triangles": null
+    },
+    {
+      "name": "hood",
+      "joint": "head",
+      "parent": "head",
+      "pivot": [
+        0.0,
+        1.73,
+        -0.01
+      ],
+      "triangles": null
+    },
+    {
+      "name": "mask",
+      "joint": "head",
+      "parent": "head",
+      "pivot": [
+        0.0,
+        1.73,
+        -0.01
+      ],
+      "triangles": null
+    },
+    {
+      "name": "cap",
+      "joint": "head",
+      "parent": "head",
+      "pivot": [
+        0.0,
+        1.73,
+        -0.01
+      ],
+      "triangles": null
+    },
+    {
+      "name": "sleeve.R",
+      "joint": "upper_arm.R",
+      "parent": "torso",
+      "pivot": [
+        -0.205,
+        1.645,
+        -0.01
+      ],
+      "triangles": null
+    },
+    {
+      "name": "forearm.R",
+      "joint": "forearm.R",
+      "parent": "sleeve.R",
+      "pivot": [
+        -0.285,
+        1.385,
+        -0.02
+      ],
+      "triangles": null
+    },
+    {
+      "name": "glove.R",
+      "joint": "hand.R",
+      "parent": "forearm.R",
+      "pivot": [
+        -0.345,
+        1.16,
+        0.0
+      ],
+      "triangles": null
+    },
+    {
+      "name": "joggers_thigh.R",
+      "joint": "thigh.R",
+      "parent": "joggers_hips",
+      "pivot": [
+        -0.115,
+        0.97,
+        0.0
+      ],
+      "triangles": null
+    },
+    {
+      "name": "joggers_shin.R",
+      "joint": "shin.R",
+      "parent": "joggers_thigh.R",
+      "pivot": [
+        -0.192,
+        0.57,
+        -0.03
+      ],
+      "triangles": null
+    },
+    {
+      "name": "sneaker.R",
+      "joint": "foot.R",
+      "parent": "joggers_shin.R",
+      "pivot": [
+        -0.228,
+        0.12,
+        -0.095
+      ],
+      "triangles": null
+    },
+    {
+      "name": "sleeve.L",
+      "joint": "upper_arm.L",
+      "parent": "torso",
+      "pivot": [
+        0.205,
+        1.645,
+        -0.01
+      ],
+      "triangles": null
+    },
+    {
+      "name": "forearm.L",
+      "joint": "forearm.L",
+      "parent": "sleeve.L",
+      "pivot": [
+        0.285,
+        1.385,
+        -0.02
+      ],
+      "triangles": null
+    },
+    {
+      "name": "glove.L",
+      "joint": "hand.L",
+      "parent": "forearm.L",
+      "pivot": [
+        0.345,
+        1.16,
+        0.0
+      ],
+      "triangles": null
+    },
+    {
+      "name": "joggers_thigh.L",
+      "joint": "thigh.L",
+      "parent": "joggers_hips",
+      "pivot": [
+        0.115,
+        0.97,
+        0.0
+      ],
+      "triangles": null
+    },
+    {
+      "name": "joggers_shin.L",
+      "joint": "shin.L",
+      "parent": "joggers_thigh.L",
+      "pivot": [
+        0.192,
+        0.57,
+        -0.03
+      ],
+      "triangles": null
+    },
+    {
+      "name": "sneaker.L",
+      "joint": "foot.L",
+      "parent": "joggers_shin.L",
+      "pivot": [
+        0.228,
+        0.12,
+        -0.095
+      ],
+      "triangles": null
+    }
+  ],
+  "export": {
+    "stage": "export",
+    "meshObjects": 1,
+    "triangles": 6986,
+    "bones": 18,
+    "clips": {
+      "crouch_idle": 2.0,
+      "crouch_walk": 0.5,
+      "hit": 0.4333,
+      "idle": 2.4,
+      "jump": 0.4,
+      "run": 0.6,
+      "slide": 0.4,
+      "wave": 1.0
+    },
+    "animatedBones": {
+      "crouch_idle": 17,
+      "crouch_walk": 17,
+      "hit": 17,
+      "idle": 17,
+      "jump": 17,
+      "run": 17,
+      "slide": 17,
+      "wave": 10
+    },
+    "gameBounds": {
+      "min": [
+        -0.4147,
+        0.0,
+        -0.2689
+      ],
+      "max": [
+        0.4147,
+        2.16,
+        0.246
+      ]
+    },
+    "heightMetres": 2.16,
+    "brimMetres": 0.246,
+    "bagMetres": -0.2689,
+    "failures": []
+  },
+  "rig": {
+    "generator": "scripts/characters/hider_hoodie_rig.py",
+    "generatorSha256": "dc8af04895e68dd395e5ea6d2aaae53c3082c96fdbbee22117696ba379a0a1f7",
+    "fps": 30,
+    "clips": {
+      "crouch_idle": {
+        "frames": [
+          0,
+          60
+        ],
+        "seconds": 2.0,
+        "loop": true,
+        "maxHeightMetres": 1.0713,
+        "lowestPointMetres": -0.0,
+        "maxHalfExtentMetres": 0.6169,
+        "loopSeamMaxDifference": 0.0
+      },
+      "crouch_walk": {
+        "frames": [
+          0,
+          15
+        ],
+        "seconds": 0.5,
+        "loop": true,
+        "maxHeightMetres": 1.0833,
+        "lowestPointMetres": -0.0,
+        "maxHalfExtentMetres": 0.6646,
+        "loopSeamMaxDifference": 0.0
+      },
+      "hit": {
+        "frames": [
+          0,
+          13
+        ],
+        "seconds": 0.4333,
+        "loop": false,
+        "maxHeightMetres": 2.1652,
+        "lowestPointMetres": -0.0,
+        "maxHalfExtentMetres": 0.4837,
+        "loopSeamMaxDifference": 0.0
+      },
+      "idle": {
+        "frames": [
+          0,
+          72
+        ],
+        "seconds": 2.4,
+        "loop": true,
+        "maxHeightMetres": 2.162,
+        "lowestPointMetres": 0.0,
+        "maxHalfExtentMetres": 0.4542,
+        "loopSeamMaxDifference": 0.0
+      },
+      "jump": {
+        "frames": [
+          0,
+          12
+        ],
+        "seconds": 0.4,
+        "loop": false,
+        "maxHeightMetres": 2.1652,
+        "lowestPointMetres": -0.0,
+        "maxHalfExtentMetres": 0.5227,
+        "loopSeamMaxDifference": 0.0
+      },
+      "run": {
+        "frames": [
+          0,
+          18
+        ],
+        "seconds": 0.6,
+        "loop": true,
+        "maxHeightMetres": 2.0743,
+        "lowestPointMetres": -0.0,
+        "maxHalfExtentMetres": 0.8259,
+        "loopSeamMaxDifference": 0.0
+      },
+      "slide": {
+        "frames": [
+          0,
+          12
+        ],
+        "seconds": 0.4,
+        "loop": false,
+        "maxHeightMetres": 1.0713,
+        "lowestPointMetres": -0.0,
+        "maxHalfExtentMetres": 0.6253,
+        "loopSeamMaxDifference": 0.0
+      },
+      "wave": {
+        "frames": [
+          0,
+          30
+        ],
+        "seconds": 1.0,
+        "loop": true,
+        "maxHeightMetres": 2.2619,
+        "lowestPointMetres": 0.0,
+        "maxHalfExtentMetres": 0.7006,
+        "loopSeamMaxDifference": 0.0
+      }
+    }
+  }
+}

@@ -7,6 +7,9 @@
 Exits 1 with every failed check listed. Warnings do not fail. It never modifies the GLB.
 Budgets are project policy (docs/3D_ASSET_PIPELINE.md); world limits mirror
 tests/world-exports.test.ts, which remains the gate for registered maps.
+Size, origin and centring are measured in the rest pose: glTF importers pose a model with
+its first animation, and Blender's exporter sorts animations by name, so a character's
+first clip is `crouch_idle`, not `idle`. `crouch*` clips are sampled separately.
 """
 import argparse
 import json
@@ -83,6 +86,20 @@ def clip_report():
         clips.append({'name': action.name, 'frames': [round(start, 3), round(end, 3)],
                       'seconds': round((end - start) / fps, 4)})
     return clips
+
+
+def rest_bounds(meshes):
+    """Game bounds with every armature in its rest pose, whatever animation the importer
+    left active; the pose is restored for the clip checks."""
+    armatures = [o for o in bpy.context.scene.objects if o.type == 'ARMATURE']
+    for armature in armatures:
+        armature.data.pose_position = 'REST'
+    bpy.context.view_layer.update()
+    bounds = eb.game_bounds(meshes)
+    for armature in armatures:
+        armature.data.pose_position = 'POSE'
+    bpy.context.view_layer.update()
+    return bounds
 
 
 def crouch_report(meshes, clips, gate):
@@ -162,7 +179,7 @@ def main():
         gate.limit('mesh objects', len(meshes), budget['meshes'])
     presentation = [o.name for o in scene.objects if o.type in {'CAMERA', 'LIGHT'}]
     gate.require(not presentation, f'authoring cameras/lights exported: {presentation[:5]}')
-    bounds = eb.game_bounds(meshes)
+    bounds = rest_bounds(meshes)
     report = {
         'glb': str(source), 'kind': args.kind, 'bytes': size,
         'checkedAtUtc': datetime.now(timezone.utc).isoformat(), 'blender': bpy.app.version_string,

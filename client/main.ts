@@ -22,8 +22,11 @@ import {
   type Snapshot,
   type GameEvent,
   type PublicPlayer,
+  type Role,
 } from '../shared/types.js';
-import { Character, makeWeapon } from './models.js';
+import { Character, makeSeekerWeapon } from './models.js';
+import { CharacterModel, HIDER_HOODIE, SEEKER_HUNTER } from './character-assets.js';
+import { WeaponModels } from './weapon-assets.js';
 import { makeStage, CYAN } from './world.js';
 import { makeArena } from './map-world.js';
 import { ACTIVE_MAP, selectMap } from '../shared/map.js';
@@ -62,15 +65,41 @@ const stage = makeStage(),
   camera = new T.PerspectiveCamera(72, innerWidth / innerHeight, 0.05, 180),
   stageCamera = new T.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
 let arena: ReturnType<typeof makeArena> | null = null;
-let foregroundGun = makeWeapon();
+// Loaded once for the page; every Seeker and the first-person view share their meshes.
+const weaponModels = new WeaponModels();
+let foregroundGun = makeSeekerWeapon('blaster', weaponModels);
 foregroundGun.scale.setScalar(0.47);
 foregroundGun.position.set(0.27, -0.33, -0.49);
 foregroundGun.rotation.y = Math.PI;
 camera.add(foregroundGun);
 resizeRenderer();
-const heroHider = new Character('hider'),
-  heroSeeker = new Character('seeker'),
-  heroGhost = new Character('hider', true);
+// Loaded once for the page; every Hider (and every Seeker) shares its geometry, materials and
+// clips.
+const hiderModel = new CharacterModel(HIDER_HOODIE),
+  seekerModel = new CharacterModel(SEEKER_HUNTER);
+// Static asset diagnostics only: never actors or hidden poses.
+canvas.dataset.hiderModel = hiderModel.status.state;
+canvas.dataset.seekerModel = seekerModel.status.state;
+canvas.dataset.weaponModels = 'loading';
+void hiderModel.ready.then(() => {
+  canvas.dataset.hiderModel = hiderModel.status.state;
+});
+void seekerModel.ready.then(() => {
+  canvas.dataset.seekerModel = seekerModel.status.state;
+});
+void weaponModels.ready.then(() => {
+  canvas.dataset.weaponModels = Object.values(weaponModels.status).every((s) => s === 'loaded')
+    ? 'loaded'
+    : 'error';
+});
+function makeCharacter(role: Role, ghost = false): Character {
+  return role === 'hider'
+    ? new Character(role, ghost, hiderModel)
+    : new Character(role, ghost, seekerModel, weaponModels);
+}
+const heroHider = makeCharacter('hider'),
+  heroSeeker = makeCharacter('seeker'),
+  heroGhost = makeCharacter('hider', true);
 heroHider.group.scale.setScalar(1.23);
 heroHider.group.position.set(-0.8, 0, 0.85);
 heroHider.group.rotation.y = 0.22;
@@ -78,7 +107,7 @@ heroSeeker.group.scale.setScalar(1.3);
 heroSeeker.group.position.set(1.45, 0, -0.1);
 heroSeeker.group.rotation.y = -0.68;
 heroGhost.group.scale.setScalar(1.23);
-heroGhost.group.position.set(0.55, 0, -1.5);
+heroGhost.group.position.set(2.35, 0, -1.25);
 heroGhost.group.rotation.y = 0.3;
 stage.stage.add(heroHider.group, heroSeeker.group, heroGhost.group);
 const audio = new GameAudio();
@@ -530,10 +559,10 @@ function onSnapshot(s: Snapshot) {
     pitch = s.self.pitch;
     sequence = Math.max(sequence, s.self.ack);
     localCharacter?.dispose();
-    localCharacter = new Character(s.self.role);
+    localCharacter = makeCharacter(s.self.role);
     arena!.scene.add(localCharacter.group);
     ownEcho?.dispose();
-    ownEcho = s.self.role === 'hider' ? new Character('hider', true) : null;
+    ownEcho = s.self.role === 'hider' ? makeCharacter('hider', true) : null;
     if (ownEcho) arena!.scene.add(ownEcho.group);
     document.body.classList.toggle('hider', s.self.role === 'hider');
     setText($('role-label'), `YOU ARE THE ${s.self.role.toUpperCase()}`);
@@ -741,7 +770,6 @@ function updateGame(dt: number, time: number) {
   localCharacter.group.visible = !seeker && snapshot.self.alive && !snapshot.self.spectating;
   localCharacter.group.position.copy(localPos);
   localCharacter.group.rotation.y = yaw + Math.PI;
-  localCharacter.body.scale.y = bodyHeight(predicted.crouched) / CFG.height;
   localCharacter.animate(
     {
       moving: Math.hypot(predicted.vx, predicted.vz),
@@ -791,9 +819,13 @@ function updateGame(dt: number, time: number) {
   }
   camera.updateMatrixWorld();
   const weapon = snapshot.self.weapon ?? 'blaster';
-  if (foregroundGun.userData.weapon !== weapon) {
+  // Rebuilt for a new weapon, and once when the generated model for it finishes loading.
+  if (
+    foregroundGun.userData.weapon !== weapon ||
+    foregroundGun.userData.generated !== weaponModels.has(weapon)
+  ) {
     foregroundGun.removeFromParent();
-    foregroundGun = makeWeapon(weapon);
+    foregroundGun = makeSeekerWeapon(weapon, weaponModels);
     foregroundGun.scale.setScalar(0.47);
     foregroundGun.rotation.y = Math.PI;
     camera.add(foregroundGun);
@@ -817,7 +849,7 @@ function updateGame(dt: number, time: number) {
       obj = undefined;
     }
     if (!obj) {
-      const character = new Character(p.role);
+      const character = makeCharacter(p.role);
       arena.scene.add(character.group);
       const label = document.createElement('div');
       label.className = 'nameplate';
@@ -829,7 +861,6 @@ function updateGame(dt: number, time: number) {
     obj.character.group.visible = p.alive;
     obj.character.group.position.set(p.x, p.y, p.z);
     obj.character.group.rotation.y = p.yaw + Math.PI;
-    obj.character.body.scale.y = bodyHeight(p.crouched) / CFG.height;
     const delayed = seeker && p.role === 'hider';
     obj.character.animate(p, dt, (delayed ? view.sampledAt : now) / 1000);
     const text =
@@ -881,7 +912,6 @@ function updateGame(dt: number, time: number) {
       const e = view.echo;
       ownEcho.group.position.set(e.x, e.y, e.z);
       ownEcho.group.rotation.y = e.yaw + Math.PI;
-      ownEcho.body.scale.y = bodyHeight(e.crouched) / CFG.height;
       ownEcho.animate(e, dt, view.sampledAt / 1000);
     }
   }

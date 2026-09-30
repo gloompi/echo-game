@@ -1,0 +1,102 @@
+{
+ "goal": "generated hider-hoodie body: Higgsfield picture -> Higgsfield mesh -> live cleanup -> auto-rig -> live clips (same flow as seeker-hunter body-gen)",
+ "budgetCredits": 40,
+ "spentCredits": "11 + rigging (3d_rigging cost not reported by the API)",
+ "decisionsFollowed": "brief.md Decisions 1-5: hood up, bag on the back (front shows the harness), peak 2.16 m, cyan logos",
+ "sources": {
+  "refs/00b-sheet.png": "82573ac8748fd1e6",
+  "refs/00-sheet.png": "115e43f01ff051aa"
+ },
+ "picture": {
+  "jobId": "4a9cf611-baf2-4f88-bbfb-af3271449ac8",
+  "model": "nano_banana_pro",
+  "params": {
+   "aspect_ratio": "1:1",
+   "resolution": "2k"
+  },
+  "prompt": "prompts/01a_apose_front.txt",
+  "inputs": [
+   "refs/00b-sheet.png",
+   "refs/00-sheet.png"
+  ],
+  "credits": 2,
+  "image": "refs/01a-apose-front-t1.png",
+  "image_hash": "2e1f79a5687dfac1",
+  "verdict": "pass (strict front A-pose)"
+ },
+ "mesh": {
+  "jobId": "8327aa6d-20f7-4715-9cdb-616a3d8e85dc",
+  "model": "tripo_h3_1_image_to_3d",
+  "tool": "higgsfield CLI (connector bl_image_to_3d failed twice with Errno 2 before submitting; nothing spent)",
+  "params": {
+   "texture": true,
+   "pbr": false
+  },
+  "credits": 9,
+  "raw": "refs/raw-8327aa6d.glb",
+  "raw_tris": 1401655,
+  "cleanup": [
+   "alpha 1, rotation XYZ, 2.16 m, -90 deg Z to face -Y, feet at 0",
+   "21 floaters deleted",
+   "decimate 9,000 tris -> hider_body (raw hidden)"
+  ]
+ },
+ "rig": {
+  "jobId": "8da712df-d538-4e59-85f1-7176db598a85",
+  "model": "3d_rigging",
+  "result": "hider_rig + hider_body.rigged (8,998 tris, max 4 influences)",
+  "fixes": [
+   "scaled to 2.16 m, feet at 0",
+   "bones renamed to the contract, root added, head_end/head_front non-deform",
+   "imported baselayer action removed"
+  ]
+ },
+ "animation": {
+  "authored": "live in Blender via anim_helpers.py (copy of the seeker helper), 30 fps, in place",
+  "clips": {
+   "idle": "2.0 s loop",
+   "run": "0.67 s loop, feet within 2 mm",
+   "jump": "0.77 s game airtime, takeoff/tuck/landing reach",
+   "crouch_idle": "top 1.090 m",
+   "crouch_walk": "top 1.106 m, stride 0.11 m (longer strides put the back knee through the floor)",
+   "slide": "top 1.108 m",
+   "hit": "0.43 s",
+   "wave": "1.0 s loop, right arm"
+  },
+  "crouch_centring": "hips and feet 0.30 m back; all clips centred within 0.05 m"
+ },
+ "export": {
+  "file": "hider-hoodie-gen.glb",
+  "bytes": 1650000.0,
+  "texture": "1024 px webp"
+ },
+ "validation": {
+  "file": "validation-glb.json",
+  "status": "passed",
+  "failures": [],
+  "warnings": []
+ },
+ "known_issues": [
+  "the back sling bag is missing: a single front picture cannot show it (brief Decision 1 puts it on the back)",
+  "decimation texture noise"
+ ],
+ "verdict": "in game (feat/generated-characters)",
+ "updatedUtc": "2026-09-30T18:57:37+00:00",
+ "integration": {
+  "date": "2026-09-30",
+  "runtime": "public/assets/characters/hider-hoodie.glb replaces the scripted model (still reproducible from scripts/characters/hider_hoodie*.py)",
+  "changes": [
+   "hoodie faces split into a flat tint_light material (2,508 faces; soles excluded) so skins recolour it",
+   "wave keyed on upper-body bones only; hit keeps the hips still",
+   "crouch_walk re-authored by build_crouch_walk.py: 0.45 m stride (0.35 ahead / 0.10 behind), 0.67 s cycle, feet on explicit IK paths every 2 frames",
+   "armature scale baked, location keys rescaled",
+   "quaternion keys kept on one hemisphere",
+   "raw generation stripped from the .blend (2.2 MB)"
+  ],
+  "authoredSpeeds": {
+   "run": 5.07,
+   "crouchWalk": 1.46
+  },
+  "validation": "validate_glb passed (0 failures, 0 warnings)"
+ }
+}

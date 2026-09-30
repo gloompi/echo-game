@@ -1,0 +1,55 @@
+{
+  "source": "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-seeker-hunter\\assets-src\\characters\\seeker-hunter\\seeker-hunter.blend",
+  "kind": "character",
+  "renderedAtUtc": "2026-09-28T18:46:27.858502+00:00",
+  "blender": "5.2.0 LTS",
+  "triangles": 3488,
+  "gameBounds": {
+    "min": [
+      -0.4495,
+      0.0,
+      -0.268
+    ],
+    "max": [
+      0.4495,
+      2.16,
+      0.2718
+    ]
+  },
+  "references": [
+    "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-seeker-hunter\\assets-src\\characters\\seeker-hunter\\refs\\01-front.png",
+    "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-seeker-hunter\\assets-src\\characters\\seeker-hunter\\refs\\02-side-left-mirrored.png",
+    "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-seeker-hunter\\assets-src\\characters\\seeker-hunter\\refs\\03-back.png",
+    "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-seeker-hunter\\assets-src\\characters\\seeker-hunter\\refs\\02-side-left.png"
+  ],
+  "views": [
+    "front",
+    "right",
+    "back",
+    "left",
+    "three-quarter",
+    "gameplay",
+    "gameplay-near"
+  ],
+  "sheetRows": [
+    [
+      "01-front.png",
+      "02-side-left-mirrored.png",
+      "03-back.png",
+      "02-side-left.png"
+    ],
+    [
+      "front.png",
+      "right.png",
+      "back.png",
+      "left.png"
+    ],
+    [
+      "three-quarter.png",
+      "gameplay.png",
+      "gameplay-near.png"
+    ]
+  ],
+  "guides": true,
+  "colourTransform": "Standard"
+}
