@@ -1,8 +1,8 @@
 # Character contract
 
-Values come from `shared/rules.json` and `shared/movement.json`; re-read them rather than
-trusting the copies here. Current values: collision radius 0.36 m, standing height 2.16 m,
-eye 1.76 m, crouch height 1.12 m, crouch eye 0.92 m.
+Values come from `shared/rules.json` and `shared/movement.json`, except the hit box below;
+re-read them rather than trusting the copies here. Current values: movement radius 0.36 m,
+standing height 2.16 m, eye 1.76 m, crouch height 1.12 m, crouch eye 0.92 m.
 
 ## Folder
 
@@ -18,8 +18,9 @@ public/assets/characters/<id>.glb     runtime export only
 
 - Metres, origin at the midpoint between the feet on the ground, facing game +Z
   (Blender -Y), +Y up. No object-level scale or rotation left unapplied at export.
-- Standing height (top of head or helmet) 85-110% of the collision height; head and torso
-  inside the collision capsule; limbs and gear extend at most about 0.15 m.
+- Standing height (top of head or helmet) 85-110% of the 2.16 m player height; head and
+  torso inside the movement cylinder; limbs and gear extend at most about 0.15 m beyond it.
+  See [the next section](#movement-cylinder-and-hit-box) for what that means for shots.
 - Crouch clips must fit within the 1.12 m crouch clearance; players crouch under 1.12-2.16 m
   lintels. `validate_glb.py` samples every `crouch*` clip.
 - Triangle target 6-10k (hard cap 15k): up to 12 players are on screen. Spend triangles on
@@ -27,6 +28,33 @@ public/assets/characters/<id>.glb     runtime export only
   catches light; avoid thin parts that shimmer at 9 m.
 - Separate objects are fine while authoring. Export one skinned mesh (or a few) per
   character; keep the material count at 5 or fewer.
+
+## Movement cylinder and hit box
+
+Gameplay uses two different player volumes. Neither follows the mesh or its animation.
+
+- **Movement cylinder**: the collider against map boxes (`overlaps` in `shared/physics.ts`
+  and `crates/echo-core/src/physics.rs`). Radius 0.36 m, from the feet up to 2.16 m, or
+  1.12 m crouched (`radius`, `height`, `crouchHeight`).
+- **Hit box**: what the server tests shots against, at present authoritative positions
+  (`player_ray_crouched` in `crates/echo-core/src/physics.rs`). Axis-aligned, ±0.38 m in x
+  and z, from 0.08 m above the feet up to 2.16 m, or 1.12 m crouched. It never turns with
+  facing, so its corners are 0.54 m from the centre line. `room/combat.rs` grows the same
+  0.38 m half-width by the radius of web projectiles and the hook. The 0.38 m and 0.08 m
+  values are hard-coded in Rust, not shared data; moving them into `shared/` is a gameplay
+  change that needs TS/Rust parity review (root `AGENTS.md`).
+
+For the model this means:
+
+- Anything inside the cylinder and above 0.08 m is inside the hit box at every facing
+  (0.36 m < 0.38 m).
+- Parts more than 0.38 m from the centre line are outside the box at some facings. Parts
+  beyond 0.54 m, below 0.08 m (soles) or above the box top are never hit: shots pass
+  through them.
+- The box is wider than a slim body, most of all for shots along the world diagonals (up
+  to 1.07 m across), so shots also hit empty air beside the character.
+
+Character review views draw both volumes ([review-loop.md](review-loop.md)).
 
 ## Materials and skins
 

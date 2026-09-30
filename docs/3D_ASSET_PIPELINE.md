@@ -69,10 +69,14 @@ B="/c/Program Files/Blender Foundation/Blender 5.2/blender.exe"
 
 Review views: characters get orthographic front/right/back/left, a three-quarter view and
 gameplay views at about 9 m and 3.5 m from another player's eye (1.76 m, 72 degree vertical
-FOV as in `client/main.ts`), with the collision capsule drawn in magenta. Worlds get a square
-plan, four elevated corners and four eye-level views from `map.json` spawns. Renders use a
-neutral light rig and the `Standard` view transform; the game uses its own lighting and ACES
-tone mapping, so in-game screenshots remain required.
+FOV as in `client/main.ts`). They draw two guides: the movement cylinder as a magenta wire
+(radius and height from `shared/rules.json`) and the shot hit box as yellow dashes (±0.38 m
+in x/z from 0.08 m to 2.16 m, copied from `player_ray_crouched` in
+`crates/echo-core/src/physics.rs`). Movement uses the cylinder, shots test only the box, and
+neither uses the mesh. Props get only the cylinder, for scale. Worlds get a square plan, four
+elevated corners and four eye-level views from `map.json` spawns. Renders use a neutral light
+rig and the `Standard` view transform; the game uses its own lighting and ACES tone mapping,
+so in-game screenshots remain required.
 
 ## Budgets enforced by `validate_glb.py`
 
@@ -110,3 +114,11 @@ route (picture, image-to-3D mesh, live cleanup, auto-rig, clips keyed live in Bl
 `assets-src/characters/hider-hoodie/body-gen/` and `seeker-hunter/body-gen/`. The Seeker's four
 weapons (`seeker-hunter/weapons-gen/`, runtime GLBs in `public/assets/weapons/`) share one grip
 layout, so one clip set holds each of them. Each folder's `manifest.json` records every job ID.
+
+## Verification record, 25 September 2026
+
+Hit-box guide, Blender 5.2.0 LTS headless on Windows: `review_renders.py` rendered the Hider
+and Seeker GLBs exported by the `codex/character-fidelity` work (not committed to this
+repository) with both guides. Measured in the scene, the cylinder had a 0.36 m radius over
+0-2.16 m and the box ±0.38 m over 0.08-2.16 m. Prop views drew only the cylinder;
+`--no-guides` and the `mirror-yard` world views drew none.

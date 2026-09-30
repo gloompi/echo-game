@@ -8,7 +8,7 @@ prevents.
 
 | Pass             | Character                                                 | World map                                                               |
 | ---------------- | --------------------------------------------------------- | ----------------------------------------------------------------------- |
-| 1 Blockout       | Proportions, head:body ratio, silhouette in capsule       | Graybox from `map.json` colliders only; **playtest in game before art** |
+| 1 Blockout       | Proportions, head:body ratio, silhouette in the guides    | Graybox from `map.json` colliders only; **playtest in game before art** |
 | 2 Structure      | Part breakdown, joints, pivots, clean topology            | Routes, cover rhythm, heights, crouch/jump spaces, mirrors              |
 | 3 Form           | Bevels, secondary shapes, face features, readable details | Architecture kit, silhouettes of landmarks, skyline                     |
 | 4 Material       | Palette, tint regions, roughness/emission, texture if any | Material zones, signage, emissive accents in cyan/magenta               |
@@ -35,8 +35,9 @@ pass explicitly and say so in the review record.
    ```
 
    Use `--glb` for the exported runtime model and `--kind world --map <map.json>` for maps
-   (plan, four elevated corners, eye-level views from spawns). Character views include the
-   magenta collision capsule; `--no-guides` hides it.
+   (plan, four elevated corners, eye-level views from spawns). Character views draw the
+   movement cylinder as a magenta wire and the shot hit box as yellow dashes; prop views
+   draw only the cylinder, for player scale. `--no-guides` hides them.
 
 3. Look at `sheet.png` and the individual views at full size. Compare like with like:
    front render against front reference, side against side.
@@ -65,8 +66,12 @@ pass explicitly and say so in the review record.
 - **Gameplay readability.** Judge `gameplay.png` (about 9 m, game FOV) and
   `gameplay-near.png`: role must read instantly at 9 m; the Seeker and the Hider must never
   be confusable by silhouette alone.
-- **Capsule fit.** Head and torso inside the magenta capsule; limbs and gear may extend
-  slightly (target at most 0.15 m) so hits feel fair.
+- **Cylinder and hit-box fit.** Head and torso inside the magenta movement cylinder, which
+  keeps them inside the yellow hit box at every facing; limbs and gear may extend slightly
+  (target at most 0.15 m). Hits feel fair when the silhouette stays close to the box:
+  shots pass through parts outside it and still hit its empty corners, which show best in
+  the three-quarter and gameplay views. Details in
+  [character.md](character.md#movement-cylinder-and-hit-box).
 - **Maps.** Eye-level views must show cover that hides a standing player (2.16 m) or a
   crouched one (1.12 m) on purpose, not accidentally. Look for accidental hiding holes, props
   that clip through colliders, and light/emissive noise that makes players hard to see.

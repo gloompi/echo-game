@@ -7,12 +7,14 @@
 
 Character/prop views: front, right, back, left (orthographic), three-quarter, and two
 gameplay views (about 9 m and 3.5 m) from another player's eye height with the game's
-72 degree vertical FOV.
+72 degree vertical FOV. Guides: the movement cylinder (magenta wire) on both, plus the
+server's shot hit box (yellow dashes) on character views.
 World views: plan, four elevated corners and eye-level views from map spawns.
 Writes <view>.png, sheet.png (references on the first row) and views.json.
 Renders are review evidence only; in-game appearance still needs a browser check.
 """
 import argparse
+import itertools
 import json
 import math
 import sys
@@ -28,6 +30,12 @@ import echo_blender as eb  # noqa: E402
 
 GAME_FOV_Y = math.radians(72)  # client/main.ts PerspectiveCamera
 CELLS = {'world': (640, 360), 'character': (512, 512), 'prop': (512, 512)}
+# Shots test this box, not the movement cylinder. The values are hard-coded in
+# player_ray_crouched (crates/echo-core/src/physics.rs; room/combat.rs repeats 0.38 for
+# web projectiles and the hook), not shared data: update the copies if the server
+# changes. The top is the standing height from shared/rules.json.
+HIT_BOX_HALF_WIDTH = 0.38  # Game x and z; the box does not turn with facing.
+HIT_BOX_BOTTOM = 0.08  # Above the feet.
 
 
 def parse():
@@ -39,7 +47,8 @@ def parse():
     parser.add_argument('--out', required=True)
     parser.add_argument('--reference', action='append', default=[])
     parser.add_argument('--map', help='map.json for eye-level views from its spawns')
-    parser.add_argument('--no-guides', action='store_true', help='Hide the collision capsule guide')
+    parser.add_argument('--no-guides', action='store_true',
+                        help='Hide the movement cylinder and hit box guides')
     return parser.parse_args(eb.script_args())
 
 
@@ -90,16 +99,54 @@ def setup_render(scene, kind):
         scene.collection.objects.link(obj)
 
 
-def add_guides(scene, lo, hi):
-    """Collision capsule (radius/height from shared rules) and a ground disc under the model."""
+def dashed_box(name, lo, hi, material, dash=0.06, gap=0.04):
+    """Outline a Blender-space axis-aligned box in dashes that start and end at each corner."""
+    curve = bpy.data.curves.new(name, 'CURVE')
+    curve.dimensions = '3D'
+    curve.bevel_depth = 0.004  # 8 mm lines, as thick as the cylinder wire.
+    corners = [Vector((x, y, z)) for x in (lo.x, hi.x) for y in (lo.y, hi.y) for z in (lo.z, hi.z)]
+    for a, b in itertools.combinations(corners, 2):
+        if sum(p != q for p, q in zip(a, b)) != 1:
+            continue  # A diagonal, not one of the 12 edges.
+        length = (b - a).length
+        count = max(1, round((length + gap) / (dash + gap)))
+        step = (length + gap) / count
+        for i in range(count):
+            spline = curve.splines.new('POLY')
+            spline.points.add(1)
+            for point, t in zip(spline.points, (i * step, i * step + step - gap)):
+                point.co = (*a.lerp(b, t / length), 1)
+    curve.materials.append(material)
+    obj = bpy.data.objects.new(name, curve)
+    bpy.context.scene.collection.objects.link(obj)
+    return obj
+
+
+def add_guides(scene, lo, hi, kind):
+    """Player volumes at the feet origin and a ground plane under the model.
+
+    The movement cylinder (shared/rules.json radius/height) is the collider against map
+    boxes; props show it for player scale. Characters also show the separate hit box that
+    server shots test. Returns what was drawn, for views.json.
+    """
     rules = eb.rules()
     bpy.ops.mesh.primitive_cylinder_add(radius=rules['radius'], depth=rules['height'], vertices=24,
                                         location=(0, 0, rules['height'] / 2))
-    capsule = bpy.context.object
-    capsule.name = 'Review collision guide'
-    wire = capsule.modifiers.new('wire', 'WIREFRAME')
+    cylinder = bpy.context.object
+    cylinder.name = 'Review movement cylinder'
+    wire = cylinder.modifiers.new('wire', 'WIREFRAME')
     wire.thickness = 0.008
-    capsule.data.materials.append(emission_material('Review guide', (1, 0.1, 0.8)))
+    cylinder.data.materials.append(emission_material('Review movement guide', (1, 0.1, 0.8)))
+    guides = [{'name': 'movement cylinder', 'radius': rules['radius'], 'height': rules['height'],
+               'source': 'shared/rules.json radius, height'}]
+    if kind == 'character':
+        half = HIT_BOX_HALF_WIDTH
+        dashed_box('Review hit box', Vector((-half, -half, HIT_BOX_BOTTOM)),
+                   Vector((half, half, rules['height'])),
+                   emission_material('Review hit guide', (1, 0.85, 0.1)))
+        guides.append({'name': 'hit box', 'halfWidth': half, 'bottom': HIT_BOX_BOTTOM,
+                       'top': rules['height'],
+                       'source': 'crates/echo-core/src/physics.rs player_ray_crouched'})
     size = max(hi.x - lo.x, hi.y - lo.y, 1) * 1.6
     bpy.ops.mesh.primitive_plane_add(size=size, location=(0, 0, lo.z - 0.001))
     ground = bpy.context.object
@@ -108,6 +155,7 @@ def add_guides(scene, lo, hi):
     mat.use_nodes = True
     mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (0.3, 0.31, 0.33, 1)
     ground.data.materials.append(mat)
+    return guides
 
 
 def camera(scene, name, location, target, ortho_scale=None):
@@ -220,8 +268,9 @@ def main():
     lo, hi = eb.world_bounds(meshes)
     triangles = eb.evaluated_triangles(meshes)
     setup_render(scene, args.kind)
+    guides = []
     if args.kind != 'world' and not args.no_guides:
-        add_guides(scene, lo, hi)
+        guides = add_guides(scene, lo, hi, args.kind)
     cams = world_views(scene, lo, hi, args.map) if args.kind == 'world' else actor_views(scene, lo, hi)
     renders = []
     default_size = scene.render.resolution_x, scene.render.resolution_y
@@ -238,7 +287,7 @@ def main():
         'renderedAtUtc': datetime.now(timezone.utc).isoformat(), 'blender': bpy.app.version_string,
         'triangles': triangles, 'gameBounds': eb.game_bounds(meshes),
         'references': [str(r) for r in references], 'views': [n for n, _ in cams],
-        'sheetRows': layout, 'guides': args.kind != 'world' and not args.no_guides,
+        'sheetRows': layout, 'guides': bool(guides), 'guideVolumes': guides,
         'colourTransform': scene.view_settings.view_transform,
     }
     (out / 'views.json').write_text(json.dumps(record, indent=2) + '\n', encoding='utf-8')

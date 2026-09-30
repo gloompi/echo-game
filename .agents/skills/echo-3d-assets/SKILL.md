@@ -25,8 +25,11 @@ reference pack define the target; review against those.
   blue armored Seeker, orange blaster, cyan/magenta art direction (root `AGENTS.md`). "Better"
   means higher craft within that identity, not a different game. If a brief conflicts,
   surface the conflict before modeling.
-- Art never owns authority. Collision comes from `map.json` boxes; hits use the server
-  capsule (`shared/rules.json` radius/height), never the mesh.
+- Art never owns authority, and gameplay never reads the mesh. Map collision comes from
+  `map.json` boxes. Players move as a cylinder (`shared/rules.json` `radius`/`height`), but
+  server shots test a separate axis-aligned hit box (`player_ray_crouched` in
+  `crates/echo-core/src/physics.rs`); see
+  [character.md](references/character.md#movement-cylinder-and-hit-box).
 - Game space is metres, +Y up, characters face +Z, origin at the feet. Blender authoring
   maps game `(x, y, z)` to Blender `(x, -z, y)`; the glTF exporter converts back.
 - The editable source (`.blend` plus its authoring script) lives in `assets-src/`; only the
