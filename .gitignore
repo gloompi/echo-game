@@ -9,3 +9,6 @@ target/
 test-results/
 playwright-report/
 cloudflared.exe
+# Raw Higgsfield generations (1M+ triangles) are reproducible from the job IDs in each manifest.
+assets-src/**/refs/raw-*.glb
+*.blend1

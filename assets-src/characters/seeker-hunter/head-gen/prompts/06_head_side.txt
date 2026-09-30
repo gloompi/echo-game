@@ -1,0 +1,3 @@
+Reference the attached strict-front A-pose character sheet and the front-facing head extract. Render the same head in STRICT PROFILE view — rotated exactly 90 degrees, camera sees the character's left ear, nose pointing to the camera-right edge of frame. NO 3/4. Strict orthographic. Neutral expression, mouth closed, eye open. White background, neutral flat lighting at 2K. Same face, hair, accessories.
+
+Avoid: no three-quarter view, no 3/4 angle, no 45° angle, no rotated showcase, no perspective distortion, no foreshortening, no different pose, no broken A-pose, no different materials, no different color, no environment, no background, no shadow, no dramatic lighting, no presentable hero angle

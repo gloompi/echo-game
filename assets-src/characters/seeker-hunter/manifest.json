@@ -1,0 +1,502 @@
+{
+  "id": "seeker-hunter",
+  "generator": "scripts/characters/seeker_hunter.py",
+  "generatorSha256": "2d5419c7d6bdbc2bbc4c6c96bfccf435a1844e4ec8057cdb33d4dce80310f9d6",
+  "stage": "structure",
+  "blender": "5.2.0 LTS",
+  "units": "metres",
+  "runtimeUp": "+Y",
+  "facing": "+Z",
+  "blend": "seeker-hunter.blend",
+  "previewGlb": "seeker-hunter-preview.glb",
+  "glbBytes": 233428,
+  "parts": [
+    {
+      "name": "pelvis",
+      "joint": "hips",
+      "parent": "seeker_hunter",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "triangles": 124
+    },
+    {
+      "name": "belt",
+      "joint": "hips",
+      "parent": "pelvis",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "triangles": 72
+    },
+    {
+      "name": "pouches",
+      "joint": "hips",
+      "parent": "pelvis",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "triangles": 84
+    },
+    {
+      "name": "torso",
+      "joint": "spine",
+      "parent": "pelvis",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.14,
+        0.0
+      ],
+      "triangles": 348
+    },
+    {
+      "name": "chest",
+      "joint": "chest",
+      "parent": "torso",
+      "empty": true,
+      "pivot": [
+        0.0,
+        1.42,
+        -0.01
+      ],
+      "triangles": null
+    },
+    {
+      "name": "chest_plates",
+      "joint": "chest",
+      "parent": "chest",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.42,
+        -0.01
+      ],
+      "triangles": 36
+    },
+    {
+      "name": "harness",
+      "joint": "chest",
+      "parent": "chest",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.42,
+        -0.01
+      ],
+      "triangles": 252
+    },
+    {
+      "name": "head",
+      "joint": "head",
+      "parent": "chest",
+      "empty": true,
+      "pivot": [
+        0.0,
+        1.74,
+        -0.01
+      ],
+      "triangles": null
+    },
+    {
+      "name": "hood",
+      "joint": "head",
+      "parent": "head",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.74,
+        -0.01
+      ],
+      "triangles": 668
+    },
+    {
+      "name": "hood_trim",
+      "joint": "head",
+      "parent": "head",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.74,
+        -0.01
+      ],
+      "triangles": 72
+    },
+    {
+      "name": "face_plate",
+      "joint": "head",
+      "parent": "head",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.74,
+        -0.01
+      ],
+      "triangles": 140
+    },
+    {
+      "name": "visor",
+      "joint": "head",
+      "parent": "head",
+      "empty": false,
+      "pivot": [
+        0.0,
+        1.74,
+        -0.01
+      ],
+      "triangles": 36
+    },
+    {
+      "name": "upper_arm.R",
+      "joint": "upper_arm.R",
+      "parent": "chest",
+      "empty": false,
+      "pivot": [
+        -0.237,
+        1.655,
+        -0.065
+      ],
+      "triangles": 76
+    },
+    {
+      "name": "shoulder_plate.R",
+      "joint": "upper_arm.R",
+      "parent": "upper_arm.R",
+      "empty": false,
+      "pivot": [
+        -0.237,
+        1.655,
+        -0.065
+      ],
+      "triangles": 24
+    },
+    {
+      "name": "deltoid_plate.R",
+      "joint": "upper_arm.R",
+      "parent": "upper_arm.R",
+      "empty": false,
+      "pivot": [
+        -0.237,
+        1.655,
+        -0.065
+      ],
+      "triangles": 24
+    },
+    {
+      "name": "forearm.R",
+      "joint": "forearm.R",
+      "parent": "upper_arm.R",
+      "empty": false,
+      "pivot": [
+        -0.305,
+        1.385,
+        -0.085
+      ],
+      "triangles": 56
+    },
+    {
+      "name": "forearm_plate.R",
+      "joint": "forearm.R",
+      "parent": "forearm.R",
+      "empty": false,
+      "pivot": [
+        -0.305,
+        1.385,
+        -0.085
+      ],
+      "triangles": 24
+    },
+    {
+      "name": "glove.R",
+      "joint": "hand.R",
+      "parent": "forearm.R",
+      "empty": false,
+      "pivot": [
+        -0.385,
+        1.135,
+        -0.03
+      ],
+      "triangles": 108
+    },
+    {
+      "name": "fingers.R",
+      "joint": "fingers.R",
+      "parent": "glove.R",
+      "empty": false,
+      "pivot": [
+        -0.388,
+        0.968,
+        0.01
+      ],
+      "triangles": 76
+    },
+    {
+      "name": "thumb.R",
+      "joint": "thumb.R",
+      "parent": "glove.R",
+      "empty": false,
+      "pivot": [
+        -0.372,
+        1.07,
+        0.03
+      ],
+      "triangles": 44
+    },
+    {
+      "name": "weapon_socket",
+      "joint": "weapon_socket",
+      "parent": "glove.R",
+      "empty": true,
+      "pivot": [
+        -0.39,
+        0.99,
+        0.005
+      ],
+      "triangles": null
+    },
+    {
+      "name": "weapon_socket_marker",
+      "joint": null,
+      "parent": "weapon_socket",
+      "empty": false,
+      "pivot": [
+        -0.39,
+        0.99,
+        0.005
+      ],
+      "triangles": 24
+    },
+    {
+      "name": "thigh.R",
+      "joint": "thigh.R",
+      "parent": "pelvis",
+      "empty": false,
+      "pivot": [
+        -0.12,
+        0.99,
+        0.025
+      ],
+      "triangles": 92
+    },
+    {
+      "name": "holster",
+      "joint": "thigh.R",
+      "parent": "thigh.R",
+      "empty": false,
+      "pivot": [
+        -0.12,
+        0.99,
+        0.025
+      ],
+      "triangles": 24
+    },
+    {
+      "name": "shin.R",
+      "joint": "shin.R",
+      "parent": "thigh.R",
+      "empty": false,
+      "pivot": [
+        -0.186,
+        0.6,
+        0.02
+      ],
+      "triangles": 164
+    },
+    {
+      "name": "knee_plate.R",
+      "joint": "shin.R",
+      "parent": "shin.R",
+      "empty": false,
+      "pivot": [
+        -0.186,
+        0.6,
+        0.02
+      ],
+      "triangles": 128
+    },
+    {
+      "name": "sneaker.R",
+      "joint": "foot.R",
+      "parent": "shin.R",
+      "empty": false,
+      "pivot": [
+        -0.25,
+        0.13,
+        -0.02
+      ],
+      "triangles": 148
+    },
+    {
+      "name": "upper_arm.L",
+      "joint": "upper_arm.L",
+      "parent": "chest",
+      "empty": false,
+      "pivot": [
+        0.237,
+        1.655,
+        -0.065
+      ],
+      "triangles": 76
+    },
+    {
+      "name": "shoulder_plate.L",
+      "joint": "upper_arm.L",
+      "parent": "upper_arm.L",
+      "empty": false,
+      "pivot": [
+        0.237,
+        1.655,
+        -0.065
+      ],
+      "triangles": 24
+    },
+    {
+      "name": "deltoid_plate.L",
+      "joint": "upper_arm.L",
+      "parent": "upper_arm.L",
+      "empty": false,
+      "pivot": [
+        0.237,
+        1.655,
+        -0.065
+      ],
+      "triangles": 24
+    },
+    {
+      "name": "forearm.L",
+      "joint": "forearm.L",
+      "parent": "upper_arm.L",
+      "empty": false,
+      "pivot": [
+        0.305,
+        1.385,
+        -0.085
+      ],
+      "triangles": 56
+    },
+    {
+      "name": "forearm_plate.L",
+      "joint": "forearm.L",
+      "parent": "forearm.L",
+      "empty": false,
+      "pivot": [
+        0.305,
+        1.385,
+        -0.085
+      ],
+      "triangles": 24
+    },
+    {
+      "name": "glove.L",
+      "joint": "hand.L",
+      "parent": "forearm.L",
+      "empty": false,
+      "pivot": [
+        0.385,
+        1.135,
+        -0.03
+      ],
+      "triangles": 108
+    },
+    {
+      "name": "fingers.L",
+      "joint": "fingers.L",
+      "parent": "glove.L",
+      "empty": false,
+      "pivot": [
+        0.388,
+        0.968,
+        0.01
+      ],
+      "triangles": 76
+    },
+    {
+      "name": "thumb.L",
+      "joint": "thumb.L",
+      "parent": "glove.L",
+      "empty": false,
+      "pivot": [
+        0.372,
+        1.07,
+        0.03
+      ],
+      "triangles": 44
+    },
+    {
+      "name": "thigh.L",
+      "joint": "thigh.L",
+      "parent": "pelvis",
+      "empty": false,
+      "pivot": [
+        0.12,
+        0.99,
+        0.025
+      ],
+      "triangles": 92
+    },
+    {
+      "name": "shin.L",
+      "joint": "shin.L",
+      "parent": "thigh.L",
+      "empty": false,
+      "pivot": [
+        0.186,
+        0.6,
+        0.02
+      ],
+      "triangles": 164
+    },
+    {
+      "name": "knee_plate.L",
+      "joint": "shin.L",
+      "parent": "shin.L",
+      "empty": false,
+      "pivot": [
+        0.186,
+        0.6,
+        0.02
+      ],
+      "triangles": 128
+    },
+    {
+      "name": "sneaker.L",
+      "joint": "foot.L",
+      "parent": "shin.L",
+      "empty": false,
+      "pivot": [
+        0.25,
+        0.13,
+        -0.02
+      ],
+      "triangles": 148
+    }
+  ],
+  "export": {
+    "stage": "structure",
+    "meshObjects": 36,
+    "triangles": 3808,
+    "gameBounds": {
+      "min": [
+        -0.4555,
+        0.0,
+        -0.268
+      ],
+      "max": [
+        0.4555,
+        2.16,
+        0.2698
+      ]
+    },
+    "heightMetres": 2.16,
+    "failures": []
+  }
+}

@@ -8,7 +8,7 @@ Read this file before changing the repository. Also read the `AGENTS.md` files o
 - The Rust server samples and withholds Hider poses. Missing history must never fall back to current poses. Never expose current hidden transforms in roster fields, diagnostics, scene objects, shadows, spatial events, or browser test hooks.
 - Shots test PRESENT authoritative positions, not historical echoes. Generic lag-compensation rewinds would undo Echo's mechanic.
 - `shared/rules.json`, `shared/arena.json`, and the documented generated map/fixture pipeline define shared gameplay data. Motor changes require TS/Rust fixture parity review and tests. These are separate TS/Rust implementations, not one shared WASM motor.
-- Rendering and UI never own game authority. Preserve the hooded Hider (`hider-hoodie`; the striped blocky Hider remains only as its loading and failure fallback), blue armored Seeker, orange blaster, and cyan/magenta art direction unless explicitly asked to change them.
+- Rendering and UI never own game authority. Preserve the hooded Hider (`hider-hoodie`), the hooded Seeker with its red visor and accents (`seeker-hunter`), its black-and-red generated weapons (one per weapon type, always held), and the cyan/magenta art direction unless explicitly asked to change them. The procedural striped Hider, armored Seeker and orange blaster remain only as loading and failure fallbacks.
 
 ## Change workflow
 

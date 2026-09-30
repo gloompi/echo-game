@@ -1,0 +1,116 @@
+{
+  "glb": "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-hider-hoodie\\public\\assets\\characters\\hider-hoodie.glb",
+  "kind": "character",
+  "bytes": 1642840,
+  "checkedAtUtc": "2026-09-30T18:44:31.564394+00:00",
+  "blender": "5.2.0 LTS",
+  "importedFromCopiedDirectory": true,
+  "meshObjects": 1,
+  "triangles": 8998,
+  "materials": [
+    "hider_body",
+    "tint_light"
+  ],
+  "textures": [
+    {
+      "name": "texture_0",
+      "size": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "gameBounds": {
+    "min": [
+      -0.6882,
+      -0.0,
+      -0.2466
+    ],
+    "max": [
+      0.6882,
+      2.16,
+      0.2466
+    ]
+  },
+  "heightMetres": 2.16,
+  "collisionHeightMetres": 2.16,
+  "skin": {
+    "armatures": 1,
+    "bones": 25,
+    "skinnedMeshes": 1,
+    "maxInfluences": 4
+  },
+  "clips": [
+    {
+      "name": "crouch_idle",
+      "frames": [
+        0.8,
+        48.8
+      ],
+      "seconds": 2.0
+    },
+    {
+      "name": "crouch_walk",
+      "frames": [
+        0.8,
+        16.8
+      ],
+      "seconds": 0.6667
+    },
+    {
+      "name": "hit",
+      "frames": [
+        0.8,
+        10.4
+      ],
+      "seconds": 0.4
+    },
+    {
+      "name": "idle",
+      "frames": [
+        0.8,
+        48.8
+      ],
+      "seconds": 2.0
+    },
+    {
+      "name": "jump",
+      "frames": [
+        0.8,
+        19.2
+      ],
+      "seconds": 0.7667
+    },
+    {
+      "name": "run",
+      "frames": [
+        0.8,
+        16.8
+      ],
+      "seconds": 0.6667
+    },
+    {
+      "name": "slide",
+      "frames": [
+        0.8,
+        8.8
+      ],
+      "seconds": 0.3333
+    },
+    {
+      "name": "wave",
+      "frames": [
+        0.8,
+        24.8
+      ],
+      "seconds": 1.0
+    }
+  ],
+  "crouchPoseHeights": {
+    "crouch_idle": 1.0773,
+    "crouch_walk": 1.0959
+  },
+  "status": "passed",
+  "failures": [],
+  "warnings": []
+}

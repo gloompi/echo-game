@@ -13,7 +13,10 @@ references. New assets are judged against their approved brief and reference pac
    [brief-templates.md](../.agents/skills/echo-3d-assets/references/brief-templates.md).
 2. **References**: user images or Higgsfield-generated concepts, then turnarounds from the
    approved concept, recorded in `refs/provenance.json`.
-3. **Passes**: blockout, structure, form, material, rig/motion (characters) or dressing
+3. **Generate, then passes live**: the Higgsfield plugin generates the mesh into the open
+   Blender (auto-rigged characters; map props extracted from the concept sheets), then the
+   agent cleans it up through the Blender MCP, one visible step at a time with viewport
+   screenshots: blockout, structure, form, material, rig/motion (characters) or dressing
    (maps), optimize. Every pass renders fixed views and a reference comparison sheet and
    records a review decision. Maps are playtested as a graybox before art.
 4. **Export and validation**: clean reimport of the runtime GLB against budgets and contracts.
@@ -23,21 +26,22 @@ references. New assets are judged against their approved brief and reference pac
 
 ```text
 assets-src/<characters|worlds|props>/<id>/   brief.md, refs/, reviews/, <id>.blend, reports
-scripts/characters/<id>.py, scripts/worlds/<id>.py   reproducible Blender builds
+assets-src/<...>/<id>/build-log.py         accepted live-modeling steps
+scripts/worlds/<id>.py                      map layout: map.json and tagged colliders
 scripts/blender/                            shared review and validation tools
 public/assets/<characters|worlds>/<id>.glb  runtime exports only (publicly served)
 ```
 
 ## Tools
 
-| Tool                                                        | Use                                                                                              |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Blender 5.2 LTS                                             | Authoring and headless builds: `/c/Program Files/Blender Foundation/Blender 5.2/blender.exe`     |
-| Blender MCP (Blender Lab add-on + Claude Desktop extension) | Live scene inspection, edits, screenshots from an agent; server on `localhost:9876`              |
-| Higgsfield CLI and skills                                   | Concept, turnaround and optional image-to-3D generation with the user's account and budget       |
-| Higgsfield Blender plugin                                   | Optional in-Blender generation; keep its own MCP bridge off while the Blender MCP uses port 9876 |
-| `scripts/blender/review_renders.py`                         | Fixed review views and `sheet.png`                                                               |
-| `scripts/blender/validate_glb.py`                           | Budget and contract gate on a clean reimport                                                     |
+| Tool                                                        | Use                                                                                                                  |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Blender 5.2 LTS                                             | Live authoring; background only for review/validation: `/c/Program Files/Blender Foundation/Blender 5.2/blender.exe` |
+| Blender MCP (Blender Lab add-on + Claude Desktop extension) | Live scene inspection, edits, screenshots from an agent; server on `localhost:9876`                                  |
+| Higgsfield CLI and skills                                   | Concepts, turnarounds, cost estimates, prompted extraction and job recovery within the brief's credit budget         |
+| Higgsfield Blender plugin + hosted connector                | In-scene 3D generation, auto-rig, remesh (`bl_*` tools); connects out to its bridge, runs alongside the Blender MCP  |
+| `scripts/blender/review_renders.py`                         | Fixed review views and `sheet.png`                                                                                   |
+| `scripts/blender/validate_glb.py`                           | Budget and contract gate on a clean reimport                                                                         |
 
 `scripts/blender/` is Python run inside Blender. It is not covered by the Node/TypeScript
 lint and test gates, so each tool reports its own failures through a nonzero exit code.
@@ -100,3 +104,9 @@ skinned GLB characters exists in the client.
 Update, 28 September 2026: `hider-hoodie` (`assets-src/characters/hider-hoodie/`) was
 produced with this pipeline and is the in-game Hider. The client loads skinned GLB characters
 through `client/character-assets.ts`; the Seeker is still procedural.
+
+Update, 30 September 2026: the in-game Hider and Seeker are now generated with the Higgsfield
+route (picture, image-to-3D mesh, live cleanup, auto-rig, clips keyed live in Blender):
+`assets-src/characters/hider-hoodie/body-gen/` and `seeker-hunter/body-gen/`. The Seeker's four
+weapons (`seeker-hunter/weapons-gen/`, runtime GLBs in `public/assets/weapons/`) share one grip
+layout, so one clip set holds each of them. Each folder's `manifest.json` records every job ID.

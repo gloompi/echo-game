@@ -14,14 +14,24 @@ import {
  */
 export interface CharacterAssetDefinition {
   readonly url: string;
-  /** Colour per skin for the materials named `tint_light`; every other material keeps its own. */
+  /** Colour per skin for the materials named `tint_light`; every other material keeps its own.
+   * An emissive tint material glows in the skin colour too. */
   readonly tints: Readonly<Record<Skin, number>>;
   readonly speeds: AuthoredSpeeds;
+  /** Upper-body clip the pose's `waving` flag plays over the base clip. It must animate only
+   * upper-body bones: every base clip is split at its bones. */
+  readonly overlay: string;
+  /** Bone that holds the weapon (+Z muzzle, +Y up, origin in the grip), if the character carries
+   * one. */
+  readonly weaponSocket?: string;
+  /** Bone that leans the upper body (and the held weapon) into the view pitch, if any. */
+  readonly pitchBone?: string;
 }
 
-/** The hooded Hider, `assets-src/characters/hider-hoodie`. The hoodie colours are the brief's
- * approved skin mapping: CIELAB L* >= 50, and blues (hue 190-240 degrees) L* >= 65, so no skin
- * reads as the blue Seeker. Run and crouch walk were authored for 6.4 and 2.88 m/s.
+/** The hooded Hider, `assets-src/characters/hider-hoodie` (generated body in `body-gen/`). The
+ * hoodie colours are the brief's approved skin mapping: CIELAB L* >= 50, and blues (hue 190-240
+ * degrees) L* >= 65, so no skin reads as the Seeker. Speeds are the measured foot speeds of the
+ * run and crouch walk clips.
  */
 export const HIDER_HOODIE: CharacterAssetDefinition = {
   url: '/assets/characters/hider-hoodie.glb',
@@ -35,27 +45,55 @@ export const HIDER_HOODIE: CharacterAssetDefinition = {
     sunset: 0xe3b050,
     carbon: 0x7c828c,
   },
-  speeds: { run: 6.4, crouchWalk: 2.88 },
+  speeds: { run: 5.07, crouchWalk: 1.46 },
+  overlay: 'wave',
+};
+
+/** The hooded Seeker, `assets-src/characters/seeker-hunter/body-gen`. It always carries its
+ * weapon; skins recolour the glowing accents (the sheet's colour variations; classic is red).
+ */
+export const SEEKER_HUNTER: CharacterAssetDefinition = {
+  url: '/assets/characters/seeker-hunter.glb',
+  tints: {
+    classic: 0xfa4e4d,
+    cobalt: 0x3d7dff,
+    ember: 0xff7a2e,
+    jade: 0x2fdc9a,
+    violet: 0xa45cff,
+    arctic: 0x9ee8ff,
+    sunset: 0xffc23d,
+    carbon: 0xe8ecf2,
+  },
+  speeds: { run: 5.24, crouchWalk: 2.0 },
+  overlay: 'aim',
+  weaponSocket: 'weapon_socket',
+  pitchBone: 'chest.upper',
 };
 
 export const TINT_MATERIAL = 'tint_light';
-/** Every clip the runtime plays: the base clips plus the hit and wave overlays. */
-export const CHARACTER_CLIPS: readonly string[] = [...BASE_CLIPS, 'hit', 'wave'];
-/** Bounding-sphere growth over the bind pose. The clips reach about 0.9 m from the body axis
- * and 2.26 m up (hider-hoodie pass-5 review); a fixed sphere keeps culling from skinning every
- * vertex on the CPU.
+/** Every clip the runtime plays for a character: the base clips, the hit and its overlay. */
+export const characterClips = (definition: CharacterAssetDefinition): readonly string[] => [
+  ...BASE_CLIPS,
+  'hit',
+  definition.overlay,
+];
+/** A Blender bone name as three.js names its node (it strips `.` and other reserved characters). */
+export const nodeName = (bone: string): string => T.PropertyBinding.sanitizeNodeName(bone);
+/** Bounding-sphere growth over the bind pose; a fixed sphere keeps culling from skinning every
+ * vertex on the CPU. The clips (and the Seeker's forward-held weapon) stay inside it; the model
+ * tests sample every clip, overlay and speed against it.
  */
-const POSE_MARGIN_METRES = 0.3;
+const POSE_MARGIN_METRES = 0.4;
 
 export interface CharacterTemplate {
   readonly definition: CharacterAssetDefinition;
   /** Source graph: cloned per character, never added to a scene. */
   readonly scene: T.Object3D;
-  /** Base clips split at the bones the wave animates, so the wave can replace the upper body
-   * while the legs keep their clip. */
+  /** Base clips split at the bones the overlay animates, so the overlay can replace the upper
+   * body while the legs keep their clip. */
   readonly lower: Readonly<Record<BaseClip, T.AnimationClip>>;
   readonly upper: Readonly<Record<BaseClip, T.AnimationClip>>;
-  readonly wave: T.AnimationClip;
+  readonly overlay: T.AnimationClip;
   /** Additive, relative to its first (idle) frame, so the flinch plays over any base clip. */
   readonly hit: T.AnimationClip;
   /** The shared `tint_light` material for a skin. The template owns it for the page's lifetime;
@@ -85,7 +123,7 @@ export function prepareCharacterTemplate(
   definition: CharacterAssetDefinition,
 ): CharacterTemplate {
   const clips = new Map<string, T.AnimationClip>(animations.map((clip) => [clip.name, clip]));
-  const missing = CHARACTER_CLIPS.filter((name) => !clips.has(name));
+  const missing = characterClips(definition).filter((name) => !clips.has(name));
   if (missing.length) throw new Error(`Character model is missing clips: ${missing.join(', ')}.`);
   const required = (name: string): T.AnimationClip => {
     const found = clips.get(name);
@@ -97,8 +135,8 @@ export function prepareCharacterTemplate(
   const tintSource = meshes.map((mesh) => mesh.material).find(isTintMaterial);
   if (!tintSource) throw new Error(`Character model has no ${TINT_MATERIAL} material.`);
 
-  const wave = required('wave'),
-    upperBones = new Set(wave.tracks.map(boneOf));
+  const overlay = required(definition.overlay),
+    upperBones = new Set(overlay.tracks.map(boneOf));
   const split = (upper: boolean) =>
     perBaseClip((name) => {
       const source = required(name);
@@ -108,7 +146,10 @@ export function prepareCharacterTemplate(
   const lower = split(false),
     upper = split(true);
   if (BASE_CLIPS.some((name) => !lower[name].tracks.length))
-    throw new Error('The wave clip must leave the legs to the base clips.');
+    throw new Error(`The ${definition.overlay} clip must leave the legs to the base clips.`);
+  for (const bone of [definition.weaponSocket, definition.pitchBone])
+    if (bone && !scene.getObjectByName(nodeName(bone)))
+      throw new Error(`Character model has no ${bone} bone.`);
   // makeClipAdditive rewrites track values, so it works on a copy.
   const hit = T.AnimationUtils.makeClipAdditive(required('hit').clone());
 
@@ -128,13 +169,15 @@ export function prepareCharacterTemplate(
     scene,
     lower,
     upper,
-    wave,
+    overlay,
     hit,
     tint(skin) {
       let material = tints.get(skin);
       if (!material) {
         const tinted = tintSource.clone();
         tinted.color.setHex(definition.tints[skin]);
+        // A glowing accent keeps glowing, in the skin colour.
+        if (tintSource.emissive.getHex() !== 0) tinted.emissive.setHex(definition.tints[skin]);
         tints.set(skin, tinted);
         material = tinted;
       }

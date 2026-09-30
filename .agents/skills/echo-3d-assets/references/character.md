@@ -8,9 +8,9 @@ eye 1.76 m, crouch height 1.12 m, crouch eye 0.92 m.
 
 ```text
 assets-src/characters/<id>/
-  brief.md  refs/  reviews/  <id>.blend  validation-glb.json
-scripts/characters/<id>.py            reproducible build (recommended; required for the
-                                      scripted route), writes the .blend and the GLB
+  brief.md  refs/  reviews/  validation-glb.json
+  <id>.blend                          source: generated mesh cleaned up live through the MCP
+  build-log.py                        generation job IDs and accepted live steps, in order
 public/assets/characters/<id>.glb     runtime export only
 ```
 
@@ -44,6 +44,9 @@ public/assets/characters/<id>.glb     runtime export only
 
 ## Rig
 
+- Start from the plugin's auto-rig on the cleaned mesh
+  ([live-blender.md](live-blender.md#6-auto-rig-characters)), then conform it to this
+  contract live: rename bones, add `root` and sockets, drop unused bones.
 - One armature, at most 64 deform bones, at most 4 influences per vertex (Three.js
   skinning). Suggested names: `root` (at the feet), `hips`, `spine`, `chest`, `neck`,
   `head`, `upper_arm.L/R`, `forearm.L/R`, `hand.L/R`, `thigh.L/R`, `shin.L/R`, `foot.L/R`.
@@ -80,25 +83,34 @@ Check loops across the seam and foot contact in the side view.
 
 ## Integration (separate echo-change task)
 
-Implemented for the Hider (`hider-hoodie`):
+Implemented for the Hider (`hider-hoodie`) and the Seeker (`seeker-hunter`):
 
-- `client/character-assets.ts` defines each authored character (URL, per-skin tints, the
-  speeds its `run` and `crouch_walk` were authored for). `CharacterModel` loads the GLB once
-  per page and rejects a model without a skinned mesh, `tint_light` or any Hider clip above.
+- `client/character-assets.ts` defines each authored character: URL, per-skin tints, the
+  speeds its `run` and `crouch_walk` were authored for (measured foot speeds), its upper-body
+  `overlay` clip (`wave` or `aim`), and optionally a `weaponSocket` and a `pitchBone`.
+  `CharacterModel` loads the GLB once per page and rejects a model without a skinned mesh,
+  `tint_light`, any required clip, an overlay that moves the legs, or a named bone it lacks.
+  An emissive `tint_light` glows in the skin colour.
 - `client/skinned-character.ts` clones the whole scene per player (`SkeletonUtils.clone`;
   three.js makes one SkinnedMesh per primitive, rebound here to one skeleton) and plays the
   clips on one `AnimationMixer`. The legs play the base clip; the upper body plays the same
-  clip in step, or `wave`; `hit` is additive. It disposes only its own skeleton, never the
-  shared geometry, materials or clips.
+  clip in step, or the overlay; `hit` is additive. A Seeker holds its weapon at
+  `weapon_socket` and leans `chest.upper` into the view pitch. It disposes only its own
+  skeleton, never the shared geometry, materials, clips or weapons.
+- `client/weapon-assets.ts` loads the four generated weapons once per page (metres, +Z muzzle,
+  origin in the grip, `muzzle` node). All four share one layout, front grip 0.31 m ahead of and
+  0.03 m above the grip, so one Seeker clip set holds each. The procedural weapons stay as the
+  fallback, also in the first-person view.
 - `client/game/character-motion.ts` chooses the clip from the `Pose` fields (`moving`,
   `grounded`, `crouched`, `sliding`, `waving`) and scales `run` and `crouch_walk` with the
-  ground speed. `wave` and `hit` never play over a crouch or slide: authored standing, they
-  would lift the head above the crouch clearance.
+  ground speed (0.5-2x). The overlay and `hit` never play over a crouch or slide: authored
+  standing, they would lift the head above the crouch clearance.
 - `Character` in `client/models.ts` keeps the procedural body as the fallback while the
   model loads or if it fails. The ghost echo swaps in the ghost materials.
-- Culling uses each mesh's bind-pose bounding sphere grown by 0.3 m. A clip that reaches
-  farther needs a larger margin; `tests/character-model.test.ts` checks every clip.
+- Culling uses each mesh's bind-pose bounding sphere grown by 0.4 m. Export with no scaled
+  node: three.js culls with the node's world matrix, so a leftover armature scale shrinks the
+  sphere. `tests/character-model.test.ts` and `tests/seeker-model.test.ts` check every clip,
+  both hands on every weapon, and the crouch clearance with the weapon held.
 
 Observation privacy is unchanged: the character only renders poses the client was
-authorized to receive. Not implemented yet: a Seeker GLB (weapon attachment at
-`weapon_socket`, the `aim` clip with camera pitch) and `tint_dark`.
+authorized to receive. Not implemented yet: `tint_dark`.

@@ -1,0 +1,116 @@
+{
+  "glb": "C:\\Users\\MyMUSTEX\\Desktop\\works\\echo-game-hider-hoodie\\public\\assets\\characters\\seeker-hunter.glb",
+  "kind": "character",
+  "bytes": 1633076,
+  "checkedAtUtc": "2026-09-30T18:44:34.144752+00:00",
+  "blender": "5.2.0 LTS",
+  "importedFromCopiedDirectory": true,
+  "meshObjects": 1,
+  "triangles": 8999,
+  "materials": [
+    "seeker_body",
+    "tint_light"
+  ],
+  "textures": [
+    {
+      "name": "texture_0",
+      "size": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "gameBounds": {
+    "min": [
+      -0.6444,
+      0.0,
+      -0.2325
+    ],
+    "max": [
+      0.6444,
+      2.16,
+      0.2325
+    ]
+  },
+  "heightMetres": 2.16,
+  "collisionHeightMetres": 2.16,
+  "skin": {
+    "armatures": 1,
+    "bones": 26,
+    "skinnedMeshes": 1,
+    "maxInfluences": 4
+  },
+  "clips": [
+    {
+      "name": "aim",
+      "frames": [
+        0.8,
+        24.8
+      ],
+      "seconds": 1.0
+    },
+    {
+      "name": "crouch_idle",
+      "frames": [
+        0.8,
+        48.8
+      ],
+      "seconds": 2.0
+    },
+    {
+      "name": "crouch_walk",
+      "frames": [
+        0.8,
+        20.0
+      ],
+      "seconds": 0.8
+    },
+    {
+      "name": "hit",
+      "frames": [
+        0.8,
+        10.4
+      ],
+      "seconds": 0.4
+    },
+    {
+      "name": "idle",
+      "frames": [
+        0.8,
+        48.8
+      ],
+      "seconds": 2.0
+    },
+    {
+      "name": "jump",
+      "frames": [
+        0.8,
+        19.2
+      ],
+      "seconds": 0.7667
+    },
+    {
+      "name": "run",
+      "frames": [
+        0.8,
+        16.8
+      ],
+      "seconds": 0.6667
+    },
+    {
+      "name": "slide",
+      "frames": [
+        0.8,
+        8.8
+      ],
+      "seconds": 0.3333
+    }
+  ],
+  "crouchPoseHeights": {
+    "crouch_idle": 1.0907,
+    "crouch_walk": 1.1198
+  },
+  "status": "passed",
+  "failures": [],
+  "warnings": []
+}

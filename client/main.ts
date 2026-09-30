@@ -24,8 +24,9 @@ import {
   type PublicPlayer,
   type Role,
 } from '../shared/types.js';
-import { Character, makeWeapon } from './models.js';
-import { CharacterModel, HIDER_HOODIE } from './character-assets.js';
+import { Character, makeSeekerWeapon } from './models.js';
+import { CharacterModel, HIDER_HOODIE, SEEKER_HUNTER } from './character-assets.js';
+import { WeaponModels } from './weapon-assets.js';
 import { makeStage, CYAN } from './world.js';
 import { makeArena } from './map-world.js';
 import { ACTIVE_MAP, selectMap } from '../shared/map.js';
@@ -64,21 +65,37 @@ const stage = makeStage(),
   camera = new T.PerspectiveCamera(72, innerWidth / innerHeight, 0.05, 180),
   stageCamera = new T.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
 let arena: ReturnType<typeof makeArena> | null = null;
-let foregroundGun = makeWeapon();
+// Loaded once for the page; every Seeker and the first-person view share their meshes.
+const weaponModels = new WeaponModels();
+let foregroundGun = makeSeekerWeapon('blaster', weaponModels);
 foregroundGun.scale.setScalar(0.47);
 foregroundGun.position.set(0.27, -0.33, -0.49);
 foregroundGun.rotation.y = Math.PI;
 camera.add(foregroundGun);
 resizeRenderer();
-// Loaded once for the page; every Hider shares its geometry, materials and clips.
-const hiderModel = new CharacterModel(HIDER_HOODIE);
+// Loaded once for the page; every Hider (and every Seeker) shares its geometry, materials and
+// clips.
+const hiderModel = new CharacterModel(HIDER_HOODIE),
+  seekerModel = new CharacterModel(SEEKER_HUNTER);
 // Static asset diagnostics only: never actors or hidden poses.
 canvas.dataset.hiderModel = hiderModel.status.state;
+canvas.dataset.seekerModel = seekerModel.status.state;
+canvas.dataset.weaponModels = 'loading';
 void hiderModel.ready.then(() => {
   canvas.dataset.hiderModel = hiderModel.status.state;
 });
+void seekerModel.ready.then(() => {
+  canvas.dataset.seekerModel = seekerModel.status.state;
+});
+void weaponModels.ready.then(() => {
+  canvas.dataset.weaponModels = Object.values(weaponModels.status).every((s) => s === 'loaded')
+    ? 'loaded'
+    : 'error';
+});
 function makeCharacter(role: Role, ghost = false): Character {
-  return new Character(role, ghost, role === 'hider' ? hiderModel : undefined);
+  return role === 'hider'
+    ? new Character(role, ghost, hiderModel)
+    : new Character(role, ghost, seekerModel, weaponModels);
 }
 const heroHider = makeCharacter('hider'),
   heroSeeker = makeCharacter('seeker'),
@@ -802,9 +819,13 @@ function updateGame(dt: number, time: number) {
   }
   camera.updateMatrixWorld();
   const weapon = snapshot.self.weapon ?? 'blaster';
-  if (foregroundGun.userData.weapon !== weapon) {
+  // Rebuilt for a new weapon, and once when the generated model for it finishes loading.
+  if (
+    foregroundGun.userData.weapon !== weapon ||
+    foregroundGun.userData.generated !== weaponModels.has(weapon)
+  ) {
     foregroundGun.removeFromParent();
-    foregroundGun = makeWeapon(weapon);
+    foregroundGun = makeSeekerWeapon(weapon, weaponModels);
     foregroundGun.scale.setScalar(0.47);
     foregroundGun.rotation.y = Math.PI;
     camera.add(foregroundGun);

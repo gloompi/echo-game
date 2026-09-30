@@ -1,0 +1,144 @@
+{
+ "goal": "full seeker-hunter body: Higgsfield picture -> Higgsfield mesh -> live cleanup -> Higgsfield auto-rig",
+ "budgetCredits": 40,
+ "spentCredits": "11 + rigging (3d_rigging cost not reported by the API)",
+ "source": {
+  "file": "refs/00-source-sheet.png",
+  "sha256_16": "c95df72c4c3823cf"
+ },
+ "picture": {
+  "jobId": "41f9fd99-ff7b-4a2a-85ed-16d129aed0a8",
+  "model": "nano_banana_pro",
+  "params": {
+   "aspect_ratio": "1:1",
+   "resolution": "2k"
+  },
+  "prompt": "prompts/01a_apose_front.txt",
+  "inputs": [
+   "refs/00-source-sheet.png"
+  ],
+  "credits": 2,
+  "image": "refs/01a-apose-front-t1.png",
+  "image_hash": "980621a743d319a7",
+  "verdict": "pass (strict front A-pose, white background)"
+ },
+ "mesh": {
+  "jobId": "1b027ec5-c635-45b0-a9fd-575610acb9c2",
+  "model": "tripo_h3_1_image_to_3d",
+  "tool": "connector bl_image_to_3d",
+  "params": {
+   "enable_pbr": false,
+   "should_texture": true
+  },
+  "credits": 9,
+  "raw": "refs/raw-1b027ec5.glb",
+  "raw_tris": 1493904,
+  "note": "single front image: back inferred by the model, no double face (the multiview label problem does not apply)",
+  "cleanup": [
+   "imported with bl_import_model into Generated",
+   "rotation mode quaternion->XYZ, alpha forced to 1",
+   "scaled 2.16 m, rotated -90 deg Z to face -Y, transforms applied, feet at z=0",
+   "10 floater parts (<300 verts) deleted",
+   "decimate collapse to 9,000 tris, applied to object seeker_body (raw kept hidden)",
+   "flat shading"
+  ]
+ },
+ "rig": {
+  "jobId": "23f91660-49fb-4a0f-ab1d-7a0f11479ad8",
+  "model": "3d_rigging",
+  "tool": "bpy.ops.higgsfield.auto_rig(use_height=True, height_meters=2.16)",
+  "result": "seeker_rig (24 bones, Mixamo-style names) + seeker_body.rigged (8,999 tris, max 4 influences)",
+  "fixes": [
+   "returned at 1.70 m centred on origin (height param ignored); armature scaled x1.2706 and moved so feet are at z=0"
+  ],
+  "pose_test": "arms raised, forearm, knee bend and head turn deform correctly by eye",
+  "contract": {
+   "renamed": "Mixamo-style -> hips/spine/chest/chest.upper/neck/head/shoulder/upper_arm/forearm/hand/thigh/shin/foot/toe .L/.R",
+   "added": [
+    "root (feet, parent of hips)",
+    "weapon_socket under hand.R, +Z = muzzle (forward)"
+   ],
+   "deform_bones": 22
+  }
+ },
+ "blender": {
+  "file": "seeker-body.blend",
+  "scene": "Seeker body gen"
+ },
+ "review": "review-v1-rigged.png",
+ "known_issues": [
+  "red visor texture smears onto both hood sides",
+  "texture noise from decimation, faceting looks noisy rather than clean planes",
+  "bones not yet renamed to the Echo rig contract; no root or weapon_socket",
+  "not exported, no clips"
+ ],
+ "verdict": "model accepted by the user; clips awaiting review",
+ "updatedUtc": "2026-09-30T18:57:37+00:00",
+ "animation": {
+  "authored": "live in Blender via MCP, keyframed with anim_helpers.py (analytic leg IK, target-pointed aim arms), 30 fps, in place",
+  "clips": {
+   "idle": "2.0 s loop",
+   "run": "0.67 s loop, ~6.4 m/s, feet planted within 2 mm, short flight",
+   "jump": "0.77 s one-shot matching game airtime (jumpSpeed 9.2, gravity 24): takeoff stretch, apex tuck, landing reach; last frame held while falling",
+   "crouch_idle": "2.0 s loop, top 1.106 m",
+   "crouch_walk": "1.33 s loop, top 1.100 m",
+   "slide": "hold, top 1.079 m",
+   "hit": "0.43 s one-shot",
+   "aim": "1.0 s hold, weapon_socket at chest height pointing forward"
+  },
+  "crouch_centring": "hips and feet shifted 0.27 m back so crouch/slide stay within 0.04 m of the origin",
+  "export": {
+   "file": "seeker-hunter-gen.glb",
+   "bytes": 1640000.0,
+   "texture": "1024 px webp"
+  },
+  "validation": {
+   "file": "validation-glb.json",
+   "status": "failed",
+   "failure": "centre check measures the aim clip (arms and weapon forward): 0.18 m forward, limit 0.15",
+   "passed": [
+    "8,999 tris",
+    "26 bones, max 4 influences",
+    "all 8 clips present",
+    "crouch heights 1.091 / 1.100 m",
+    "height 2.166 m"
+   ]
+  },
+  "viewer": "session scratchpad viewer/ (Three.js 0.186, same as the game), not in the repo",
+  "weapon": {
+   "rule": "the Seeker always carries the blaster: every clip is two-handed (right hand on the grip via weapon_socket, left hand under the barrel)",
+   "method": "hold_weapon() in anim_helpers.py: grip/muzzle targets relative to chest.upper (world muzzle direction for crouch, slide and aim), two-bone arm IK, socket solved onto the grip",
+   "reference": "blaster.ref in Refs (copy of makeBlaster() at 0.47 scale, bone-parented to weapon_socket, not exported); the game attaches its own weapon at runtime",
+   "review": "review-clips-armed.png"
+  }
+ },
+ "rightHandFix": {
+  "date": "2026-09-30",
+  "problem": "right wrist folded ~115 deg: weapon_socket was oriented for a hand hanging in the A-pose, so pointing the gun forward forced the wrist down",
+  "fix": [
+   "weapon_socket re-oriented to a natural pistol grip: hand in line with the forearm, 20 deg down, palm toward the gun; socket at the fist centre (45% along hand.R, 3 cm to the palm)",
+   "left hand given a full frame (palm on the front grip) instead of a direction only",
+   "hold search rejects wrists bent > 40 deg; jump uses one searched hold per key",
+   "bug fixed: PoseBone.matrix leaked scale; search now attaches its weapon first"
+  ],
+  "result": "all clips x all weapons, every frame: wrists <= 39 deg, left-hand gap <= 1.9 cm; blaster/repeater/web never enter the body; scatter grazes (2-9 face pairs) in slide, aim and crouch clips",
+  "review": "weapons-gen/review-right-hand.png, weapons-gen/review-weapons-in-clips.png"
+ },
+ "integration": {
+  "date": "2026-09-30",
+  "runtime": "public/assets/characters/seeker-hunter.glb (definition SEEKER_HUNTER in client/character-assets.ts)",
+  "changes": [
+   "accent faces split into an emissive tint_light material (741 faces) so skins recolour and glow",
+   "aim keyed on upper-body bones only (the runtime overlay)",
+   "crouch_walk re-authored: 0.5 m stride shifted forward (0.30 ahead / 0.20 behind), 0.8 s cycle",
+   "armature scale (0.0127 from auto_rig) baked, location keys rescaled; GLB has no scaled node",
+   "quaternion keys kept on one hemisphere",
+   "raw generation and helper objects stripped from the .blend (3.8 MB)"
+  ],
+  "authoredSpeeds": {
+   "run": 5.24,
+   "crouchWalk": 2.0
+  },
+  "validation": "validate_glb passed (0 failures, 0 warnings)"
+ }
+}

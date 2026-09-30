@@ -1,7 +1,12 @@
 import * as T from 'three';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 import type { Skin } from '../shared/balance.js';
-import { TINT_MATERIAL, skinnedMeshes, type CharacterTemplate } from './character-assets.js';
+import {
+  TINT_MATERIAL,
+  nodeName,
+  skinnedMeshes,
+  type CharacterTemplate,
+} from './character-assets.js';
 import {
   HELD_CLIPS,
   perBaseClip,
@@ -12,6 +17,9 @@ import {
 
 /** Cross-fade time between clips, in seconds. */
 const FADE_SECONDS = 0.15;
+/** Share of the view pitch the pitch bone takes; the clip's own pose carries the rest. */
+const PITCH_SHARE = 0.8;
+const MAX_PITCH = 1.2;
 
 /** Actions animating the same bones. The target fades in linearly while the others fade out,
  * and weights are normalized, so an interrupted fade never blends toward the bind pose.
@@ -58,8 +66,9 @@ export interface GhostMaterials {
 
 /** One player's instance of an authored character. It shares the template's geometry,
  * materials and clips, and owns its skeleton and mixer. The legs always play the base clip; the
- * upper body plays the same clip in step, or the wave; the hit flinch is added over both where
- * the motion policy allows it.
+ * upper body plays the same clip in step, or the overlay (wave or aim); the hit flinch is added
+ * over both where the motion policy allows it. A character with a weapon socket holds the weapon
+ * it is given, and one with a pitch bone leans into the view pitch.
  */
 export class SkinnedCharacter {
   readonly root: T.Object3D;
@@ -70,8 +79,11 @@ export class SkinnedCharacter {
   private readonly upperBody = new BlendLayer();
   private readonly lower: Record<BaseClip, T.AnimationAction>;
   private readonly upper: Record<BaseClip, T.AnimationAction>;
-  private readonly wave: T.AnimationAction;
+  private readonly overlay: T.AnimationAction;
   private readonly flinch: T.AnimationAction;
+  private readonly socket: T.Object3D | null;
+  private readonly pitchBone: T.Object3D | null;
+  private weapon: T.Object3D | null = null;
   private flinchWeight = 0;
   private skin: Skin | null = null;
 
@@ -107,7 +119,10 @@ export class SkinnedCharacter {
     this.mixer = new T.AnimationMixer(this.root);
     this.lower = perBaseClip((name) => this.baseAction(name, template.lower[name]));
     this.upper = perBaseClip((name) => this.baseAction(name, template.upper[name]));
-    this.wave = this.mixer.clipAction(template.wave);
+    this.overlay = this.mixer.clipAction(template.overlay);
+    const { weaponSocket, pitchBone } = template.definition;
+    this.socket = weaponSocket ? (this.root.getObjectByName(nodeName(weaponSocket)) ?? null) : null;
+    this.pitchBone = pitchBone ? (this.root.getObjectByName(nodeName(pitchBone)) ?? null) : null;
     this.flinch = this.mixer.clipAction(template.hit).setLoop(T.LoopOnce, 1);
   }
 
@@ -127,6 +142,33 @@ export class SkinnedCharacter {
     for (const mesh of this.tinted) mesh.material = material;
   }
 
+  /** Puts `weapon` (metres, +Z muzzle, origin in the grip) in the hand, replacing the previous
+   * one; null empties the hand. The caller owns the weapon's shared resources. */
+  setWeapon(weapon: T.Object3D | null): void {
+    this.weapon?.removeFromParent();
+    this.weapon = null;
+    if (!weapon || !this.socket) return;
+    // The socket inherits the armature's export scale; undo it so the weapon stays in metres.
+    this.root.updateMatrixWorld(true);
+    const socketScale = this.socket.getWorldScale(new T.Vector3()).x,
+      rootScale = this.root.getWorldScale(new T.Vector3()).x;
+    weapon.scale.setScalar(rootScale / socketScale);
+    weapon.position.set(0, 0, 0);
+    weapon.quaternion.identity();
+    this.socket.add(weapon);
+    this.weapon = weapon;
+  }
+
+  /** Whether this character has a hand socket for a weapon. */
+  get hasWeaponSocket(): boolean {
+    return this.socket !== null;
+  }
+
+  /** The weapon in the hand, if any. */
+  get heldWeapon(): T.Object3D | null {
+    return this.weapon;
+  }
+
   /** Restarts the flinch; it shows over any base clip the motion policy allows it on. */
   hit(): void {
     this.flinch.reset().play();
@@ -137,7 +179,7 @@ export class SkinnedCharacter {
       lower = this.lower[motion.base],
       upper = this.upper[motion.base];
     this.lowerBody.fadeTo(lower);
-    this.upperBody.fadeTo(motion.wave ? this.wave : upper);
+    this.upperBody.fadeTo(motion.overlay ? this.overlay : upper);
     lower.timeScale = upper.timeScale = motion.timeScale;
     // The base clip's upper half runs on the legs' clock, also while it fades back from a wave.
     upper.time = lower.time;
@@ -150,6 +192,24 @@ export class SkinnedCharacter {
     this.lowerBody.update(dt);
     this.upperBody.update(dt);
     this.mixer.update(dt);
+    this.leanIntoPitch(pose.pitch ?? 0);
+  }
+
+  /** Tilts the pitch bone about the character's own side axis after the clips have posed it,
+   * so the upper body and the held weapon follow the view up and down. */
+  private leanIntoPitch(pitch: number): void {
+    const bone = this.pitchBone,
+      parent = bone?.parent;
+    if (!bone || !parent || !pitch) return;
+    const angle = Math.max(-MAX_PITCH, Math.min(MAX_PITCH, pitch)) * PITCH_SHARE;
+    this.root.updateMatrixWorld(true);
+    // The character's side axis in the bone's parent space; a positive turn about it raises the
+    // front of a character facing +Z.
+    const toParent = parent.getWorldQuaternion(new T.Quaternion()).invert(),
+      side = new T.Vector3(1, 0, 0)
+        .applyQuaternion(this.root.getWorldQuaternion(new T.Quaternion()))
+        .applyQuaternion(toParent);
+    bone.quaternion.premultiply(new T.Quaternion().setFromAxisAngle(side, angle));
   }
 
   dispose(): void {

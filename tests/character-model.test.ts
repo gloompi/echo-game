@@ -3,7 +3,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as T from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 import { SKINS } from '../shared/balance.js';
 import {
@@ -17,11 +16,12 @@ import {
 import { BASE_CLIPS, type MotionPose } from '../client/game/character-motion.js';
 import { Character } from '../client/models.js';
 import { SkinnedCharacter } from '../client/skinned-character.js';
+import { parseGlb } from './glb.js';
 
 const glb = readFileSync(new URL('../public/assets/characters/hider-hoodie.glb', import.meta.url));
 /** The shipped runtime GLB, parsed fresh for every test. */
 async function loadGlb(): Promise<{ scene: T.Object3D; animations: T.AnimationClip[] }> {
-  const gltf = await new GLTFLoader().parseAsync(new Uint8Array(glb).buffer, '');
+  const gltf = await parseGlb(glb);
   return { scene: gltf.scene, animations: gltf.animations };
 }
 async function loadTemplate(): Promise<CharacterTemplate> {
@@ -36,6 +36,10 @@ function bone(root: T.Object3D, name: string): T.Object3D {
   return found;
 }
 const STEP_SECONDS = 1 / 60;
+/** Skinned primitives in the shipped GLB: the textured body and the `tint_light` hoodie. */
+const MESHES = 2;
+/** The speed the run clip was authored for, so it plays at its own rate (time scale 1). */
+const RUN = HIDER_HOODIE.speeds.run;
 function play(character: SkinnedCharacter, fields: Partial<MotionPose>, seconds: number): void {
   const pose: MotionPose = { moving: 0, grounded: true, waving: false, ...fields };
   for (let step = Math.round(seconds / STEP_SECONDS); step > 0; step--)
@@ -119,9 +123,9 @@ void test('the shipped Hider GLB meets the character runtime contract', async ()
   const { scene, animations } = await loadGlb();
   const template = prepareCharacterTemplate(scene, animations, HIDER_HOODIE);
   const meshes = skinnedMeshes(template.scene);
-  assert.equal(meshes.length, 5);
+  assert.equal(meshes.length, MESHES);
   assert.equal(new Set(meshes.map((mesh) => mesh.skeleton)).size, 1);
-  const upperBones = bonesOf(template.wave);
+  const upperBones = bonesOf(template.overlay);
   for (const name of ['spine', 'chest', 'head', 'upper_armR', 'handL'])
     assert.ok(upperBones.has(name));
   for (const name of BASE_CLIPS) {
@@ -259,7 +263,7 @@ void test('the legs keep the base clip in step while the upper body waves', asyn
   const character = new SkinnedCharacter(template),
     run = reference(template, source('run')),
     wave = reference(template, source('wave'));
-  play(character, { moving: 6.4, waving: true }, 0.5);
+  play(character, { moving: RUN, waving: true }, 0.5);
   run.advance(0.5);
   wave.advance(0.5);
   for (const name of ['hips', 'thighL', 'shinR', 'footL'])
@@ -270,7 +274,7 @@ void test('the legs keep the base clip in step while the upper body waves', asyn
     bone(character.root, 'hips').position.distanceTo(bone(run.root, 'hips').position) < 1e-6,
   );
   // Once the wave fades out, the upper body rejoins the run on the legs' clock.
-  play(character, { moving: 6.4 }, 0.5);
+  play(character, { moving: RUN }, 0.5);
   run.advance(0.5);
   for (const name of ['thighR', 'chest', 'upper_armL', 'upper_armR', 'head'])
     assertSameRotation(bone(character.root, name), bone(run.root, name), `run ${name}`);
@@ -368,8 +372,8 @@ void test('a ghost echo replaces every material, casts no shadow and ignores ski
   const meshes = skinnedMeshes(ghost.root);
   const bodies = meshes.filter((mesh) => mesh.material === body),
     shells = meshes.filter((mesh) => mesh.material === shell);
-  assert.equal(bodies.length, 5);
-  assert.equal(shells.length, 5);
+  assert.equal(bodies.length, MESHES);
+  assert.equal(shells.length, MESHES);
   assert.equal(new Set(meshes.map((mesh) => mesh.skeleton)).size, 1);
   for (const mesh of meshes) {
     assert.equal(mesh.castShadow, false);
@@ -427,7 +431,7 @@ void test('a Hider keeps its procedural body until the model loads, then swaps o
   await model.ready;
   assert.equal(waiting.authored, true);
   assert.equal(waiting.body.visible, false);
-  assert.equal(skinnedMeshes(waiting.group).length, 5);
+  assert.equal(skinnedMeshes(waiting.group).length, MESHES);
   assert.equal(disposed.authored, false, 'a disposed character never attaches a late model');
   assert.equal(disposed.group.children.length, disposedChildren);
 

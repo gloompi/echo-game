@@ -19,20 +19,20 @@ const base = (fields: Partial<MotionPose>) => selectMotion(pose(fields), speeds)
 void test('grounded speed chooses between idle and run, and airborne poses jump', () => {
   assert.deepEqual(selectMotion(pose(), speeds), {
     base: 'idle',
-    wave: false,
+    overlay: false,
     flinch: true,
     timeScale: 1,
   });
   assert.equal(base({ moving: MOVING_SPEED_MPS - 0.01 }), 'idle');
   assert.deepEqual(selectMotion(pose({ moving: 6.4 }), speeds), {
     base: 'run',
-    wave: false,
+    overlay: false,
     flinch: true,
     timeScale: 1,
   });
   assert.deepEqual(selectMotion(pose({ moving: 6.4, grounded: false }), speeds), {
     base: 'jump',
-    wave: false,
+    overlay: false,
     flinch: true,
     timeScale: 1,
   });
@@ -62,16 +62,16 @@ void test('looping clips play at the actual ground speed within bounded rates', 
   assert.equal(rate({ moving: 12, grounded: false }), 1);
   assert.deepEqual(selectMotion(pose({ moving: Number.NaN }), speeds), {
     base: 'idle',
-    wave: false,
+    overlay: false,
     flinch: true,
     timeScale: 1,
   });
 });
 
-void test('the wave and the hit flinch show when standing, never over a crouch or slide', () => {
+void test('the overlay and the hit flinch show when standing, never over a crouch or slide', () => {
   const overlays = (fields: Partial<MotionPose>) => {
-    const { wave, flinch } = selectMotion(pose({ waving: true, ...fields }), speeds);
-    return [wave, flinch];
+    const { overlay, flinch } = selectMotion(pose({ waving: true, ...fields }), speeds);
+    return [overlay, flinch];
   };
   assert.deepEqual(overlays({}), [true, true]);
   assert.deepEqual(overlays({ moving: 6.4 }), [true, true]);
@@ -79,5 +79,9 @@ void test('the wave and the hit flinch show when standing, never over a crouch o
   assert.deepEqual(overlays({ crouched: true }), [false, false]);
   assert.deepEqual(overlays({ crouched: true, moving: 2.88 }), [false, false]);
   assert.deepEqual(overlays({ sliding: true, moving: 8 }), [false, false]);
-  assert.equal(selectMotion(pose({ moving: 6.4 }), speeds).wave, false, 'no wave unless waving');
+  assert.equal(
+    selectMotion(pose({ moving: 6.4 }), speeds).overlay,
+    false,
+    'no overlay unless waving',
+  );
 });

@@ -1,0 +1,1445 @@
+{
+ "blend": "assets-src/characters/seeker-hunter/seeker-hunter.blend (structure stage, r2)",
+ "parts": [
+  {
+   "name": "belt",
+   "parent": "pelvis",
+   "rigJoint": "hips",
+   "origin": [
+    0.0,
+    1.0,
+    -0.0
+   ],
+   "min": [
+    -0.214,
+    1.195,
+    -0.165
+   ],
+   "max": [
+    0.214,
+    1.262,
+    0.2
+   ],
+   "radius": 0.2241,
+   "radiusAt": [
+    0.203,
+    1.195,
+    0.095
+   ],
+   "triangles": 72,
+   "faces": {
+    "tri": 0,
+    "quad": 22,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour"
+   ]
+  },
+  {
+   "name": "chest_plates",
+   "parent": "chest",
+   "rigJoint": "chest",
+   "origin": [
+    0.0,
+    1.42,
+    -0.01
+   ],
+   "min": [
+    -0.19,
+    1.5137,
+    0.1182
+   ],
+   "max": [
+    0.19,
+    1.7163,
+    0.1778
+   ],
+   "radius": 0.2602,
+   "radiusAt": [
+    -0.19,
+    1.518,
+    0.178
+   ],
+   "triangles": 36,
+   "faces": {
+    "tri": 0,
+    "quad": 18,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 3,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "deltoid_plate.L",
+   "parent": "upper_arm.L",
+   "rigJoint": "upper_arm.L",
+   "origin": [
+    0.237,
+    1.655,
+    -0.065
+   ],
+   "min": [
+    0.2844,
+    1.5153,
+    -0.1713
+   ],
+   "max": [
+    0.3617,
+    1.6885,
+    -0.0091
+   ],
+   "radius": 0.3993,
+   "radiusAt": [
+    0.361,
+    1.524,
+    -0.171
+   ],
+   "triangles": 24,
+   "faces": {
+    "tri": 0,
+    "quad": 12,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "deltoid_plate.R",
+   "parent": "upper_arm.R",
+   "rigJoint": "upper_arm.R",
+   "origin": [
+    -0.237,
+    1.655,
+    -0.065
+   ],
+   "min": [
+    -0.3617,
+    1.5153,
+    -0.1713
+   ],
+   "max": [
+    -0.2844,
+    1.6885,
+    -0.0091
+   ],
+   "radius": 0.3993,
+   "radiusAt": [
+    -0.361,
+    1.524,
+    -0.171
+   ],
+   "triangles": 24,
+   "faces": {
+    "tri": 0,
+    "quad": 12,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "face_plate",
+   "parent": "head",
+   "rigJoint": "head",
+   "origin": [
+    0.0,
+    1.74,
+    -0.01
+   ],
+   "min": [
+    -0.162,
+    1.775,
+    -0.02
+   ],
+   "max": [
+    0.162,
+    2.03,
+    0.162
+   ],
+   "radius": 0.162,
+   "radiusAt": [
+    0.162,
+    1.86,
+    -0.0
+   ],
+   "triangles": 140,
+   "faces": {
+    "tri": 0,
+    "quad": 60,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "faceplate"
+   ]
+  },
+  {
+   "name": "fingers.L",
+   "parent": "glove.L",
+   "rigJoint": "fingers.L",
+   "origin": [
+    0.388,
+    0.968,
+    0.01
+   ],
+   "min": [
+    0.332,
+    0.8547,
+    -0.0487
+   ],
+   "max": [
+    0.4438,
+    0.9929,
+    0.0816
+   ],
+   "radius": 0.4447,
+   "radiusAt": [
+    0.444,
+    0.985,
+    0.032
+   ],
+   "triangles": 76,
+   "faces": {
+    "tri": 0,
+    "quad": 30,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "fingers.R",
+   "parent": "glove.R",
+   "rigJoint": "fingers.R",
+   "origin": [
+    -0.388,
+    0.968,
+    0.01
+   ],
+   "min": [
+    -0.4438,
+    0.8547,
+    -0.0487
+   ],
+   "max": [
+    -0.332,
+    0.9929,
+    0.0816
+   ],
+   "radius": 0.4447,
+   "radiusAt": [
+    -0.444,
+    0.985,
+    0.032
+   ],
+   "triangles": 76,
+   "faces": {
+    "tri": 0,
+    "quad": 30,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "forearm.L",
+   "parent": "upper_arm.L",
+   "rigJoint": "forearm.L",
+   "origin": [
+    0.305,
+    1.385,
+    -0.085
+   ],
+   "min": [
+    0.2488,
+    1.1178,
+    -0.1437
+   ],
+   "max": [
+    0.4282,
+    1.4069,
+    0.0189
+   ],
+   "radius": 0.4309,
+   "radiusAt": [
+    0.428,
+    1.145,
+    -0.048
+   ],
+   "triangles": 56,
+   "faces": {
+    "tri": 0,
+    "quad": 20,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "forearm.R",
+   "parent": "upper_arm.R",
+   "rigJoint": "forearm.R",
+   "origin": [
+    -0.305,
+    1.385,
+    -0.085
+   ],
+   "min": [
+    -0.4282,
+    1.1178,
+    -0.1437
+   ],
+   "max": [
+    -0.2488,
+    1.4069,
+    0.0189
+   ],
+   "radius": 0.4309,
+   "radiusAt": [
+    -0.428,
+    1.145,
+    -0.048
+   ],
+   "triangles": 56,
+   "faces": {
+    "tri": 0,
+    "quad": 20,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "forearm_plate.L",
+   "parent": "forearm.L",
+   "rigJoint": "forearm.L",
+   "origin": [
+    0.305,
+    1.385,
+    -0.085
+   ],
+   "min": [
+    0.3436,
+    1.2436,
+    -0.1419
+   ],
+   "max": [
+    0.4248,
+    1.4118,
+    0.0049
+   ],
+   "radius": 0.4381,
+   "radiusAt": [
+    0.425,
+    1.253,
+    -0.107
+   ],
+   "triangles": 24,
+   "faces": {
+    "tri": 0,
+    "quad": 12,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "forearm_plate.R",
+   "parent": "forearm.R",
+   "rigJoint": "forearm.R",
+   "origin": [
+    -0.305,
+    1.385,
+    -0.085
+   ],
+   "min": [
+    -0.4248,
+    1.2436,
+    -0.1419
+   ],
+   "max": [
+    -0.3436,
+    1.4118,
+    0.0049
+   ],
+   "radius": 0.4381,
+   "radiusAt": [
+    -0.425,
+    1.253,
+    -0.107
+   ],
+   "triangles": 24,
+   "faces": {
+    "tri": 0,
+    "quad": 12,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "glove.L",
+   "parent": "forearm.L",
+   "rigJoint": "hand.L",
+   "origin": [
+    0.385,
+    1.135,
+    -0.03
+   ],
+   "min": [
+    0.3265,
+    0.9468,
+    -0.0786
+   ],
+   "max": [
+    0.4555,
+    1.1467,
+    0.0758
+   ],
+   "radius": 0.4571,
+   "radiusAt": [
+    0.456,
+    0.999,
+    0.038
+   ],
+   "triangles": 108,
+   "faces": {
+    "tri": 0,
+    "quad": 46,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "suit",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "glove.R",
+   "parent": "forearm.R",
+   "rigJoint": "hand.R",
+   "origin": [
+    -0.385,
+    1.135,
+    -0.03
+   ],
+   "min": [
+    -0.4555,
+    0.9468,
+    -0.0786
+   ],
+   "max": [
+    -0.3265,
+    1.1467,
+    0.0758
+   ],
+   "radius": 0.4571,
+   "radiusAt": [
+    -0.456,
+    0.999,
+    0.038
+   ],
+   "triangles": 108,
+   "faces": {
+    "tri": 0,
+    "quad": 46,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "suit",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "harness",
+   "parent": "chest",
+   "rigJoint": "chest",
+   "origin": [
+    0.0,
+    1.42,
+    -0.01
+   ],
+   "min": [
+    -0.1835,
+    1.3082,
+    -0.268
+   ],
+   "max": [
+    0.2331,
+    1.7615,
+    0.1787
+   ],
+   "radius": 0.2748,
+   "radiusAt": [
+    0.095,
+    1.52,
+    -0.258
+   ],
+   "triangles": 252,
+   "faces": {
+    "tri": 0,
+    "quad": 116,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 3,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "holster",
+   "parent": "thigh.R",
+   "rigJoint": "thigh.R",
+   "origin": [
+    -0.12,
+    0.99,
+    0.025
+   ],
+   "min": [
+    -0.2965,
+    0.7895,
+    -0.0378
+   ],
+   "max": [
+    -0.2072,
+    1.0345,
+    0.0853
+   ],
+   "radius": 0.3077,
+   "radiusAt": [
+    -0.297,
+    0.798,
+    0.082
+   ],
+   "triangles": 24,
+   "faces": {
+    "tri": 0,
+    "quad": 12,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "hood",
+   "parent": "head",
+   "rigJoint": "head",
+   "origin": [
+    0.0,
+    1.74,
+    -0.01
+   ],
+   "min": [
+    -0.185,
+    1.6986,
+    -0.19
+   ],
+   "max": [
+    0.185,
+    2.16,
+    0.214
+   ],
+   "radius": 0.2343,
+   "radiusAt": [
+    0.15,
+    1.87,
+    0.18
+   ],
+   "triangles": 668,
+   "faces": {
+    "tri": 32,
+    "quad": 318,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "hood_trim",
+   "parent": "head",
+   "rigJoint": "head",
+   "origin": [
+    0.0,
+    1.74,
+    -0.01
+   ],
+   "min": [
+    -0.174,
+    1.8251,
+    0.1367
+   ],
+   "max": [
+    0.174,
+    2.0108,
+    0.2073
+   ],
+   "radius": 0.2392,
+   "radiusAt": [
+    -0.153,
+    1.866,
+    0.184
+   ],
+   "triangles": 72,
+   "faces": {
+    "tri": 0,
+    "quad": 36,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "tint_light"
+   ]
+  },
+  {
+   "name": "knee_plate.L",
+   "parent": "shin.L",
+   "rigJoint": "shin.L",
+   "origin": [
+    0.186,
+    0.6,
+    0.02
+   ],
+   "min": [
+    0.0871,
+    0.478,
+    0.076
+   ],
+   "max": [
+    0.2734,
+    0.74,
+    0.192
+   ],
+   "radius": 0.3108,
+   "radiusAt": [
+    0.263,
+    0.62,
+    0.165
+   ],
+   "triangles": 128,
+   "faces": {
+    "tri": 0,
+    "quad": 54,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "knee_plate.R",
+   "parent": "shin.R",
+   "rigJoint": "shin.R",
+   "origin": [
+    -0.186,
+    0.6,
+    0.02
+   ],
+   "min": [
+    -0.2734,
+    0.478,
+    0.076
+   ],
+   "max": [
+    -0.0871,
+    0.74,
+    0.192
+   ],
+   "radius": 0.3108,
+   "radiusAt": [
+    -0.263,
+    0.62,
+    0.165
+   ],
+   "triangles": 128,
+   "faces": {
+    "tri": 0,
+    "quad": 54,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "pelvis",
+   "parent": "seeker_hunter",
+   "rigJoint": "hips",
+   "origin": [
+    0.0,
+    1.0,
+    -0.0
+   ],
+   "min": [
+    -0.235,
+    0.92,
+    -0.172
+   ],
+   "max": [
+    0.235,
+    1.14,
+    0.185
+   ],
+   "radius": 0.2381,
+   "radiusAt": [
+    0.221,
+    0.96,
+    0.088
+   ],
+   "triangles": 124,
+   "faces": {
+    "tri": 0,
+    "quad": 48,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "pouches",
+   "parent": "pelvis",
+   "rigJoint": "hips",
+   "origin": [
+    0.0,
+    1.0,
+    -0.0
+   ],
+   "min": [
+    -0.2346,
+    1.095,
+    -0.174
+   ],
+   "max": [
+    0.2346,
+    1.265,
+    0.214
+   ],
+   "radius": 0.2742,
+   "radiusAt": [
+    -0.235,
+    1.1,
+    0.142
+   ],
+   "triangles": 84,
+   "faces": {
+    "tri": 0,
+    "quad": 42,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 7,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "shin.L",
+   "parent": "thigh.L",
+   "rigJoint": "shin.L",
+   "origin": [
+    0.186,
+    0.6,
+    0.02
+   ],
+   "min": [
+    0.1018,
+    0.1203,
+    -0.1415
+   ],
+   "max": [
+    0.3045,
+    0.6152,
+    0.1196
+   ],
+   "radius": 0.3052,
+   "radiusAt": [
+    0.304,
+    0.137,
+    -0.02
+   ],
+   "triangles": 164,
+   "faces": {
+    "tri": 0,
+    "quad": 72,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "shin.R",
+   "parent": "thigh.R",
+   "rigJoint": "shin.R",
+   "origin": [
+    -0.186,
+    0.6,
+    0.02
+   ],
+   "min": [
+    -0.3045,
+    0.1203,
+    -0.1415
+   ],
+   "max": [
+    -0.1018,
+    0.6152,
+    0.1196
+   ],
+   "radius": 0.3052,
+   "radiusAt": [
+    -0.304,
+    0.137,
+    -0.02
+   ],
+   "triangles": 164,
+   "faces": {
+    "tri": 0,
+    "quad": 72,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "shoulder_plate.L",
+   "parent": "upper_arm.L",
+   "rigJoint": "upper_arm.L",
+   "origin": [
+    0.237,
+    1.655,
+    -0.065
+   ],
+   "min": [
+    0.159,
+    1.6777,
+    -0.185
+   ],
+   "max": [
+    0.2921,
+    1.7783,
+    0.025
+   ],
+   "radius": 0.3448,
+   "radiusAt": [
+    0.291,
+    1.72,
+    -0.185
+   ],
+   "triangles": 24,
+   "faces": {
+    "tri": 0,
+    "quad": 12,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "shoulder_plate.R",
+   "parent": "upper_arm.R",
+   "rigJoint": "upper_arm.R",
+   "origin": [
+    -0.237,
+    1.655,
+    -0.065
+   ],
+   "min": [
+    -0.2921,
+    1.6777,
+    -0.185
+   ],
+   "max": [
+    -0.159,
+    1.7783,
+    0.025
+   ],
+   "radius": 0.3448,
+   "radiusAt": [
+    -0.291,
+    1.72,
+    -0.185
+   ],
+   "triangles": 24,
+   "faces": {
+    "tri": 0,
+    "quad": 12,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "armour",
+    "tint_light"
+   ]
+  },
+  {
+   "name": "sneaker.L",
+   "parent": "shin.L",
+   "rigJoint": "foot.L",
+   "origin": [
+    0.25,
+    0.13,
+    -0.02
+   ],
+   "min": [
+    0.1759,
+    0.0,
+    -0.1365
+   ],
+   "max": [
+    0.3496,
+    0.245,
+    0.2698
+   ],
+   "radius": 0.4185,
+   "radiusAt": [
+    0.329,
+    0.065,
+    0.259
+   ],
+   "triangles": 148,
+   "faces": {
+    "tri": 0,
+    "quad": 74,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 3,
+   "materials": [
+    "tint_light",
+    "suit"
+   ]
+  },
+  {
+   "name": "sneaker.R",
+   "parent": "shin.R",
+   "rigJoint": "foot.R",
+   "origin": [
+    -0.25,
+    0.13,
+    -0.02
+   ],
+   "min": [
+    -0.3496,
+    0.0,
+    -0.1365
+   ],
+   "max": [
+    -0.1759,
+    0.245,
+    0.2698
+   ],
+   "radius": 0.4185,
+   "radiusAt": [
+    -0.329,
+    0.065,
+    0.259
+   ],
+   "triangles": 148,
+   "faces": {
+    "tri": 0,
+    "quad": 74,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 3,
+   "materials": [
+    "tint_light",
+    "suit"
+   ]
+  },
+  {
+   "name": "thigh.L",
+   "parent": "pelvis",
+   "rigJoint": "thigh.L",
+   "origin": [
+    0.12,
+    0.99,
+    0.025
+   ],
+   "min": [
+    -0.0032,
+    0.5853,
+    -0.1267
+   ],
+   "max": [
+    0.2728,
+    1.0109,
+    0.185
+   ],
+   "radius": 0.277,
+   "radiusAt": [
+    0.26,
+    0.732,
+    0.096
+   ],
+   "triangles": 92,
+   "faces": {
+    "tri": 0,
+    "quad": 36,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "thigh.R",
+   "parent": "pelvis",
+   "rigJoint": "thigh.R",
+   "origin": [
+    -0.12,
+    0.99,
+    0.025
+   ],
+   "min": [
+    -0.2728,
+    0.5853,
+    -0.1267
+   ],
+   "max": [
+    0.0032,
+    1.0109,
+    0.185
+   ],
+   "radius": 0.277,
+   "radiusAt": [
+    -0.26,
+    0.732,
+    0.096
+   ],
+   "triangles": 92,
+   "faces": {
+    "tri": 0,
+    "quad": 36,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "thumb.L",
+   "parent": "glove.L",
+   "rigJoint": "thumb.L",
+   "origin": [
+    0.372,
+    1.07,
+    0.03
+   ],
+   "min": [
+    0.3484,
+    0.9767,
+    0.0091
+   ],
+   "max": [
+    0.3939,
+    1.0817,
+    0.0928
+   ],
+   "radius": 0.3951,
+   "radiusAt": [
+    0.394,
+    1.068,
+    0.03
+   ],
+   "triangles": 44,
+   "faces": {
+    "tri": 0,
+    "quad": 16,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "thumb.R",
+   "parent": "glove.R",
+   "rigJoint": "thumb.R",
+   "origin": [
+    -0.372,
+    1.07,
+    0.03
+   ],
+   "min": [
+    -0.3939,
+    0.9767,
+    0.0091
+   ],
+   "max": [
+    -0.3484,
+    1.0817,
+    0.0928
+   ],
+   "radius": 0.3951,
+   "radiusAt": [
+    -0.394,
+    1.068,
+    0.03
+   ],
+   "triangles": 44,
+   "faces": {
+    "tri": 0,
+    "quad": 16,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "torso",
+   "parent": "pelvis",
+   "rigJoint": "spine",
+   "origin": [
+    0.0,
+    1.14,
+    -0.0
+   ],
+   "min": [
+    -0.232,
+    1.12,
+    -0.18
+   ],
+   "max": [
+    0.232,
+    1.795,
+    0.172
+   ],
+   "radius": 0.238,
+   "radiusAt": [
+    0.22,
+    1.54,
+    -0.091
+   ],
+   "triangles": 348,
+   "faces": {
+    "tri": 0,
+    "quad": 160,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "upper_arm.L",
+   "parent": "chest",
+   "rigJoint": "upper_arm.L",
+   "origin": [
+    0.237,
+    1.655,
+    -0.065
+   ],
+   "min": [
+    0.1733,
+    1.3689,
+    -0.1468
+   ],
+   "max": [
+    0.3631,
+    1.7091,
+    0.0028
+   ],
+   "radius": 0.3781,
+   "radiusAt": [
+    0.362,
+    1.401,
+    -0.108
+   ],
+   "triangles": 76,
+   "faces": {
+    "tri": 0,
+    "quad": 30,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "upper_arm.R",
+   "parent": "chest",
+   "rigJoint": "upper_arm.R",
+   "origin": [
+    -0.237,
+    1.655,
+    -0.065
+   ],
+   "min": [
+    -0.3631,
+    1.3689,
+    -0.1468
+   ],
+   "max": [
+    -0.1733,
+    1.7091,
+    0.0028
+   ],
+   "radius": 0.3781,
+   "radiusAt": [
+    -0.362,
+    1.401,
+    -0.108
+   ],
+   "triangles": 76,
+   "faces": {
+    "tri": 0,
+    "quad": 30,
+    "ngon": 2
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 1,
+   "materials": [
+    "suit"
+   ]
+  },
+  {
+   "name": "visor",
+   "parent": "head",
+   "rigJoint": "head",
+   "origin": [
+    0.0,
+    1.74,
+    -0.01
+   ],
+   "min": [
+    -0.0734,
+    1.809,
+    0.1262
+   ],
+   "max": [
+    0.0734,
+    1.9662,
+    0.1692
+   ],
+   "radius": 0.1699,
+   "radiusAt": [
+    -0.015,
+    1.943,
+    0.169
+   ],
+   "triangles": 36,
+   "faces": {
+    "tri": 0,
+    "quad": 18,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 3,
+   "materials": [
+    "tint_light"
+   ]
+  },
+  {
+   "name": "weapon_socket_marker",
+   "parent": "weapon_socket",
+   "rigJoint": null,
+   "origin": [
+    -0.39,
+    0.99,
+    0.005
+   ],
+   "min": [
+    -0.396,
+    0.984,
+    0.001
+   ],
+   "max": [
+    -0.384,
+    1.06,
+    0.145
+   ],
+   "radius": 0.4217,
+   "radiusAt": [
+    -0.396,
+    0.984,
+    0.145
+   ],
+   "triangles": 24,
+   "faces": {
+    "tri": 0,
+    "quad": 12,
+    "ngon": 0
+   },
+   "nonManifoldEdges": 0,
+   "looseEdges": 0,
+   "islands": 2,
+   "materials": [
+    "marker"
+   ]
+  }
+ ],
+ "empties": [
+  {
+   "name": "seeker_hunter",
+   "parent": null,
+   "rigJoint": null,
+   "origin": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  {
+   "name": "chest",
+   "parent": "torso",
+   "rigJoint": "chest",
+   "origin": [
+    0.0,
+    1.42,
+    -0.01
+   ]
+  },
+  {
+   "name": "head",
+   "parent": "chest",
+   "rigJoint": "head",
+   "origin": [
+    0.0,
+    1.74,
+    -0.01
+   ]
+  },
+  {
+   "name": "weapon_socket",
+   "parent": "glove.R",
+   "rigJoint": "weapon_socket",
+   "origin": [
+    -0.39,
+    0.99,
+    0.005
+   ]
+  }
+ ],
+ "triangles": 3808,
+ "faces": {
+  "tri": 32,
+  "quad": 1690,
+  "ngon": 42
+ },
+ "nonManifoldEdges": 0,
+ "materials": [
+  "armour",
+  "faceplate",
+  "marker",
+  "suit",
+  "tint_light"
+ ]
+}

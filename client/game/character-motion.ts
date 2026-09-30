@@ -28,6 +28,8 @@ export function perBaseClip<V>(make: (clip: BaseClip) => V): Record<BaseClip, V>
 export interface MotionPose {
   /** Horizontal speed in m/s. */
   moving: number;
+  /** View pitch in radians, positive up; characters that carry a weapon lean into it. */
+  pitch?: number;
   grounded: boolean;
   waving: boolean;
   crouched?: boolean;
@@ -40,8 +42,9 @@ export interface AuthoredSpeeds {
 }
 export interface Motion {
   base: BaseClip;
-  /** The upper body waves over the base clip. */
-  wave: boolean;
+  /** The upper body plays the character's overlay clip (the Hider's wave, the Seeker's aim)
+   * over the base clip; the pose's `waving` flag asks for it. */
+  overlay: boolean;
   /** A hit flinch may show over the base clip. */
   flinch: boolean;
   /** Base clip playback rate, so feet keep pace with the actual ground speed. */
@@ -53,26 +56,32 @@ export const MOVING_SPEED_MPS = 0.5;
 const MIN_TIME_SCALE = 0.5,
   MAX_TIME_SCALE = 2;
 
-/** The wave and the hit flinch are authored standing and move the upper body up and back. Over
- * a crouch or slide they would lift the head above the 1.12 m crouch clearance, so neither plays.
+/** The overlay and the hit flinch are authored standing and move the upper body up and back.
+ * Over a crouch or slide they would lift the head above the 1.12 m crouch clearance, so neither
+ * plays.
  */
 export function selectMotion(pose: MotionPose, speeds: AuthoredSpeeds): Motion {
-  if (pose.sliding) return { base: 'slide', wave: false, flinch: false, timeScale: 1 };
+  if (pose.sliding) return { base: 'slide', overlay: false, flinch: false, timeScale: 1 };
   const moving = pose.grounded && pose.moving >= MOVING_SPEED_MPS;
   // The crouched collision height also applies in the air, so a crouch outranks the jump.
   if (pose.crouched)
     return moving
       ? {
           base: 'crouch_walk',
-          wave: false,
+          overlay: false,
           flinch: false,
           timeScale: playback(pose.moving, speeds.crouchWalk),
         }
-      : { base: 'crouch_idle', wave: false, flinch: false, timeScale: 1 };
-  if (!pose.grounded) return { base: 'jump', wave: pose.waving, flinch: true, timeScale: 1 };
+      : { base: 'crouch_idle', overlay: false, flinch: false, timeScale: 1 };
+  if (!pose.grounded) return { base: 'jump', overlay: pose.waving, flinch: true, timeScale: 1 };
   return moving
-    ? { base: 'run', wave: pose.waving, flinch: true, timeScale: playback(pose.moving, speeds.run) }
-    : { base: 'idle', wave: pose.waving, flinch: true, timeScale: 1 };
+    ? {
+        base: 'run',
+        overlay: pose.waving,
+        flinch: true,
+        timeScale: playback(pose.moving, speeds.run),
+      }
+    : { base: 'idle', overlay: pose.waving, flinch: true, timeScale: 1 };
 }
 
 function playback(speedMps: number, authoredMps: number): number {

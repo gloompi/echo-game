@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('the authored Hider model loads and animates for a Hider and a Seeker', async ({
+test('the authored Hider, Seeker and weapon models load and animate in a round', async ({
   browser,
 }, info) => {
   test.setTimeout(90_000);
@@ -22,6 +22,12 @@ test('the authored Hider model loads and animates for a Hider and a Seeker', asy
     // The menu stage shows the model before any room exists. The attribute is static asset
     // state, never actor data.
     await expect(host.locator('#game')).toHaveAttribute('data-hider-model', 'loaded', {
+      timeout: 30_000,
+    });
+    await expect(host.locator('#game')).toHaveAttribute('data-seeker-model', 'loaded', {
+      timeout: 30_000,
+    });
+    await expect(host.locator('#game')).toHaveAttribute('data-weapon-models', 'loaded', {
       timeout: 30_000,
     });
     await host.locator('[data-role="seeker"]').click();
@@ -64,6 +70,12 @@ test('the authored Hider model loads and animates for a Hider and a Seeker', asy
     await friend.screenshot({ path: info.outputPath('hider-standing.png') });
     await host.bringToFront();
     await host.screenshot({ path: info.outputPath('seeker.png') });
+    // The Seeker switches weapons through the real input path; the generated model follows.
+    await host.locator('#capture').click();
+    await host.keyboard.down('2');
+    await host.waitForTimeout(400);
+    await host.keyboard.up('2');
+    await host.screenshot({ path: info.outputPath('seeker-scatter.png') });
     expect(errors).toEqual([]);
   } finally {
     await a.close();

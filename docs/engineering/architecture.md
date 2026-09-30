@@ -20,7 +20,9 @@ client/
   game/snapshot-buffer.ts       bounded authorized-observation interpolation
   game/character-motion.ts      pure clip choice from authorized pose fields
   character-assets.ts           authored character definitions, loading and shared template
-  skinned-character.ts          per-player skinned instance: clip layers, skin tint, ghost
+  skinned-character.ts          per-player skinned instance: clip layers, skin tint, ghost,
+                                held weapon and view-pitch lean
+  weapon-assets.ts              generated Seeker weapon models, loaded once per page
   ui/dom.ts                     required-element bindings and idempotent text updates
   ui/roster-panels.ts            lobby/score rendering and cache ownership
   main.ts                       remaining game/render composition

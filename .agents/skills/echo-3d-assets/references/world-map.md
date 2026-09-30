@@ -9,14 +9,18 @@ Rust motors; the art only has to match it. Re-read `shared/rules.json`,
 ```text
 assets-src/worlds/<id>/
   brief.md  refs/  reviews/  <id>.blend  map.json  validation-glb.json
-scripts/worlds/<id>.py              one reproducible script writes the .blend, map.json and GLB
+scripts/worlds/<id>.py              layout script: writes map.json and the Colliders collection
 public/assets/worlds/<id>.glb       runtime export only
 ```
 
-Rerunning the script replaces its `.blend`, so every accepted change (including anything
-tried live through the Blender MCP) must live in the script. The existing
-`scripts/worlds/*.py` show the technical pattern (colliders tagged with `collisionId`,
-`map.json` emission, export flags). Their art and layouts are not a quality reference.
+The layout script is the reproducible source of gameplay data. Run it inside the open
+Blender through the MCP (execute the file) so the user sees the graybox appear; it must
+create or update the `Colliders` collection in place and never delete the `Art`
+collections. Art goes in `Art` collections of the saved `.blend`: props extracted from the
+approved concept sheets with Higgsfield (`sam_3_3d`), cleaned up and placed live, plus
+live-modeled trims and signage ([live-blender.md](live-blender.md#8-worlds)). The existing `scripts/worlds/*.py` show the technical
+pattern (colliders tagged with `collisionId`, `map.json` emission, export flags), but they
+rebuild the whole file from scratch; their art and layouts are not a quality reference.
 
 ## Collision data (`map.json`)
 
@@ -72,8 +76,10 @@ dead ends and spots where a player is invisible from every angle.
 
 ## Validate and register
 
+Export the runtime GLB from the saved `.blend` (Colliders and Art, without Refs, Guides,
+cameras or lights), then validate it in the background:
+
 ```bash
-"$B" --background --factory-startup --python-exit-code 1 --python scripts/worlds/<id>.py
 "$B" --background --factory-startup --python-exit-code 1 --python scripts/blender/validate_glb.py -- \
   --glb public/assets/worlds/<id>.glb --kind world --map assets-src/worlds/<id>/map.json \
   --out assets-src/worlds/<id>/validation-glb.json
