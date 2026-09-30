@@ -20,8 +20,9 @@ pass explicitly and say so in the review record.
 
 ## Each pass
 
-1. Build or edit (script and/or Blender MCP), save the source.
-2. Render fixed views:
+1. Generate or fix live in the open Blender through the MCPs, step by step with viewport
+   screenshots ([live-blender.md](live-blender.md)), and save the `.blend`.
+2. At the end of the pass, render the fixed views from the saved file:
 
    ```bash
    B="/c/Program Files/Blender Foundation/Blender 5.2/blender.exe"

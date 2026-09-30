@@ -26,9 +26,9 @@ Use the installed `higgsfield-generate` skill and the Higgsfield CLI with the us
 selected workspace. Discover current model IDs with `higgsfield model list --json`; model
 names in this file are examples, not pinned choices.
 
-1. **Budget first.** Without a budget in the brief, ask before any paid job. For a batch,
-   tell the user how many jobs you will submit. `higgsfield generate cost ...` gives an
-   estimate where supported.
+1. **Budget first.** The brief's credit budget covers concepts, turnarounds, mesh
+   generation, extraction and rigging together ([job log](#budget-and-job-log)). Spend
+   within it without asking per job; ask only to exceed it.
 2. **Hero concepts (2-4).** Vary silhouette, proportions and material language
    deliberately, not just colour. Include the identity constraints in every prompt. Save
    each result under a stable letter.
@@ -47,18 +47,41 @@ names in this file are examples, not pinned choices.
    `higgsfield generate list --json` / `generate get <id> --json` /
    `generate wait <id>`; never resubmit a job that may still be running.
 
-## Mesh route: generated-then-cleaned
+## Mesh route: generate, then clean up live
 
-Only when the brief selects it. `multi_image_to_3d` accepts one to four images; pass the
-approved front/side/back (and three-quarter) turnaround and request texture if needed.
-Treat the result as a sculpt reference or starting mesh, never as game-ready:
+This is the default route. Generate the starting mesh into the open Blender from the
+approved references and clean it up live
+([live-blender.md](live-blender.md#4-generate-into-the-scene)):
 
-- Keep the raw download in `refs/` with its provenance entry.
-- In Blender: fix scale, origin and facing; remove floaters and interior faces;
-  retopologize or decimate into a separate game mesh within the triangle target; unwrap;
-  bake or reassign materials to the project's flat stylized palette; then rig.
-- Everything after the download must be reproducible from the authoring script or the
-  saved `.blend`, and reviewed with the same loop as a scripted model.
+- Characters: the approved front/side/back turnaround into a multiview-to-3D job (order
+  front, side, back), or the front view into a single-image job, then the plugin's
+  auto-rig once cleaned.
+- Props: a single-image job from an isolated part sheet (`10-part-<name>.png`), or a
+  text-to-3D job when no sheet exists.
+- Map props: extract them from the approved concept sheets and eye-level views with the
+  `sam_3_3d` job, one prompted object per job, so the props match the approved art.
+
+A generated mesh is a starting point, never game-ready: keep the raw download in `refs/`,
+then fix scale, facing and origin, remove floaters and interior faces, remesh to the
+triangle target, replace materials with the flat palette and rig, all live. Review it
+with the same loop as any other asset.
+
+## Budget and job log
+
+Log every paid job in `provenance.json` as soon as it is submitted: `jobId`, `model`,
+`inputs`, `estimatedCredits`, `credits` (as returned), `purpose`, `result` (the kept file)
+and `approved`. Keep a running total against the brief's budget in the review record.
+Credits are shared with other sessions, so count your own job IDs, not the account
+balance. Estimates as of 2026-09-30 (re-check with `higgsfield generate cost`):
+
+| Job                                                               | Credits                                    |
+| ----------------------------------------------------------------- | ------------------------------------------ |
+| Concept image (GPT Image 2.5 high) / turnaround (Nano Banana Pro) | 2.75 / 2                                   |
+| `tripo_h3_1_image_to_3d`, `tripo_h3_1_multiview_to_3d`            | 9                                          |
+| `hunyuan3d_v3_image_to_3d`                                        | 11                                         |
+| `tripo_3d` standard / detailed                                    | 5 / 12.5                                   |
+| `hunyuan3d_v3_1_text_to_3d`                                       | 7                                          |
+| `sam_3_3d` extraction, auto-rig, remesh, retexture, Meshy jobs    | not estimable: record the returned credits |
 
 ## Supplied references
 

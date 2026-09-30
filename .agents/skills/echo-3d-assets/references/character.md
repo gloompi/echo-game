@@ -8,9 +8,9 @@ eye 1.76 m, crouch height 1.12 m, crouch eye 0.92 m.
 
 ```text
 assets-src/characters/<id>/
-  brief.md  refs/  reviews/  <id>.blend  validation-glb.json
-scripts/characters/<id>.py            reproducible build (recommended; required for the
-                                      scripted route), writes the .blend and the GLB
+  brief.md  refs/  reviews/  validation-glb.json
+  <id>.blend                          source: generated mesh cleaned up live through the MCP
+  build-log.py                        generation job IDs and accepted live steps, in order
 public/assets/characters/<id>.glb     runtime export only
 ```
 
@@ -43,6 +43,9 @@ public/assets/characters/<id>.glb     runtime export only
 
 ## Rig
 
+- Start from the plugin's auto-rig on the cleaned mesh
+  ([live-blender.md](live-blender.md#6-auto-rig-characters)), then conform it to this
+  contract live: rename bones, add `root` and sockets, drop unused bones.
 - One armature, at most 64 deform bones, at most 4 influences per vertex (Three.js
   skinning). Suggested names: `root` (at the feet), `hips`, `spine`, `chest`, `neck`,
   `head`, `upper_arm.L/R`, `forearm.L/R`, `hand.L/R`, `thigh.L/R`, `shin.L/R`, `foot.L/R`.

@@ -1,6 +1,6 @@
 ---
 name: echo-3d-assets
-description: Create or remake Echo 3D art in Blender — player characters, props and playable world maps — from a brief through references, staged modeling with render-vs-reference review, GLB export, validation and game integration. Use for any new or improved character model, map/environment model, prop, rig or animation for this repository.
+description: Create or remake Echo 3D art in Blender — player characters, props and playable world maps — from a brief through references, in-scene Higgsfield generation (auto-rigged characters, props extracted from concept sheets), live cleanup with render-vs-reference review, GLB export, validation and game integration. Use for any new or improved character model, map/environment model, prop, rig or animation for this repository.
 ---
 
 # Echo 3D asset production
@@ -32,10 +32,22 @@ reference pack define the target; review against those.
 - The editable source (`.blend` plus its authoring script) lives in `assets-src/`; only the
   runtime GLB goes to `public/assets/`. Never put private sources or credentials in
   `public/`.
-- Live Blender MCP edits are exploration. An accepted change counts only when it is carried
-  into the authoring script or the saved source and re-exported.
-- A paid generation needs the brief's budget. Save every job ID immediately; resume a slow
-  job instead of resubmitting it (see the reference pack guide).
+- **Generate first.** Characters and props start as a Higgsfield mesh generated into the
+  open scene from the approved references (auto-rigged for characters); map props are
+  extracted from the approved concept sheets. Do not write procedural bmesh/formula code
+  to stand in for a mesh the brief lets you generate. If generation fails or the budget
+  runs out, stop and report; hand-modeling a replacement needs the user's agreement.
+- **Clean up live.** Every fix happens in the user's open Blender through the MCP, in
+  small visible steps with a viewport screenshot after each
+  ([live-blender.md](references/live-blender.md)). Never model in a background Blender
+  process; `--background` is only for review renders and validation of the saved file.
+  If an MCP connection fails, stop and ask.
+- The saved `.blend` plus its `build-log.py` of accepted steps is the character source. For
+  worlds, the layout script stays the source of `map.json` and colliders.
+- Every brief carries a credit budget (defaults in
+  [brief-templates.md](references/brief-templates.md)); spend within it without asking
+  per job. Estimate before submitting, log every job ID and its credits in
+  `provenance.json` immediately, and resume a slow job instead of resubmitting it.
 - Report what was actually verified. Renders are not in-game proof; a valid GLB is not an
   integrated asset.
 
@@ -48,9 +60,11 @@ reference pack define the target; review against those.
 2. **Reference pack.** Build or collect references before modeling:
    [reference-pack.md](references/reference-pack.md). Get the user's approval of the hero
    concept before generating turnarounds or part sheets.
-3. **Build in passes** with the render-and-compare loop:
-   [review-loop.md](references/review-loop.md). Asset-specific contracts:
-   [character.md](references/character.md), [world-map.md](references/world-map.md).
+3. **Generate, then clean up live** ([live-blender.md](references/live-blender.md)): load
+   both Blender toolsets, generate the mesh into the scene, then fix it pass by pass with
+   the render-and-compare loop in [review-loop.md](references/review-loop.md).
+   Asset-specific contracts: [character.md](references/character.md),
+   [world-map.md](references/world-map.md).
 4. **Export and validate** the runtime GLB from a clean reimport:
    `scripts/blender/validate_glb.py`, then the repository tests.
 5. **Integrate** through `echo-change` on a feature branch: register the asset, add or
@@ -59,16 +73,21 @@ reference pack define the target; review against those.
 
 ## Tools
 
-| Need                                                         | Tool                                                                            |
-| ------------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| Drive the open Blender 5.2 live (inspect, build, screenshot) | Blender MCP (`mcp__Blender__*`)                                                 |
-| Headless reproducible build                                  | `blender --background --factory-startup --python-exit-code 1 --python <script>` |
-| Fixed review views + comparison sheet                        | `scripts/blender/review_renders.py`                                             |
-| Clean-reimport budget/contract gate                          | `scripts/blender/validate_glb.py`                                               |
-| Concept/turnaround images, image-to-3D                       | `higgsfield-generate` skill / Higgsfield CLI; Higgsfield `generate_3d`          |
-| In-game check                                                | `pnpm play` or E2E build + built-in browser                                     |
+| Need                                              | Tool                                                                                  |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Generate a mesh into the open scene, poll, import | Higgsfield connector `bl_*` (`bl_image_to_3d`, `bl_generate_3d`, `bl_import_model`)   |
+| Auto-rig, remesh, retexture a selected mesh       | Higgsfield plugin operators `bpy.ops.higgsfield.auto_rig` / `remesh` / `retexture`    |
+| Cost estimates, prompted extraction, job recovery | Higgsfield CLI `higgsfield generate cost / create / get / wait`                       |
+| Live cleanup: edit, frame, screenshot             | Blender MCP (`mcp__Blender__*`); both MCP toolsets are deferred, load with ToolSearch |
+| Concept and turnaround images                     | `higgsfield-generate` skill / Higgsfield CLI                                          |
+| Review renders / validation of a saved file only  | `blender --background --factory-startup --python-exit-code 1 --python <script>`       |
+| Fixed review views + comparison sheet             | `scripts/blender/review_renders.py`                                                   |
+| Clean-reimport budget/contract gate               | `scripts/blender/validate_glb.py`                                                     |
+| In-game check                                     | `pnpm play` or E2E build + built-in browser                                           |
 
 Commands in the references use `B="/c/Program Files/Blender Foundation/Blender 5.2/blender.exe"`
-(Git Bash). On this machine run Python helpers with `python`, not `python3`. The Blender MCP add-on and the
-Higgsfield Blender plugin both default to port 9876; leave the Higgsfield plugin's MCP
-option off while using the Blender MCP.
+(Git Bash). On this machine run Python helpers with `python`, not `python3`, and call the
+Higgsfield CLI as `higgsfield` (`hf` is the Hugging Face CLI here). Both MCPs drive the same
+Blender at once: the Blender MCP add-on listens on `localhost:9876`, while the Higgsfield
+plugin connects out to its hosted bridge and needs no local port. Start the Blender MCP
+server, then check that the plugin's MCP tab shows it as connected.
