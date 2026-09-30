@@ -1,0 +1,754 @@
+{
+ "counts": {
+  "boxes": 211,
+  "spawns": 12,
+  "mirrors": 6,
+  "waypoints": 21,
+  "landmarks": 10
+ },
+ "boxKinds": {
+  "cover": 157,
+  "step": 46,
+  "platform": 8
+ },
+ "boxRoles": {
+  "barrier": 2,
+  "booth": 14,
+  "boundary": 4,
+  "cabinets": 3,
+  "car": 6,
+  "crate": 6,
+  "deck": 8,
+  "deck-round": 6,
+  "facade": 3,
+  "glass": 15,
+  "kiosk": 9,
+  "panel": 6,
+  "pillar": 8,
+  "post": 2,
+  "prop": 10,
+  "rail": 21,
+  "roof": 8,
+  "sign": 1,
+  "step": 40,
+  "tube": 4,
+  "tube-crouch": 1,
+  "vault": 1,
+  "wall": 33
+ },
+ "groundAreaSquareMetres": 2731,
+ "reachableTops": [
+  {
+   "id": "catwalk-landing-rail-e",
+   "top": 4.3,
+   "role": "rail",
+   "intended": true,
+   "via": "catwalk-rail-m"
+  },
+  {
+   "id": "catwalk-landing-rail-s",
+   "top": 4.3,
+   "role": "rail",
+   "intended": true,
+   "via": "catwalk-rail-m"
+  },
+  {
+   "id": "catwalk-landing-rail-w",
+   "top": 4.3,
+   "role": "rail",
+   "intended": true,
+   "via": "catwalk-rail-m"
+  },
+  {
+   "id": "catwalk-rail-e",
+   "top": 4.3,
+   "role": "rail",
+   "intended": true,
+   "via": "catwalk-rail-m"
+  },
+  {
+   "id": "catwalk-rail-m",
+   "top": 4.3,
+   "role": "rail",
+   "intended": true,
+   "via": "catwalk-rail-w"
+  },
+  {
+   "id": "catwalk-rail-w",
+   "top": 4.3,
+   "role": "rail",
+   "intended": true,
+   "via": "slide-shell-e2"
+  },
+  {
+   "id": "slide-top-rail",
+   "top": 4.3,
+   "role": "rail",
+   "intended": true,
+   "via": "slide-shell-e2"
+  },
+  {
+   "id": "slide-chute-rail-1",
+   "top": 4.0,
+   "role": "rail",
+   "intended": true,
+   "via": "slide-shell-e2"
+  },
+  {
+   "id": "slide-chute-rail-2",
+   "top": 3.4,
+   "role": "rail",
+   "intended": true,
+   "via": "slide-shell-e2"
+  },
+  {
+   "id": "arcade-roof-e",
+   "top": 3.3,
+   "role": "deck",
+   "intended": true,
+   "via": "arcade-roof-w"
+  },
+  {
+   "id": "arcade-roof-w",
+   "top": 3.3,
+   "role": "deck",
+   "intended": true,
+   "via": "catwalk-landing-rail-s"
+  },
+  {
+   "id": "arcade-stair-landing",
+   "top": 3.3,
+   "role": "deck",
+   "intended": true,
+   "via": "arcade-roof-w"
+  },
+  {
+   "id": "catwalk",
+   "top": 3.3,
+   "role": "deck",
+   "intended": true,
+   "via": "gatehouse-lintel"
+  },
+  {
+   "id": "catwalk-mirror-landing",
+   "top": 3.3,
+   "role": "deck",
+   "intended": true,
+   "via": "catwalk-rail-m"
+  },
+  {
+   "id": "slide-top",
+   "top": 3.3,
+   "role": "deck",
+   "intended": true,
+   "via": "slide-shell-e2"
+  },
+  {
+   "id": "workshop-bridge",
+   "top": 3.3,
+   "role": "deck",
+   "intended": true,
+   "via": "gatehouse-lintel"
+  },
+  {
+   "id": "workshop-roof",
+   "top": 3.3,
+   "role": "deck",
+   "intended": true,
+   "via": "gatehouse-lintel"
+  },
+  {
+   "id": "arcade-n",
+   "top": 3.0,
+   "role": "wall",
+   "intended": false,
+   "via": "arcade-roof-w"
+  },
+  {
+   "id": "arcade-s-m",
+   "top": 3.0,
+   "role": "wall",
+   "intended": false,
+   "via": "arcade-roof-w"
+  },
+  {
+   "id": "gatehouse-e",
+   "top": 3.0,
+   "role": "wall",
+   "intended": true,
+   "via": "booth-07"
+  },
+  {
+   "id": "gatehouse-lintel",
+   "top": 3.0,
+   "role": "roof",
+   "intended": true,
+   "via": "booth-07"
+  },
+  {
+   "id": "gatehouse-w",
+   "top": 3.0,
+   "role": "wall",
+   "intended": true,
+   "via": "booth-07"
+  },
+  {
+   "id": "slide-roof-mid",
+   "top": 2.9,
+   "role": "tube",
+   "intended": true,
+   "via": "ride-panel-west"
+  },
+  {
+   "id": "slide-shell-e2",
+   "top": 2.9,
+   "role": "tube",
+   "intended": true,
+   "via": "ride-panel-west"
+  },
+  {
+   "id": "kiosk-1",
+   "top": 2.8,
+   "role": "kiosk",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "kiosk-2",
+   "top": 2.8,
+   "role": "kiosk",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "kiosk-3",
+   "top": 2.8,
+   "role": "kiosk",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "kiosk-4",
+   "top": 2.8,
+   "role": "kiosk",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "kiosk-5",
+   "top": 2.8,
+   "role": "kiosk",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "kiosk-6",
+   "top": 2.8,
+   "role": "kiosk",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "slide-chute-rail-3",
+   "top": 2.8,
+   "role": "rail",
+   "intended": true,
+   "via": "slide-shell-e2"
+  },
+  {
+   "id": "arcade-kiosk",
+   "top": 2.7,
+   "role": "kiosk",
+   "intended": true,
+   "via": "crate-east-1"
+  },
+  {
+   "id": "booth-01",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "crate-east-1"
+  },
+  {
+   "id": "booth-02",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "booth-12"
+  },
+  {
+   "id": "booth-03",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "catwalk-rail-m"
+  },
+  {
+   "id": "booth-04",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "catwalk-rail-m"
+  },
+  {
+   "id": "booth-05",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "booth-07"
+  },
+  {
+   "id": "booth-06",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "booth-07"
+  },
+  {
+   "id": "booth-07",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "booth-09"
+  },
+  {
+   "id": "booth-08",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "booth-09",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "booth-10",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "booth-12"
+  },
+  {
+   "id": "booth-11",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "kiosk-east"
+  },
+  {
+   "id": "booth-12",
+   "top": 2.7,
+   "role": "booth",
+   "intended": true,
+   "via": "kiosk-east"
+  },
+  {
+   "id": "kiosk-east",
+   "top": 2.7,
+   "role": "kiosk",
+   "intended": true,
+   "via": "crate-east-1"
+  },
+  {
+   "id": "ride-panel-east",
+   "top": 2.6,
+   "role": "panel",
+   "intended": true,
+   "via": "crate-east-1"
+  },
+  {
+   "id": "ride-panel-se-1",
+   "top": 2.6,
+   "role": "panel",
+   "intended": true,
+   "via": "kiosk-east"
+  },
+  {
+   "id": "ride-panel-se-2",
+   "top": 2.6,
+   "role": "panel",
+   "intended": true,
+   "via": "ride-panel-se-1"
+  },
+  {
+   "id": "ride-panel-west",
+   "top": 2.6,
+   "role": "panel",
+   "intended": true,
+   "via": "gatehouse-lintel"
+  },
+  {
+   "id": "shed-ne",
+   "top": 2.6,
+   "role": "kiosk",
+   "intended": true,
+   "via": "arcade-roof-w"
+  },
+  {
+   "id": "counter-alley-1",
+   "top": 2.2,
+   "role": "booth",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "court-booth",
+   "top": 2.2,
+   "role": "booth",
+   "intended": true,
+   "via": "bumper-car-6"
+  },
+  {
+   "id": "slide-chute-rail-4",
+   "top": 2.2,
+   "role": "rail",
+   "intended": true,
+   "via": "slide-shell-e2"
+  },
+  {
+   "id": "arcade-cabinets-2",
+   "top": 1.9,
+   "role": "cabinets",
+   "intended": true,
+   "via": "arcade-roof-w"
+  },
+  {
+   "id": "carousel-horse-e",
+   "top": 1.9,
+   "role": "prop",
+   "intended": true,
+   "via": "kiosk-east"
+  },
+  {
+   "id": "carousel-horse-n",
+   "top": 1.9,
+   "role": "prop",
+   "intended": true,
+   "via": "booth-12"
+  },
+  {
+   "id": "carousel-horse-s",
+   "top": 1.9,
+   "role": "prop",
+   "intended": true,
+   "via": "booth-12"
+  },
+  {
+   "id": "carousel-horse-w",
+   "top": 1.9,
+   "role": "prop",
+   "intended": true,
+   "via": "booth-10"
+  },
+  {
+   "id": "slide-crouch-roof",
+   "top": 1.8,
+   "role": "tube-crouch",
+   "intended": true,
+   "via": "gatehouse-lintel"
+  },
+  {
+   "id": "slide-shell-n",
+   "top": 1.8,
+   "role": "tube",
+   "intended": true,
+   "via": "gatehouse-lintel"
+  },
+  {
+   "id": "slide-shell-s",
+   "top": 1.8,
+   "role": "tube",
+   "intended": true,
+   "via": "gatehouse-lintel"
+  },
+  {
+   "id": "carousel-chariot-ne",
+   "top": 1.4,
+   "role": "prop",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-chariot-nw",
+   "top": 1.4,
+   "role": "prop",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-chariot-se",
+   "top": 1.4,
+   "role": "prop",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-chariot-sw",
+   "top": 1.4,
+   "role": "prop",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "court-e-n",
+   "top": 1.2,
+   "role": "rail",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "court-e-s",
+   "top": 1.2,
+   "role": "rail",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "court-n-e",
+   "top": 1.2,
+   "role": "rail",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "court-n-m",
+   "top": 1.2,
+   "role": "rail",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "court-n-w",
+   "top": 1.2,
+   "role": "rail",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "crate-arcade",
+   "top": 1.2,
+   "role": "crate",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "crate-east-1",
+   "top": 1.2,
+   "role": "crate",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "crate-ne",
+   "top": 1.2,
+   "role": "crate",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "crate-plaza-n",
+   "top": 1.2,
+   "role": "crate",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "crate-plaza-s",
+   "top": 1.2,
+   "role": "crate",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "crate-west-1",
+   "top": 1.2,
+   "role": "crate",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "workshop-stage",
+   "top": 1.2,
+   "role": "vault",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "bumper-car-1",
+   "top": 1.0,
+   "role": "car",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "bumper-car-2",
+   "top": 1.0,
+   "role": "car",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "bumper-car-3",
+   "top": 1.0,
+   "role": "car",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "bumper-car-4",
+   "top": 1.0,
+   "role": "car",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "bumper-car-5",
+   "top": 1.0,
+   "role": "car",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "bumper-car-6",
+   "top": 1.0,
+   "role": "car",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-rail-e",
+   "top": 1.0,
+   "role": "rail",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-rail-n",
+   "top": 1.0,
+   "role": "rail",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-rail-s",
+   "top": 1.0,
+   "role": "rail",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-rail-w",
+   "top": 1.0,
+   "role": "rail",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "hub-plinth",
+   "top": 1.0,
+   "role": "prop",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "barrier-east",
+   "top": 0.9,
+   "role": "barrier",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "barrier-west",
+   "top": 0.9,
+   "role": "barrier",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-deck-1",
+   "top": 0.3,
+   "role": "deck-round",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-deck-2",
+   "top": 0.3,
+   "role": "deck-round",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-deck-3",
+   "top": 0.3,
+   "role": "deck-round",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-deck-4",
+   "top": 0.3,
+   "role": "deck-round",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-deck-5",
+   "top": 0.3,
+   "role": "deck-round",
+   "intended": true,
+   "via": "ground"
+  },
+  {
+   "id": "carousel-deck-6",
+   "top": 0.3,
+   "role": "deck-round",
+   "intended": true,
+   "via": "ground"
+  }
+ ],
+ "boundaryReached": [],
+ "boundary": {
+  "edge-north": {
+   "height": 7.5,
+   "highestReachableWithin12m": 4.3,
+   "marginMetres": 1.437
+  },
+  "edge-south": {
+   "height": 5.0,
+   "highestReachableWithin12m": 2.8,
+   "marginMetres": 0.437
+  },
+  "edge-west": {
+   "height": 7.5,
+   "highestReachableWithin12m": 4.3,
+   "marginMetres": 1.437
+  },
+  "edge-east": {
+   "height": 7.5,
+   "highestReachableWithin12m": 3.3,
+   "marginMetres": 2.437
+  }
+ },
+ "highestReachableTop": 4.3,
+ "blockedLegs": [],
+ "clearLegs": "43/43",
+ "maze": {
+  "cells": 42,
+  "passages": 45,
+  "independentLoops": 4,
+  "deadEnds": [],
+  "connected": true,
+  "cellSizeMetres": [
+   2.333,
+   2.286
+  ],
+  "clearCorridorMetres": 2.086,
+  "glassBoxes": 15
+ },
+ "problems": []
+}

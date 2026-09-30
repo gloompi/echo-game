@@ -1,0 +1,621 @@
+[
+  {
+    "file": "00-concept.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [],
+    "jobId": null,
+    "createdAtUtc": "2026-09-13T23:28:09Z",
+    "approved": true,
+    "note": "Supplied as authoritative for the Neon Carnival v2 brief (2026-09-25). 1448x1086 sheet: isometric overview, top-down plan with legend, six location details, prop kit. Byte-identical to the v1 copy ../reference.png (same sha256), so git stores one blob. createdAtUtc is the supplied file modification time.",
+    "sha256": "af97ac399b9896e652932f065a29b1af45dc367822c114812b2da3cbd88e62e6",
+    "original": "echo-character-assets/assets/e7b92f37-2831-4988-a077-5e5aa945c25f.png"
+  },
+  {
+    "file": "01-overview.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Isometric overview with title and callouts. Massing, levels and mood reference: raised carousel terrace, coaster and Ferris wheel behind, skyline, retaining walls to the street.",
+    "sha256": "6a239ed76890a7dc79bda2b22ad16048fb0cd126bf0470f302b3b226e166c630",
+    "crop": {
+      "sheetBox": [
+        0,
+        0,
+        966,
+        608
+      ],
+      "size": [
+        966,
+        608
+      ]
+    }
+  },
+  {
+    "file": "20-plan.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Top-down MAP LAYOUT with routes. Authoritative for zone placement. Scale 0.18 m per sheet pixel, carousel centre at sheet (1207.5, 222.5) = game origin (see brief.md).",
+    "sha256": "5e51004de66752522202e0d64f5cc8e5497a5f9d6aa432b4a6a757fa01f09901",
+    "crop": {
+      "sheetBox": [
+        970,
+        0,
+        1448,
+        412
+      ],
+      "size": [
+        478,
+        412
+      ]
+    }
+  },
+  {
+    "file": "20-plan-legend.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Legend for the plan: hider loops (green), jump/vault (orange), slide/underpass (blue), climb/vertical (yellow), teleport mirrors, cover objects, seeker sightlines, danger zones.",
+    "sha256": "44c5042aed841386ae651d978a3b1afacd4ca8492a13b96337c9087993c9b393",
+    "crop": {
+      "sheetBox": [
+        980,
+        414,
+        1354,
+        602
+      ],
+      "size": [
+        374,
+        188
+      ]
+    }
+  },
+  {
+    "file": "21-view-carousel-loop.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Location detail: carousel with horses, bulb canopy, railing fence. Art-pass match target.",
+    "sha256": "3d65f90947f6dc6a4643cf44f315946371a97e66db919721d3ee868bc066d57f",
+    "crop": {
+      "sheetBox": [
+        10,
+        632,
+        245,
+        838
+      ],
+      "size": [
+        235,
+        206
+      ]
+    }
+  },
+  {
+    "file": "22-view-mirror-maze.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Location detail: glass/mirror corridors with neon frames, wet reflective floor.",
+    "sha256": "66fd1617612a46520193110ca3c4976a8fb00d3fe85b52af8379432ce53478f3",
+    "crop": {
+      "sheetBox": [
+        251,
+        632,
+        484,
+        838
+      ],
+      "size": [
+        233,
+        206
+      ]
+    }
+  },
+  {
+    "file": "23-view-tunnel-slide.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Location detail: glossy magenta-to-blue tube slide, stone arch doorway, crate, bulb stair.",
+    "sha256": "6a34547a6f4fc67b8b7e9331c6d614920694ba4f7561133387810aa18b44c6a8",
+    "crop": {
+      "sheetBox": [
+        490,
+        632,
+        722,
+        838
+      ],
+      "size": [
+        232,
+        206
+      ]
+    }
+  },
+  {
+    "file": "24-view-arcade-roof-route.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Location detail: rooftop with railings and gaps, ARCADE neon facade, skyline behind.",
+    "sha256": "a624bf9e2bb9e7976af4bfd4d5aaadacdd4e86c848db5aee6639542e1b3db2b9",
+    "crop": {
+      "sheetBox": [
+        728,
+        632,
+        960,
+        838
+      ],
+      "size": [
+        232,
+        206
+      ]
+    }
+  },
+  {
+    "file": "25-view-bumper-court.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Location detail: bumper cars under a truss canopy with bulb strings, BUMP! neon arch.",
+    "sha256": "bc8c9e395a37b8591cc06a7d3fb2a3600ff048418d919cfb81cc77b0bc0f24b2",
+    "crop": {
+      "sheetBox": [
+        966,
+        632,
+        1199,
+        838
+      ],
+      "size": [
+        233,
+        206
+      ]
+    }
+  },
+  {
+    "file": "26-view-teleport-hub.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Location detail: ornate purple-glowing mirror doors with a diamond motif, lanterns.",
+    "sha256": "aeb8e62b83f824785d6e3d49c1e8b9e237b9db7554ffeaeb1a767f76067e985b",
+    "crop": {
+      "sheetBox": [
+        1206,
+        632,
+        1439,
+        838
+      ],
+      "size": [
+        233,
+        206
+      ]
+    }
+  },
+  {
+    "file": "11-prop-kit.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "ENVIRONMENT PROPS row: the modular kit, each with its gameplay role caption.",
+    "sha256": "535a712edac51ee92f75d74ef2f7972bb9e5bc35195804b0a62af646c6fc3a9d",
+    "crop": {
+      "sheetBox": [
+        0,
+        842,
+        1448,
+        1012
+      ],
+      "size": [
+        1448,
+        170
+      ]
+    }
+  },
+  {
+    "file": "10-part-booth-counter.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: booth counter (cover).",
+    "sha256": "490b812cb0d7b50280b1c0f5dabd0bd8b885af6f4d281829b2406f286ade554b",
+    "crop": {
+      "sheetBox": [
+        8,
+        869,
+        130,
+        1008
+      ],
+      "size": [
+        122,
+        139
+      ]
+    }
+  },
+  {
+    "file": "10-part-low-barrier.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: low barrier (vault).",
+    "sha256": "830430c1d67a453a86cf9035db82909992f6babd0352ac1851d4966d73f53982",
+    "crop": {
+      "sheetBox": [
+        130,
+        869,
+        246,
+        1008
+      ],
+      "size": [
+        116,
+        139
+      ]
+    }
+  },
+  {
+    "file": "10-part-jump-crate.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: jump crate (jump).",
+    "sha256": "b79a0f1bbf25d6d9a3a73533bdd66478a7efbc46fe8487f73d499aa35775a443",
+    "crop": {
+      "sheetBox": [
+        246,
+        869,
+        371,
+        1008
+      ],
+      "size": [
+        125,
+        139
+      ]
+    }
+  },
+  {
+    "file": "10-part-slide-tunnel-entrance.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: slide tunnel entrance (access).",
+    "sha256": "99726f3fd7b87ad0d10ccc35c9613a5e43397bb65eb2cf2383fc4d5429c56270",
+    "crop": {
+      "sheetBox": [
+        371,
+        869,
+        517,
+        1008
+      ],
+      "size": [
+        146,
+        139
+      ]
+    }
+  },
+  {
+    "file": "10-part-railing-segment.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: railing segment (climbable).",
+    "sha256": "a2744675c6213f9094f2093d3d9054a68e28f8d7cab215dfb9e8152083de05b5",
+    "crop": {
+      "sheetBox": [
+        517,
+        850,
+        672,
+        1008
+      ],
+      "size": [
+        155,
+        158
+      ]
+    }
+  },
+  {
+    "file": "10-part-carnival-light-pole.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: carnival light pole with bulb string and pennants (decor).",
+    "sha256": "3c3134192cf83d7bd7dfa004c88fccb2b072fae11c0524a32777922e0ae235cc",
+    "crop": {
+      "sheetBox": [
+        672,
+        850,
+        793,
+        1008
+      ],
+      "size": [
+        121,
+        158
+      ]
+    }
+  },
+  {
+    "file": "10-part-broken-ride-panel.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: broken ride panel (cover).",
+    "sha256": "d412207effdca4d46511fe0118843c8fa6bf267d64040d9571d85f6c0b1bd270",
+    "crop": {
+      "sheetBox": [
+        793,
+        850,
+        951,
+        1008
+      ],
+      "size": [
+        158,
+        158
+      ]
+    }
+  },
+  {
+    "file": "10-part-neon-arrow-sign.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: neon arrow sign (decor).",
+    "sha256": "8e44626a59ad5c3d2f80b430a9e806f154b686e347d17df91c874610b5945423",
+    "crop": {
+      "sheetBox": [
+        951,
+        850,
+        1070,
+        1008
+      ],
+      "size": [
+        119,
+        158
+      ]
+    }
+  },
+  {
+    "file": "10-part-arcade-cabinet.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: arcade cabinet (decor); includes the small dark side box drawn beside it.",
+    "sha256": "61dd57bc2d138f9ccdc9b1df70938b9bf8dc0be77dbcffd81ebdc2a3ca4459f3",
+    "crop": {
+      "sheetBox": [
+        1070,
+        850,
+        1201,
+        1008
+      ],
+      "size": [
+        131,
+        158
+      ]
+    }
+  },
+  {
+    "file": "10-part-ticket-kiosk.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: ticket kiosk (cover).",
+    "sha256": "e3a7c57a349ca8c0ca2a4e7bee948c1a6a81cdcbb96c64851d80b302789cc162",
+    "crop": {
+      "sheetBox": [
+        1201,
+        850,
+        1317,
+        1008
+      ],
+      "size": [
+        116,
+        158
+      ]
+    }
+  },
+  {
+    "file": "10-part-teleport-mirror.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [
+      "00-concept.png"
+    ],
+    "jobId": null,
+    "createdAtUtc": "2026-09-25T20:52:05Z",
+    "approved": true,
+    "note": "Prop: teleport mirror (gameplay).",
+    "sha256": "88fc41444ccde43cbde26eb01c1fe6c881b7e31492067b192f351b638d23b692",
+    "crop": {
+      "sheetBox": [
+        1317,
+        850,
+        1440,
+        1008
+      ],
+      "size": [
+        123,
+        158
+      ]
+    }
+  },
+  {
+    "file": "../reference.png",
+    "source": "user",
+    "model": null,
+    "prompt": null,
+    "inputs": [],
+    "jobId": null,
+    "createdAtUtc": null,
+    "approved": false,
+    "note": "v1 copy of the same concept (identical bytes to 00-concept.png). Kept as history.",
+    "sha256": "af97ac399b9896e652932f065a29b1af45dc367822c114812b2da3cbd88e62e6"
+  },
+  {
+    "file": "../overview.png",
+    "source": "blender-render",
+    "model": null,
+    "prompt": null,
+    "inputs": [],
+    "jobId": null,
+    "createdAtUtc": null,
+    "approved": false,
+    "note": "v1 Blender render. History only: not a quality or layout reference (brief).",
+    "sha256": "e05540ebd8181bc3b77c74d9d032e39aab0fcb1939843ade2f6c1bf57e180c67"
+  },
+  {
+    "file": "../ground-view.png",
+    "source": "blender-render",
+    "model": null,
+    "prompt": null,
+    "inputs": [],
+    "jobId": null,
+    "createdAtUtc": null,
+    "approved": false,
+    "note": "v1 Blender render. History only.",
+    "sha256": "cd647873e3203442ff7c67f7a3ed1a831ffe3ff02526b8798acd95c87783aa3f"
+  },
+  {
+    "file": "../gameplay-hider.png",
+    "source": "blender-render",
+    "model": null,
+    "prompt": null,
+    "inputs": [],
+    "jobId": null,
+    "createdAtUtc": null,
+    "approved": false,
+    "note": "v1 in-game capture. History only.",
+    "sha256": "88fd2a3457f85761b153e82ea4c611e8033e9693faf08dee8e7480ec87d380fb"
+  },
+  {
+    "file": "../gameplay-seeker.png",
+    "source": "blender-render",
+    "model": null,
+    "prompt": null,
+    "inputs": [],
+    "jobId": null,
+    "createdAtUtc": null,
+    "approved": false,
+    "note": "v1 in-game capture. History only.",
+    "sha256": "bb6fa140d4a8cd92c394df7c80b62f96fadd4ff922b88a731912336af2060d57"
+  }
+]
